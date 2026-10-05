@@ -1,0 +1,119 @@
+@import 'tailwindcss';
+
+/*
+ * Токены оформления. Цвета — из брендбука ФСП: фиолетово-синий #402FFF, графит #1B1C21, светло-серый #EDEDED.
+ * Контраст основного цвета на белом ~6.8:1 (WCAG AA для текста).
+ */
+@theme {
+  --color-brand-50: #f1efff;
+  --color-brand-100: #e4e0ff;
+  --color-brand-200: #c9c1ff;
+  --color-brand-300: #a597ff;
+  --color-brand-400: #7565ff;
+  --color-brand-500: #402fff;
+  --color-brand-600: #3322e0;
+  --color-brand-700: #2a1bb8;
+  --color-brand-800: #21168e;
+  --color-brand-900: #18106a;
+
+  --color-ink: #1b1c21;
+  --color-ink-soft: #3a3c45;
+  --color-muted: #5b5e6b;
+  --color-line: #e2e2ea;
+  --color-line-strong: #c8c9ca;
+  --color-canvas: #f6f6fa;
+  --color-surface: #ffffff;
+  --color-accent-red: #ec1d35;
+
+  --color-success-50: #ecfdf3;
+  --color-success-600: #067647;
+  --color-success-700: #05603a;
+  --color-warning-50: #fffaeb;
+  --color-warning-600: #b54708;
+  --color-warning-700: #93370d;
+  --color-danger-50: #fef3f2;
+  --color-danger-600: #c4320a;
+  --color-danger-700: #a3260d;
+  --color-info-50: #eff8ff;
+  --color-info-700: #175cd3;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: var(--font-brand), ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  --radius-card: 14px;
+}
+
+@layer base {
+  html {
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-mono);
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-brand-400);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: var(--color-brand-100);
+  }
+  code,
+  pre,
+  kbd {
+    font-family: var(--font-mono);
+  }
+  dialog::backdrop {
+    background: rgb(27 28 33 / 0.45);
+  }
+}
+
+@layer components {
+  .font-brand {
+    font-family: var(--font-mono);
+  }
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 8px;
+    z-index: 100;
+    background: var(--color-surface);
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+  .skip-link:focus {
+    left: 8px;
+  }
+  /* Тонкая фирменная линия со скруглением и точкой-узлом (мотив брендбука). */
+  .brand-line {
+    border: 1px solid var(--color-brand-300);
+    border-radius: 28px;
+    position: relative;
+  }
+  .brand-line::before {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--color-brand-500);
+    top: -4px;
+    left: 40px;
+  }
+}

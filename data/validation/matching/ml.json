@@ -1,0 +1,108 @@
+{
+  "specialization": "ML_ENGINEER",
+  "candidates": [
+    { "id": "ML-01", "note": "Senior 92, всё подтверждено, MLflow/Docker/Airflow/PyTorch заявлены, победитель и призёр ФСП", "grade": "SENIOR", "overall": 92, "verified": ["python", "pandas", "scikit-learn", "data-preparation", "classification", "ml-metrics", "model-validation"], "self": ["mlflow", "docker", "airflow", "pytorch", "gradient-boosting"], "formats": ["REMOTE", "HYBRID"], "city": "Москва", "salary": [450000, 540000], "fsp": [{ "event": "ev-a", "discipline": "ALGORITHMIC", "place": 1, "role": null }, { "event": "ev-b", "discipline": "ROBOTICS", "place": 2, "role": null }], "experienceMonths": 100 },
+    { "id": "ML-02", "note": "Senior 86, валидация и подготовка данных подтверждены, удалённо", "grade": "SENIOR", "overall": 86, "verified": ["python", "scikit-learn", "data-preparation", "model-validation", "classification", "ml-metrics"], "self": ["pytorch", "spark", "docker"], "formats": ["REMOTE"], "city": "Санкт-Петербург", "salary": [430000, 520000], "fsp": [], "experienceMonths": 95 },
+    { "id": "ML-03", "note": "Middle 89, классификация и метрики подтверждены, призёр ФСП", "grade": "MIDDLE", "overall": 89, "verified": ["python", "pandas", "scikit-learn", "classification", "ml-metrics", "data-preparation"], "self": ["gradient-boosting", "sql", "docker"], "formats": ["REMOTE", "HYBRID"], "city": "Москва", "salary": [300000, 370000], "fsp": [{ "event": "ev-c", "discipline": "ALGORITHMIC", "place": 3, "role": null }], "experienceMonths": 48 },
+    { "id": "ML-04", "note": "Middle 78, метрики не подтверждены", "grade": "MIDDLE", "overall": 78, "verified": ["python", "pandas", "classification"], "self": ["sql", "scikit-learn"], "formats": ["REMOTE"], "city": "Казань", "salary": [250000, 310000], "fsp": [], "experienceMonths": 36 },
+    { "id": "ML-05", "note": "Middle 93, всё подтверждено, Новосибирск, победитель ФСП", "grade": "MIDDLE", "overall": 93, "verified": ["python", "pandas", "scikit-learn", "classification", "ml-metrics", "model-validation", "data-preparation"], "self": ["gradient-boosting", "sql", "airflow"], "formats": ["REMOTE"], "city": "Новосибирск", "salary": [320000, 400000], "fsp": [{ "event": "ev-d", "discipline": "PRODUCT", "place": 1, "role": "ML" }], "experienceMonths": 60 },
+    { "id": "ML-06", "note": "Middle 82, обязательное подтверждено, scikit-learn только заявлен", "grade": "MIDDLE", "overall": 82, "verified": ["python", "classification", "ml-metrics", "pandas"], "self": ["scikit-learn", "gradient-boosting", "sql"], "formats": ["REMOTE", "HYBRID"], "city": "Екатеринбург", "salary": [290000, 340000], "fsp": [], "experienceMonths": 44 },
+    { "id": "ML-07", "note": "Junior 83, pandas и подготовка данных подтверждены, Новосибирск, офис/гибрид", "grade": "JUNIOR", "overall": 83, "verified": ["python", "pandas", "data-preparation"], "self": ["numpy", "sql", "scikit-learn"], "formats": ["OFFICE", "HYBRID"], "city": "Новосибирск", "salary": [80000, 110000], "fsp": [{ "event": "ev-e", "discipline": "PRODUCT", "place": 5, "role": "ML" }], "experienceMonths": 12 },
+    { "id": "ML-08", "note": "Junior 76 у нижней границы, pandas только заявлен", "grade": "JUNIOR", "overall": 76, "verified": ["python"], "self": ["pandas", "numpy"], "formats": ["OFFICE"], "city": "Новосибирск", "salary": [70000, 100000], "fsp": [], "experienceMonths": 6 },
+    { "id": "ML-09", "note": "Junior 90, сильный, Новосибирск, офис/удалённо, победитель ФСП", "grade": "JUNIOR", "overall": 90, "verified": ["python", "pandas", "data-preparation", "scikit-learn"], "self": ["numpy", "sql"], "formats": ["OFFICE", "REMOTE"], "city": "Новосибирск", "salary": [100000, 140000], "fsp": [{ "event": "ev-f", "discipline": "ROBOTICS", "place": 1, "role": null }], "experienceMonths": 16 },
+    { "id": "ML-10", "note": "Senior 80, подготовка данных только заявлена", "grade": "SENIOR", "overall": 80, "verified": ["python", "scikit-learn", "model-validation"], "self": ["data-preparation", "mlflow"], "formats": ["REMOTE"], "city": "Москва", "salary": [430000, 500000], "fsp": [], "experienceMonths": 90 },
+    { "id": "ML-11", "note": "Senior 94, всё подтверждено, только офис", "grade": "SENIOR", "overall": 94, "verified": ["python", "pandas", "scikit-learn", "data-preparation", "classification", "ml-metrics", "model-validation"], "self": ["mlflow", "airflow", "docker", "pytorch"], "formats": ["OFFICE"], "city": "Москва", "salary": [480000, 560000], "fsp": [], "experienceMonths": 104 },
+    { "id": "ML-12", "note": "Senior 88, всё нужное подтверждено, ожидания чуть выше верхней границы", "grade": "SENIOR", "overall": 88, "verified": ["python", "pandas", "scikit-learn", "data-preparation", "model-validation", "classification"], "self": ["pytorch", "docker", "spark"], "formats": ["REMOTE"], "city": "Тула", "salary": [600000, 700000], "fsp": [], "experienceMonths": 99 },
+    { "id": "ML-13", "note": "Middle 95, всё подтверждено, победитель и призёр ФСП", "grade": "MIDDLE", "overall": 95, "verified": ["python", "pandas", "scikit-learn", "data-preparation", "classification", "ml-metrics", "model-validation"], "self": ["mlflow", "airflow", "docker", "pytorch", "gradient-boosting", "sql"], "formats": ["REMOTE"], "city": "Москва", "salary": [330000, 390000], "fsp": [{ "event": "ev-g", "discipline": "ALGORITHMIC", "place": 1, "role": null }, { "event": "ev-h", "discipline": "ROBOTICS", "place": 2, "role": null }], "experienceMonths": 62 },
+    { "id": "ML-14", "note": "Senior 85, валидация и подготовка данных подтверждены, MLflow/Airflow заявлены, призёр ФСП", "grade": "SENIOR", "overall": 85, "verified": ["python", "pandas", "scikit-learn", "data-preparation", "model-validation", "ml-metrics"], "self": ["mlflow", "airflow"], "formats": ["REMOTE", "HYBRID"], "city": "Екатеринбург", "salary": [450000, 520000], "fsp": [{ "event": "ev-i", "discipline": "PRODUCT", "place": 2, "role": "ML" }], "experienceMonths": 80 },
+    { "id": "ML-15", "note": "Скрытый профиль (не опубликован), по данным — отличный Senior", "grade": "SENIOR", "overall": 93, "verified": ["python", "pandas", "scikit-learn", "data-preparation", "classification", "ml-metrics", "model-validation"], "self": ["mlflow", "docker"], "formats": ["REMOTE"], "city": "Москва", "salary": [400000, 500000], "fsp": [], "experienceMonths": 100, "discoverable": false },
+    { "id": "ML-16", "note": "Senior 77 у нижней границы, желательное только заявлено", "grade": "SENIOR", "overall": 77, "verified": ["python", "scikit-learn", "data-preparation", "model-validation"], "self": ["mlflow", "airflow", "docker", "pytorch"], "formats": ["REMOTE"], "city": "Краснодар", "salary": [440000, 520000], "fsp": [], "experienceMonths": 70 },
+    { "id": "ML-17", "note": "Senior 87, классификация/метрики/валидация подтверждены, подготовка данных нет", "grade": "SENIOR", "overall": 87, "verified": ["python", "classification", "ml-metrics", "scikit-learn", "pandas", "model-validation"], "self": ["gradient-boosting", "sql"], "formats": ["REMOTE"], "city": "Рязань", "salary": [340000, 420000], "fsp": [], "experienceMonths": 84 },
+    { "id": "ML-18", "note": "Junior 88, pandas подтверждён, но нет офисного формата и другой город", "grade": "JUNIOR", "overall": 88, "verified": ["python", "pandas", "data-preparation"], "self": ["numpy", "sql"], "formats": ["REMOTE", "HYBRID"], "city": "Омск", "salary": [80000, 110000], "fsp": [], "experienceMonths": 11 }
+  ],
+  "needs": [
+    {
+      "id": "ML-N1", "split": "tuning", "title": "ML-инженер для скоринговых моделей",
+      "scenario": "Команда кредитного скоринга ищет Middle/Senior: обязательны классификация, метрики и Python, желательно подтверждённые scikit-learn и валидация моделей, градиентный бустинг и SQL приветствуются; удалённо; 280–380 тыс. ₽.",
+      "allowedGrades": ["MIDDLE", "SENIOR"], "requiredSkills": ["classification", "ml-metrics", "python"],
+      "preferredSkills": [{ "skill": "scikit-learn", "mode": "VERIFIED_ONLY" }, { "skill": "gradient-boosting", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "sql", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "model-validation", "mode": "VERIFIED_ONLY" }],
+      "workFormat": "REMOTE", "city": null, "salary": [280000, 380000]
+    },
+    {
+      "id": "ML-N2", "split": "final", "title": "Junior data/ML-специалист в офис (Новосибирск)",
+      "scenario": "Аналитический отдел в Новосибирске берёт Junior на офисную работу: обязательны pandas и Python, желательно подтверждённая подготовка данных, NumPy и SQL приветствуются; 90–130 тыс. ₽.",
+      "allowedGrades": ["JUNIOR"], "requiredSkills": ["pandas", "python"],
+      "preferredSkills": [{ "skill": "data-preparation", "mode": "VERIFIED_ONLY" }, { "skill": "numpy", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "sql", "mode": "SELF_REPORTED_ALLOWED" }],
+      "workFormat": "OFFICE", "city": "Новосибирск", "salary": [90000, 130000]
+    },
+    {
+      "id": "ML-N3", "split": "final", "title": "Senior ML-инженер: валидация моделей и эксплуатация",
+      "scenario": "Платформенная команда ищет Senior: обязательны подтверждённые валидация моделей, scikit-learn и подготовка данных; MLflow, Airflow, Docker, PyTorch приветствуются, желательна подтверждённая классификация; удалённо; 420–560 тыс. ₽.",
+      "allowedGrades": ["SENIOR"], "requiredSkills": ["model-validation", "scikit-learn", "data-preparation"],
+      "preferredSkills": [{ "skill": "mlflow", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "airflow", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "docker", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "pytorch", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "classification", "mode": "VERIFIED_ONLY" }],
+      "workFormat": "REMOTE", "city": null, "salary": [420000, 560000]
+    }
+  ],
+  "labels": {
+    "ML-N1": {
+      "ML-01": { "l": 0, "v": true, "why": "Ожидания 450–540 тыс. значительно выше вилки 280–380 тыс." },
+      "ML-02": { "l": 0, "v": true, "why": "Ожидания 430–520 тыс. значительно выше вилки" },
+      "ML-03": { "l": 2, "v": false, "why": "Middle 89: классификация, метрики, scikit-learn подтверждены, градиентный бустинг и SQL заявлены, ожидания 300–370 тыс. внутри вилки, призёр ФСП" },
+      "ML-04": { "l": 0, "v": true, "why": "Метрики качества не подтверждены тестом, результат 78" },
+      "ML-05": { "l": 2, "v": false, "why": "Middle 93: всё подтверждено, удалённо, ожидания 320–400 тыс. пересекаются с вилкой, победитель ФСП" },
+      "ML-06": { "l": 1, "v": false, "why": "Обязательные подтверждены, результат 82, но scikit-learn и валидация не подтверждены (scikit-learn заявлен)" },
+      "ML-07": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых (Middle/Senior)" },
+      "ML-08": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" },
+      "ML-09": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых (даже при сильных результатах)" },
+      "ML-10": { "l": 0, "v": true, "why": "Классификация и метрики не подтверждены, ожидания 430–500 тыс. выше вилки" },
+      "ML-11": { "l": 0, "v": true, "why": "Только офис, ожидания 480–560 тыс. значительно выше вилки" },
+      "ML-12": { "l": 0, "v": true, "why": "Ожидания 600–700 тыс. значительно выше вилки" },
+      "ML-13": { "l": 2, "v": false, "why": "Middle 95: всё подтверждено, градиентный бустинг и SQL заявлены, ожидания 330–390 тыс. пересекаются с вилкой, победитель и призёр ФСП" },
+      "ML-14": { "l": 0, "v": true, "why": "Классификация не подтверждена, ожидания 450–520 тыс. значительно выше вилки" },
+      "ML-15": { "l": 0, "v": true, "why": "Профиль скрыт: кандидат недоступен для поиска" },
+      "ML-16": { "l": 0, "v": true, "why": "Классификация и метрики не подтверждены, ожидания значительно выше вилки" },
+      "ML-17": { "l": 2, "v": false, "why": "Senior 87: классификация, метрики, scikit-learn и валидация подтверждены, ожидания 340–420 тыс. пересекаются с вилкой, удалённо" },
+      "ML-18": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" }
+    },
+    "ML-N2": {
+      "ML-01": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-02": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-03": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-04": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-05": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-06": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-07": { "l": 2, "v": false, "why": "Junior 83: pandas, Python и подготовка данных подтверждены, Новосибирск, офис, ожидания 80–110 тыс. пересекаются с вилкой" },
+      "ML-08": { "l": 1, "v": true, "why": "Python подтверждён, pandas только заявлен; результат 76 на границе проходного, Новосибирск, офис — допустим для собеседования" },
+      "ML-09": { "l": 2, "v": false, "why": "Junior 90: всё подтверждено, Новосибирск, офис, ожидания 100–140 тыс. пересекаются с вилкой, победитель ФСП" },
+      "ML-10": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-11": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-12": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-13": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-14": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-15": { "l": 0, "v": true, "why": "Профиль скрыт: кандидат недоступен для поиска" },
+      "ML-16": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-17": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "ML-18": { "l": 0, "v": true, "why": "Нет офисного формата и другой город: офис в Новосибирске невозможен" }
+    },
+    "ML-N3": {
+      "ML-01": { "l": 2, "v": false, "why": "Senior 92: все обязательные и классификация подтверждены, MLflow/Docker/Airflow/PyTorch заявлены, ожидания 450–540 тыс. внутри вилки, победитель и призёр ФСП" },
+      "ML-02": { "l": 2, "v": false, "why": "Senior 86: все обязательные и классификация подтверждены, PyTorch/Docker заявлены, ожидания 430–520 тыс. внутри вилки" },
+      "ML-03": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых (только Senior)" },
+      "ML-04": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых" },
+      "ML-05": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых" },
+      "ML-06": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых" },
+      "ML-07": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" },
+      "ML-08": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" },
+      "ML-09": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" },
+      "ML-10": { "l": 1, "v": true, "why": "Senior 80: валидация и scikit-learn подтверждены, подготовка данных только заявлена; ожидания 430–500 тыс. внутри вилки — допустим для собеседования" },
+      "ML-11": { "l": 0, "v": true, "why": "Только офис, вакансия удалённая" },
+      "ML-12": { "l": 1, "v": true, "why": "Senior 88: всё обязательное подтверждено, удалённо; ожидания 600–700 тыс. выше верхней границы 560 тыс. на 7,1% — допустим для переговоров" },
+      "ML-13": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых (даже при очень сильных результатах)" },
+      "ML-14": { "l": 2, "v": false, "why": "Senior 85: все обязательные подтверждены, MLflow/Airflow заявлены, ожидания 450–520 тыс. внутри вилки, призёр ФСП" },
+      "ML-15": { "l": 0, "v": true, "why": "Профиль скрыт: кандидат недоступен для поиска" },
+      "ML-16": { "l": 1, "v": false, "why": "Обязательные подтверждены, но результат 77 у нижней границы; MLflow/Airflow/Docker/PyTorch только заявлены" },
+      "ML-17": { "l": 0, "v": true, "why": "Подготовка данных не подтверждена и не заявлена" },
+      "ML-18": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" }
+    }
+  }
+}

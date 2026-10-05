@@ -1,0 +1,139 @@
+# Локальный и демонстрационный запуск платформы.
+#
+#   docker compose --profile local up -d --build        # postgres, mailpit, migrate, api, web
+#   docker compose --profile seed run --rm seed         # демонстрационные данные (только для демо)
+#
+# Mailpit и порты БД привязаны к 127.0.0.1: интерфейс почты нельзя выставлять публично.
+# Для внешнего стенда профиль `local` не используется: задайте SMTP_* и HTTPS-прокси.
+
+name: fsp-talent
+
+# Значения .env рассчитаны на запуск на хосте (localhost). Внутри сети контейнеров адреса другие,
+# поэтому режим, SMTP-хост и порт здесь не берутся из .env: NODE_ENV фиксирован, SMTP задаётся DOCKER_SMTP_*.
+x-app-env: &app-env
+  NODE_ENV: production
+  DATABASE_URL: postgresql://${POSTGRES_USER:-fsp}:${POSTGRES_PASSWORD:-fsp_local_password}@postgres:5432/${POSTGRES_DB:-fsp}?schema=public
+  APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+  SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+  SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required (see .env.example)}
+  SMTP_HOST: ${DOCKER_SMTP_HOST:-mailpit}
+  SMTP_PORT: ${DOCKER_SMTP_PORT:-1025}
+  SMTP_SECURE: ${SMTP_SECURE:-false}
+  SMTP_USER: ${SMTP_USER:-}
+  SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+  MAIL_FROM: ${MAIL_FROM:-ФСП Таланты <no-reply@fsp-talent.example>}
+  FSP_PROVIDER: ${FSP_PROVIDER:-mock}
+  ASSESSMENT_POLICY_VERSION: ${ASSESSMENT_POLICY_VERSION:-assessment-policy-v1}
+  MATCHING_FORMULA_VERSION: ${MATCHING_FORMULA_VERSION:-matching-formula-v1}
+  INVITATION_POLICY_VERSION: ${INVITATION_POLICY_VERSION:-invitation-policy-v1}
+  SWAGGER_ENABLED: ${SWAGGER_ENABLED:-true}
+  TRUST_PROXY: ${TRUST_PROXY:-loopback, linklocal, uniquelocal}
+
+services:
+  postgres:
+    image: postgres:17.9-alpine3.23
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fsp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fsp_local_password}
+      POSTGRES_DB: ${POSTGRES_DB:-fsp}
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:v1.31.4
+    profiles: ["local"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${MAILPIT_SMTP_PORT:-1025}:1025"
+      - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: fsp-talent-api:local
+    command: ["node", "node_modules/prisma/build/index.js", "migrate", "deploy"]
+    environment:
+      <<: *app-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  seed:
+    image: fsp-talent-api:local
+    profiles: ["seed"]
+    command: ["node", "dist/scripts/seed.js"]
+    environment:
+      <<: *app-env
+      SEED_DEMO_PASSWORD: ${SEED_DEMO_PASSWORD:-}
+      # В production seed требует явного подтверждения; профиль `seed` запускается только вручную.
+      SEED_CONFIRM: "yes"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: "no"
+
+  api:
+    image: fsp-talent-api:local
+    restart: unless-stopped
+    environment:
+      <<: *app-env
+      PORT: 3001
+    ports:
+      - "127.0.0.1:${API_HOST_PORT:-3001}:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/api/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        API_INTERNAL_URL: http://api:3001
+    image: fsp-talent-web:local
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      API_INTERNAL_URL: http://api:3001
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "${WEB_HOST_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+volumes:
+  postgres-data:

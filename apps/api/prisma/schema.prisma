@@ -1,0 +1,609 @@
+// Схема данных платформы обратного подбора ИТ-специалистов.
+// Идентификаторы — UUID, время — UTC (timestamptz), зарплата — целые рубли в месяц (GROSS), опыт — месяцы.
+// Частичные уникальные индексы (одна активная попытка, одно активное приглашение на пару)
+// заданы явной SQL-миграцией, т. к. не выражаются средствами Prisma Schema.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "cjs"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CANDIDATE
+  EMPLOYER
+}
+
+enum Grade {
+  JUNIOR
+  MIDDLE
+  SENIOR
+}
+
+enum WorkFormat {
+  REMOTE
+  HYBRID
+  OFFICE
+}
+
+enum Availability {
+  ACTIVE
+  PAUSED
+}
+
+enum ContactChannel {
+  EMAIL
+  PHONE
+  MESSENGER
+}
+
+enum ConsentType {
+  DATA_PROCESSING
+  PROFILE_PUBLICATION
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  PASSED
+  FAILED
+  EXPIRED
+  ABANDONED
+}
+
+enum QualificationEventType {
+  CONFIRMED
+  RECONFIRMED
+  RAISED
+  LOWERED_BY_CHOICE
+}
+
+enum HiringNeedStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum InvitationStatus {
+  SENT
+  VIEWED
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  EXPIRED
+}
+
+enum FspLinkState {
+  LINKED_WITH_HISTORY
+  LINKED_WITHOUT_HISTORY
+  SYNC_ERROR
+}
+
+// ───────────────────────────── Пользователи и сессии ─────────────────────────────
+
+model User {
+  id              String    @id @default(uuid()) @db.Uuid
+  email           String
+  normalizedEmail String    @unique
+  passwordHash    String
+  role            Role
+  emailVerifiedAt DateTime? @db.Timestamptz(3)
+  isDemo          Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(3)
+
+  sessions           Session[]
+  verificationTokens EmailVerificationToken[]
+  consents           ConsentRecord[]
+  candidateProfile   CandidateProfile?
+  company            Company?
+  auditEvents        AuditEvent[]
+}
+
+model Session {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @db.Uuid
+  tokenHash  String    @unique
+  createdAt  DateTime  @default(now()) @db.Timestamptz(3)
+  lastUsedAt DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt  DateTime  @db.Timestamptz(3)
+  revokedAt  DateTime? @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  tokenHash String    @unique
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt DateTime  @db.Timestamptz(3)
+  usedAt    DateTime? @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model ConsentRecord {
+  id            String      @id @default(uuid()) @db.Uuid
+  userId        String      @db.Uuid
+  type          ConsentType
+  policyVersion String
+  acceptedAt    DateTime    @db.Timestamptz(3)
+  withdrawnAt   DateTime?   @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+}
+
+// ───────────────────────────── Справочники ─────────────────────────────
+
+model Specialization {
+  code           String @id
+  title          String
+  description    String
+  sortOrder      Int
+  catalogVersion String
+
+  groups         CompetencyGroup[]
+  profiles       CandidateProfile[]
+  qualifications CandidateQualification[]
+  attempts       AssessmentAttempt[]
+  needs          HiringNeed[]
+}
+
+model CompetencyGroup {
+  code               String @id
+  specializationCode String
+  title              String
+  sortOrder          Int
+
+  specialization Specialization @relation(fields: [specializationCode], references: [code])
+
+  @@index([specializationCode])
+}
+
+model Skill {
+  code                String   @id
+  title               String
+  category            String
+  specializationCodes String[]
+  catalogVersion      String
+
+  candidateSkills CandidateSkill[]
+}
+
+// ───────────────────────────── Кандидат ─────────────────────────────
+
+model CandidateProfile {
+  id                       String           @id @default(uuid()) @db.Uuid
+  userId                   String           @unique @db.Uuid
+  /// Системный псевдоним для обезличенной карточки, например «A17F».
+  alias                    String           @unique
+  fullName                 String?
+  contactEmail             String?
+  phone                    String?
+  messenger                String?
+  city                     String?
+  timezone                 String?
+  workFormats              WorkFormat[]
+  availability             Availability     @default(ACTIVE)
+  salaryFrom               Int?
+  salaryTo                 Int?
+  industries               String[]
+  activeSpecializationCode String?
+  declaredGrade            Grade?
+  experienceMonths         Int?
+  teamRoles                String[]
+  experienceDescription    String?
+  softSkills               String[]
+  externalLinks            String[]
+  isDiscoverable           Boolean          @default(false)
+  showSalaryToEmployers    Boolean          @default(true)
+  showFspToEmployers       Boolean          @default(true)
+  disclosureChannels       ContactChannel[]
+  /// Ответы онбордингового опроса (с версией опроса).
+  survey                   Json?
+  createdAt                DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt                DateTime         @updatedAt @db.Timestamptz(3)
+
+  user                 User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activeSpecialization Specialization?          @relation(fields: [activeSpecializationCode], references: [code])
+  skills               CandidateSkill[]
+  qualifications       CandidateQualification[]
+  qualificationHistory QualificationHistory[]
+  attempts             AssessmentAttempt[]
+  invitations          Invitation[]
+  contactGrants        ContactAccessGrant[]
+  fspLink              FspLink?
+  fspAchievements      FspAchievement[]
+  bookmarks            CandidateBookmark[]
+  selectionResults     SelectionResult[]
+
+  @@index([activeSpecializationCode, isDiscoverable, availability])
+}
+
+/// Самоописанный стек кандидата (не является подтверждением).
+model CandidateSkill {
+  candidateId String @db.Uuid
+  skillCode   String
+  months      Int?
+
+  candidate CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  skill     Skill            @relation(fields: [skillCode], references: [code])
+
+  @@id([candidateId, skillCode])
+  @@index([skillCode])
+}
+
+model CandidateQualification {
+  id                 String   @id @default(uuid()) @db.Uuid
+  candidateId        String   @db.Uuid
+  specializationCode String
+  confirmedGrade     Grade
+  /// Попытка, которой подтверждена текущая квалификация.
+  attemptId          String   @unique @db.Uuid
+  overallScore       Int
+  groupScores        Json
+  skillEvidence      Json
+  /// Навыки со статусом «подтверждён тестом» — денормализация для фильтрации.
+  verifiedSkills     String[]
+  confirmedAt        DateTime @db.Timestamptz(3)
+  nextReassessmentAt DateTime @db.Timestamptz(3)
+  policyVersion      String
+  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+
+  candidate      CandidateProfile  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  specialization Specialization    @relation(fields: [specializationCode], references: [code])
+  attempt        AssessmentAttempt @relation(fields: [attemptId], references: [id])
+
+  @@unique([candidateId, specializationCode])
+  @@index([specializationCode, confirmedGrade])
+}
+
+/// Неизменяемая история подтверждений квалификации.
+model QualificationHistory {
+  id                 String                 @id @default(uuid()) @db.Uuid
+  candidateId        String                 @db.Uuid
+  specializationCode String
+  eventType          QualificationEventType
+  grade              Grade
+  previousGrade      Grade?
+  attemptId          String                 @db.Uuid
+  overallScore       Int
+  groupScores        Json
+  policyVersion      String
+  occurredAt         DateTime               @db.Timestamptz(3)
+
+  candidate CandidateProfile  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  attempt   AssessmentAttempt @relation(fields: [attemptId], references: [id])
+
+  @@index([candidateId, occurredAt])
+}
+
+// ───────────────────────────── Оценка ─────────────────────────────
+
+model AssessmentAttempt {
+  id                   String        @id @default(uuid()) @db.Uuid
+  candidateId          String        @db.Uuid
+  specializationCode   String
+  requestedGrade       Grade
+  status               AttemptStatus @default(IN_PROGRESS)
+  startedAt            DateTime      @db.Timestamptz(3)
+  expiresAt            DateTime      @db.Timestamptz(3)
+  finishedAt           DateTime?     @db.Timestamptz(3)
+  blueprintVersion     String
+  bankVersion          String
+  policyVersion        String
+  policySnapshot       Json
+  clientRequestId      String?
+  overallScore         Int?
+  groupScores          Json?
+  skillEvidence        Json?
+  confident            Boolean?
+  qualificationGranted Boolean       @default(false)
+  /// Попытка создана сидером синтетических данных (ответы сгенерированы, оценка — серверным evaluator).
+  isSynthetic          Boolean       @default(false)
+
+  candidate            CandidateProfile        @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  specialization       Specialization          @relation(fields: [specializationCode], references: [code])
+  items                AssessmentItem[]
+  answers              AssessmentAnswer[]
+  qualification        CandidateQualification?
+  qualificationHistory QualificationHistory[]
+
+  @@unique([candidateId, clientRequestId])
+  @@index([candidateId, specializationCode, requestedGrade, finishedAt])
+  @@index([candidateId, status])
+}
+
+model AssessmentItem {
+  id             String   @id @default(uuid()) @db.Uuid
+  attemptId      String   @db.Uuid
+  position       Int
+  groupCode      String
+  familyId       String
+  familyVersion  Int
+  grade          Grade
+  /// Серверный seed генерации экземпляра.
+  seed           String
+  /// Отпечаток значимых условий (без учёта порядка вариантов ответа).
+  fingerprint    String
+  skillTags      String[]
+  /// Публичные условия — единственная часть, сериализуемая клиенту.
+  publicSnapshot Json
+  /// Закрытый ключ проверки. Никогда не покидает backend.
+  privateKey     Json
+
+  attempt AssessmentAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  answers AssessmentAnswer[]
+
+  @@unique([attemptId, position])
+  @@unique([id, attemptId])
+  @@index([familyId, fingerprint])
+}
+
+model AssessmentAnswer {
+  id        String   @id @default(uuid()) @db.Uuid
+  attemptId String   @db.Uuid
+  itemId    String   @db.Uuid
+  answer    Json
+  revision  Int
+  savedAt   DateTime @db.Timestamptz(3)
+
+  attempt AssessmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  /// Составной внешний ключ гарантирует, что ответ относится к заданию именно этой попытки.
+  item    AssessmentItem    @relation(fields: [itemId, attemptId], references: [id, attemptId], onDelete: Cascade)
+
+  @@unique([attemptId, itemId])
+}
+
+// ───────────────────────────── Работодатель ─────────────────────────────
+
+model Company {
+  id                 String   @id @default(uuid()) @db.Uuid
+  ownerUserId        String   @unique @db.Uuid
+  name               String
+  description        String?
+  industry           String?
+  website            String?
+  contactPersonName  String?
+  contactChannelType String?
+  contactValue       String?
+  createdAt          DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+
+  owner         User                 @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  needs         HiringNeed[]
+  selectionRuns SelectionRun[]
+  bookmarks     CandidateBookmark[]
+  invitations   Invitation[]
+  contactGrants ContactAccessGrant[]
+}
+
+model HiringNeed {
+  id                 String           @id @default(uuid()) @db.Uuid
+  companyId          String           @db.Uuid
+  title              String
+  description        String
+  specializationCode String
+  allowedGrades      Grade[]
+  /// Обязательные навыки, которые должны быть подтверждены тестом.
+  requiredSkills     String[]
+  /// Желательные навыки: [{ skill, mode: SELF_REPORTED_ALLOWED | VERIFIED_ONLY }].
+  preferredSkills    Json
+  workFormat         WorkFormat
+  city               String?
+  salaryFrom         Int
+  salaryTo           Int
+  status             HiringNeedStatus @default(DRAFT)
+  version            Int              @default(1)
+  createdAt          DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime         @updatedAt @db.Timestamptz(3)
+
+  company        Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  specialization Specialization @relation(fields: [specializationCode], references: [code])
+  selectionRuns  SelectionRun[]
+  invitations    Invitation[]
+
+  @@index([companyId, status])
+}
+
+/// Сохранённое построение подборки по потребности. Контакты кандидатов в снимок не попадают.
+model SelectionRun {
+  id               String   @id @default(uuid()) @db.Uuid
+  companyId        String   @db.Uuid
+  needId           String   @db.Uuid
+  needVersion      Int
+  needSnapshot     Json
+  filters          Json
+  formulaVersion   String
+  formulaSnapshot  Json
+  parentRunId      String?  @db.Uuid
+  createdByUserId  String   @db.Uuid
+  createdAt        DateTime @db.Timestamptz(3)
+  totalConsidered  Int
+  totalMatched     Int
+  rejectionSummary Json
+  durationMs       Int
+
+  company   Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  need      HiringNeed        @relation(fields: [needId], references: [id], onDelete: Cascade)
+  parentRun SelectionRun?     @relation("SelectionRunRefinement", fields: [parentRunId], references: [id])
+  children  SelectionRun[]    @relation("SelectionRunRefinement")
+  results   SelectionResult[]
+
+  @@index([companyId, needId, createdAt])
+}
+
+model SelectionResult {
+  id          String @id @default(uuid()) @db.Uuid
+  runId       String @db.Uuid
+  candidateId String @db.Uuid
+  rank        Int
+  score       Float
+  components  Json
+  explanation Json
+
+  run       SelectionRun     @relation(fields: [runId], references: [id], onDelete: Cascade)
+  candidate CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([runId, candidateId])
+  @@unique([runId, rank])
+}
+
+model CandidateBookmark {
+  id          String   @id @default(uuid()) @db.Uuid
+  companyId   String   @db.Uuid
+  candidateId String   @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  company   Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  candidate CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, candidateId])
+}
+
+// ───────────────────────────── Приглашения и доступ к контактам ─────────────────────────────
+
+model Invitation {
+  id                  String           @id @default(uuid()) @db.Uuid
+  companyId           String           @db.Uuid
+  candidateId         String           @db.Uuid
+  needId              String?          @db.Uuid
+  title               String
+  description         String
+  salaryFrom          Int
+  salaryTo            Int
+  workFormat          WorkFormat
+  employerContactType ContactChannel
+  employerContact     String
+  /// Снимок данных компании на момент отправки (без приватных данных кандидата).
+  companySnapshot     Json
+  status              InvitationStatus @default(SENT)
+  createdAt           DateTime         @db.Timestamptz(3)
+  expiresAt           DateTime         @db.Timestamptz(3)
+  viewedAt            DateTime?        @db.Timestamptz(3)
+  respondedAt         DateTime?        @db.Timestamptz(3)
+  createdByUserId     String           @db.Uuid
+  clientRequestId     String?
+  policyVersion       String
+
+  company   Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  candidate CandidateProfile  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  need      HiringNeed?       @relation(fields: [needId], references: [id], onDelete: SetNull)
+  events    InvitationEvent[]
+
+  @@unique([companyId, clientRequestId])
+  @@index([candidateId, status])
+  @@index([companyId, status, createdAt])
+}
+
+model InvitationEvent {
+  id           String            @id @default(uuid()) @db.Uuid
+  invitationId String            @db.Uuid
+  actorUserId  String?           @db.Uuid
+  fromStatus   InvitationStatus?
+  toStatus     InvitationStatus
+  occurredAt   DateTime          @db.Timestamptz(3)
+  metadata     Json?
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId, occurredAt])
+}
+
+model ContactAccessGrant {
+  id                 String           @id @default(uuid()) @db.Uuid
+  candidateId        String           @db.Uuid
+  companyId          String           @db.Uuid
+  /// Каналы связи, которые кандидат согласился раскрыть этой компании.
+  channels           ContactChannel[]
+  grantedAt          DateTime         @db.Timestamptz(3)
+  revokedAt          DateTime?        @db.Timestamptz(3)
+  sourceInvitationId String           @db.Uuid
+
+  candidate CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  company   Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([candidateId, companyId])
+  @@index([companyId])
+}
+
+// ───────────────────────────── ФСП (демонстрационная интеграция) ─────────────────────────────
+
+model FspLink {
+  id                   String       @id @default(uuid()) @db.Uuid
+  candidateId          String       @unique @db.Uuid
+  provider             String
+  externalId           String
+  state                FspLinkState
+  linkedAt             DateTime     @db.Timestamptz(3)
+  lastSyncAttemptAt    DateTime?    @db.Timestamptz(3)
+  lastSuccessfulSyncAt DateTime?    @db.Timestamptz(3)
+  lastErrorCode        String?
+
+  candidate CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, externalId])
+}
+
+model FspAchievement {
+  id                String    @id @default(uuid()) @db.Uuid
+  candidateId       String    @db.Uuid
+  provider          String
+  externalId        String
+  eventId           String?
+  eventTitle        String?
+  discipline        String?
+  eventLevel        String?
+  eventDate         DateTime? @db.Date
+  participationType String?
+  place             Int?
+  teamRole          String?
+  skillTags         String[]
+  source            String
+  verifiedAt        DateTime? @db.Timestamptz(3)
+  syncedAt          DateTime  @db.Timestamptz(3)
+  isDemo            Boolean   @default(true)
+
+  candidate CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([candidateId, provider, externalId])
+}
+
+/// Учёт использованных одноразовых демонстрационных кодов привязки ФСП ID.
+model FspLinkCodeRedemption {
+  codeHash    String   @id
+  provider    String
+  externalId  String
+  candidateId String   @db.Uuid
+  redeemedAt  DateTime @db.Timestamptz(3)
+}
+
+// ───────────────────────────── Аудит ─────────────────────────────
+
+/// Журнал значимых действий. metadata не содержит персональных данных.
+model AuditEvent {
+  id          String   @id @default(uuid()) @db.Uuid
+  actorUserId String?  @db.Uuid
+  action      String
+  objectType  String
+  objectId    String?
+  occurredAt  DateTime @default(now()) @db.Timestamptz(3)
+  requestId   String?
+  metadata    Json?
+
+  actor User? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId, occurredAt])
+  @@index([objectType, objectId])
+}

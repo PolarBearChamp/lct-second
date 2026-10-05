@@ -1,0 +1,1625 @@
+{
+  "bankVersion": "bank-bbfda64da1",
+  "note": "Определения заданий — код в apps/api/src/domain/assessment/bank; экземпляры генерируются детерминированно из (семейство, версия, грейд, seed). Различающиеся экземпляры считаются по отпечатку значимых условий (без учёта порядка вариантов).",
+  "families": 24,
+  "familyGradePairs": 72,
+  "minDistinctInstances": 127,
+  "seedsTried": 300,
+  "familiesDetail": [
+    {
+      "id": "fe.event-loop",
+      "version": 1,
+      "specialization": "FRONTEND",
+      "group": "FE_JS_ASYNC",
+      "groupTitle": "JavaScript/TypeScript и асинхронность",
+      "title": "Порядок выполнения асинхронного кода",
+      "description": "Порядок вывода при смешении синхронного кода, микрозадач (Promise, queueMicrotask, await) и таймеров.",
+      "skillTags": [
+        "javascript",
+        "async-js"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Синхронный код, setTimeout(0) и Promise.then без вложенности.",
+          "distinctInstances": 142,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "ORDERING": 1,
+            "NUMERIC": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "async/await, цепочки then, queueMicrotask, таймеры с разными задержками.",
+          "distinctInstances": 298,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "ORDERING": 1,
+            "NUMERIC": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Вложенное планирование: микрозадачи из таймеров, таймеры из микрозадач, несколько await подряд.",
+          "distinctInstances": 299,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "ORDERING": 1,
+            "NUMERIC": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "fe.promise-combinators",
+      "version": 1,
+      "specialization": "FRONTEND",
+      "group": "FE_JS_ASYNC",
+      "groupTitle": "JavaScript/TypeScript и асинхронность",
+      "title": "Комбинаторы промисов и типы TypeScript",
+      "description": "Исход и время завершения Promise.all / race / any / allSettled, последовательное и параллельное ожидание, типы результатов.",
+      "skillTags": [
+        "javascript",
+        "async-js",
+        "typescript"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Promise.all: первая ошибка по времени, время завершения, тип кортежа.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "SINGLE_CHOICE": 2,
+            "NUMERIC": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "race, any, allSettled при смешанных исходах; тип результата комбинатора.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "MULTI_SELECT": 1,
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Последовательный цикл с await против Promise.all при ошибке; сужение PromiseSettledResult.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "fe.ui-state",
+      "version": 1,
+      "specialization": "FRONTEND",
+      "group": "FE_UI_STATE",
+      "groupTitle": "Состояние и поведение интерфейса",
+      "title": "Переходы состояния интерфейса (useReducer)",
+      "description": "Итоговое состояние reducer-а и побочные эффекты для последовательности событий интерфейса.",
+      "skillTags": [
+        "react",
+        "state-management"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Простой автомат статусов запроса: итоговый статус и переходы в loading.",
+          "distinctInstances": 252,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "SINGLE_CHOICE": 1,
+            "NUMERIC": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Защита от двойной отправки и повтор после ошибки: сколько запросов отправлено.",
+          "distinctInstances": 283,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "SINGLE_CHOICE": 1,
+            "NUMERIC": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Устаревшие ответы отсекаются по requestId: что отображается и какие события проигнорированы.",
+          "distinctInstances": 299,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "SINGLE_CHOICE": 1,
+            "MULTI_SELECT": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "fe.react-effects",
+      "version": 1,
+      "specialization": "FRONTEND",
+      "group": "FE_UI_STATE",
+      "groupTitle": "Состояние и поведение интерфейса",
+      "title": "Эффекты, зависимости и замыкания в React",
+      "description": "Сколько раз выполняется эффект, что отображается при устаревшем замыкании и при гонке ответов.",
+      "skillTags": [
+        "react",
+        "state-management"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Число запусков useEffect при разных массивах зависимостей.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Устаревшее замыкание в setInterval, функциональное обновление состояния.",
+          "distinctInstances": 237,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Гонка ответов при смене параметра, флаг отмены в cleanup.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "SINGLE_CHOICE": 1,
+            "NUMERIC": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "fe.http-client-errors",
+      "version": 1,
+      "specialization": "FRONTEND",
+      "group": "FE_HTTP_ERRORS",
+      "groupTitle": "HTTP/API и обработка ошибок клиента",
+      "title": "Обработка ответов API на клиенте",
+      "description": "Реакция интерфейса на коды ответа, поведение fetch, безопасные повторы и политика ожидания.",
+      "skillTags": [
+        "http",
+        "error-handling"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Реакция интерфейса на 401/403/404/422/409/429/500; fetch не отклоняет промис при HTTP-ошибке.",
+          "distinctInstances": 268,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "MATCHING": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Какие неудачные запросы можно повторять автоматически; ожидание по Retry-After.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "MULTI_SELECT": 1,
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Политика повторов: экспоненциальная задержка с ограничением, Retry-After, неповторяемые ошибки.",
+          "distinctInstances": 283,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "fe.request-races",
+      "version": 1,
+      "specialization": "FRONTEND",
+      "group": "FE_HTTP_ERRORS",
+      "groupTitle": "HTTP/API и обработка ошибок клиента",
+      "title": "Гонки запросов и отображение ошибок",
+      "description": "Устаревшие ответы при поиске, debounce, отмена через AbortController, типобезопасная обработка результата.",
+      "skillTags": [
+        "http",
+        "error-handling",
+        "async-js",
+        "typescript"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Поиск без защиты: побеждает ответ, пришедший последним; сужение discriminated union.",
+          "distinctInstances": 282,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "SINGLE_CHOICE": 3
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Debounce: сколько запросов уйдёт; отмена предыдущих запросов через AbortController.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 4,
+            "max": 4
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 3
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Ошибки отменённых запросов не показываются (AbortError); исчерпывающий switch с never.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "SINGLE_CHOICE": 2,
+            "NUMERIC": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "be.http-semantics",
+      "version": 1,
+      "specialization": "BACKEND",
+      "group": "BE_API",
+      "groupTitle": "API и обработка запросов",
+      "title": "Семантика HTTP: методы и коды ответа",
+      "description": "Сопоставление ситуаций API с кодами ответа и выбор семантики методов.",
+      "skillTags": [
+        "http",
+        "rest-api"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Базовые коды (2xx/4xx) и выбор метода под операцию.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "MATCHING": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Асинхронная обработка, лимиты, неподдерживаемый метод; идемпотентность методов по RFC 9110.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "MATCHING": 1,
+            "MULTI_SELECT": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Условные запросы и согласование типов; решение об автоматическом повторе после таймаута.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "MATCHING": 1,
+            "SINGLE_CHOICE": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "be.idempotency",
+      "version": 1,
+      "specialization": "BACKEND",
+      "group": "BE_API",
+      "groupTitle": "API и обработка запросов",
+      "title": "Повторные запросы и идемпотентность",
+      "description": "Поведение API с Idempotency-Key при повторах, изменённом теле, истечении ключа и параллельных запросах.",
+      "skillTags": [
+        "rest-api",
+        "http"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Повтор с тем же и с другим телом, запросы без ключа.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Плюс истечение срока хранения ключа: повтор после срока создаёт запись заново.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Плюс параллельная обработка: запрос с ключом, который ещё обрабатывается, получает 409.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1,
+            "MULTI_SELECT": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "be.sql-query-result",
+      "version": 1,
+      "specialization": "BACKEND",
+      "group": "BE_SQL",
+      "groupTitle": "SQL и моделирование данных",
+      "title": "Результат SQL-запроса",
+      "description": "Вычисление результата запросов с JOIN, агрегатами, NULL и оконными функциями на сгенерированных таблицах.",
+      "skillTags": [
+        "sql"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "JOIN, фильтры, GROUP BY/HAVING, агрегаты без NULL.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 2
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "LEFT JOIN и место условия (ON против WHERE), COUNT(столбец), AVG и сравнения с NULL.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 2
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "NOT IN при NULL в подзапросе, NOT EXISTS, оконные функции, агрегаты с FILTER.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "be.data-modeling",
+      "version": 1,
+      "specialization": "BACKEND",
+      "group": "BE_SQL",
+      "groupTitle": "SQL и моделирование данных",
+      "title": "Моделирование данных и ограничения",
+      "description": "Выбор ограничений целостности, типа связи, индексов и механизмов, удерживающих инварианты в PostgreSQL.",
+      "skillTags": [
+        "sql",
+        "postgresql"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Правила → UNIQUE/CHECK/FK, тип связи сущностей.",
+          "distinctInstances": 299,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "MATCHING": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Уникальность по выражению и частичный индекс; порядок столбцов составного индекса.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "MATCHING": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "EXCLUDE-ограничения; механизмы, удерживающие инвариант при конкурентных вставках.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "MATCHING": 1,
+            "MULTI_SELECT": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "be.tx-isolation",
+      "version": 1,
+      "specialization": "BACKEND",
+      "group": "BE_RELIABILITY",
+      "groupTitle": "Транзакции, конкурентность и надёжность",
+      "title": "Конкурентные транзакции в PostgreSQL",
+      "description": "Итог параллельных транзакций при разных уровнях изоляции, блокировках и аномалиях.",
+      "skillTags": [
+        "postgresql",
+        "transactions",
+        "concurrency"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Потерянное обновление, атомарный UPDATE и ожидание блокировки, откат транзакции.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "SELECT … FOR UPDATE, ошибка сериализации в REPEATABLE READ, перепроверка условия UPDATE после ожидания.",
+          "distinctInstances": 299,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "SINGLE_CHOICE": 1,
+            "NUMERIC": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Write skew при REPEATABLE READ и SERIALIZABLE, взаимоблокировки и порядок захвата строк.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "SINGLE_CHOICE": 1,
+            "NUMERIC": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "be.reliability-patterns",
+      "version": 1,
+      "specialization": "BACKEND",
+      "group": "BE_RELIABILITY",
+      "groupTitle": "Транзакции, конкурентность и надёжность",
+      "title": "Надёжность: повторы, очереди и outbox",
+      "description": "Расчёт политики повторов, поведение очереди задач в PostgreSQL и свойства transactional outbox.",
+      "skillTags": [
+        "concurrency",
+        "transactions",
+        "postgresql"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Экспоненциальная задержка с ограничением, выбор ошибок для повтора, атомарность транзакции при сбое.",
+          "distinctInstances": 299,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "MULTI_SELECT": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Очередь задач с FOR UPDATE SKIP LOCKED, падение воркера до COMMIT, гарантия «не менее одного раза».",
+          "distinctInstances": 246,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Transactional outbox: повторная публикация после сбоя relay, свойства схемы, порядок шагов.",
+          "distinctInstances": 249,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "MULTI_SELECT": 1,
+            "ORDERING": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ml.leakage",
+      "version": 1,
+      "specialization": "ML_ENGINEER",
+      "group": "ML_DATA",
+      "groupTitle": "Подготовка данных и утечки",
+      "title": "Утечки данных",
+      "description": "Поиск утечек целевой информации и информации из test при подготовке данных и валидации.",
+      "skillTags": [
+        "data-preparation",
+        "scikit-learn",
+        "pandas",
+        "python"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Явные утечки: обучение преобразований на всех данных, признаки из будущего, копия целевой переменной.",
+          "distinctInstances": 153,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "MULTI_SELECT": 1,
+            "SINGLE_CHOICE": 2
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Target encoding и SMOTE до разбиения, пересечение групп; порядок шагов корректного пайплайна.",
+          "distinctInstances": 289,
+          "seedsTried": 300,
+          "parts": {
+            "min": 4,
+            "max": 4
+          },
+          "formats": {
+            "MULTI_SELECT": 1,
+            "ORDERING": 1,
+            "SINGLE_CHOICE": 2
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Утечки в коде scikit-learn и pandas вне фолдов кросс-валидации, направление смещения оценки.",
+          "distinctInstances": 299,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "MULTI_SELECT": 2,
+            "SINGLE_CHOICE": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ml.pandas-prep",
+      "version": 1,
+      "specialization": "ML_ENGINEER",
+      "group": "ML_DATA",
+      "groupTitle": "Подготовка данных и утечки",
+      "title": "Подготовка признаков в pandas",
+      "description": "Результат операций pandas с пропусками, группировками и объединениями таблиц.",
+      "skillTags": [
+        "pandas",
+        "data-preparation",
+        "python",
+        "scikit-learn"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "dropna, fillna средним, drop_duplicates, сравнение с NaN.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 2
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "groupby + transform, медиана по группам, value_counts(normalize=True).",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 2
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Размножение строк при merge, импутация только по train, pd.cut, count против size.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 2,
+            "max": 2
+          },
+          "formats": {
+            "NUMERIC": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "ml.confusion-metrics",
+      "version": 1,
+      "specialization": "ML_ENGINEER",
+      "group": "ML_METRICS",
+      "groupTitle": "Метрики и оценка моделей",
+      "title": "Матрица ошибок и метрики классификации",
+      "description": "Расчёт precision, recall, F1, специфичности и усреднений; выбор метрики и порога по цене ошибки.",
+      "skillTags": [
+        "ml-metrics",
+        "classification"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Precision и recall из TP/FP/FN/TN, выбор приоритетной метрики по цене ошибки.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "F1 и специфичность, macro-precision по матрице 3×3, micro-среднее и accuracy.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 4,
+            "max": 4
+          },
+          "formats": {
+            "NUMERIC": 3,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Precision и recall на заданном пороге по списку оценок, выбор порога с максимальным F1.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 4,
+            "max": 4
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "ml.imbalance-metrics",
+      "version": 1,
+      "specialization": "ML_ENGINEER",
+      "group": "ML_METRICS",
+      "groupTitle": "Метрики и оценка моделей",
+      "title": "Метрики при дисбалансе и ранжирование",
+      "description": "Accuracy при редком классе, ROC-AUC как доля верно упорядоченных пар, precision через распространённость.",
+      "skillTags": [
+        "ml-metrics",
+        "classification"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Парадокс accuracy на редком классе; F1 по TP/FP/FN.",
+          "distinctInstances": 298,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "ROC-AUC по парам объектов; инвариантность к монотонным преобразованиям оценок.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "MULTI_SELECT": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Precision при заданных TPR, FPR и распространённости; ложные срабатывания на большой выборке.",
+          "distinctInstances": 127,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ml.validation-schemes",
+      "version": 1,
+      "specialization": "ML_ENGINEER",
+      "group": "ML_VALIDATION",
+      "groupTitle": "Валидация, выбор модели и эксплуатационные сценарии",
+      "title": "Схемы валидации и подсчёт обучений",
+      "description": "k-fold, GridSearchCV, TimeSeriesSplit, вложенная кросс-валидация и корректность выводов о качестве.",
+      "skillTags": [
+        "model-validation",
+        "scikit-learn"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Размер train в k-fold, число обучений в GridSearchCV, выбор разбиения под тип данных.",
+          "distinctInstances": 292,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "TimeSeriesSplit: размеры train и test по фолдам; разбиение без утечки из будущего.",
+          "distinctInstances": 288,
+          "seedsTried": 300,
+          "parts": {
+            "min": 4,
+            "max": 4
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 2
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Вложенная кросс-валидация: число обучений, роль внешнего цикла; проверка утверждений о валидации.",
+          "distinctInstances": 277,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1,
+            "MULTI_SELECT": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ml.model-ops",
+      "version": 1,
+      "specialization": "ML_ENGINEER",
+      "group": "ML_VALIDATION",
+      "groupTitle": "Валидация, выбор модели и эксплуатационные сценарии",
+      "title": "Диагностика моделей и эксплуатация",
+      "description": "Диагностика по кривым обучения, выбор порога по стоимости, сравнение моделей, PSI и типы дрейфа.",
+      "skillTags": [
+        "model-validation",
+        "classification"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Диагностика недо- и переобучения по train/validation и выбор действия.",
+          "distinctInstances": 299,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "MATCHING": 1,
+            "SINGLE_CHOICE": 2
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Выбор порога по стоимости ошибок; сравнение моделей по CV с явным правилом значимости.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 2
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "PSI для мониторинга, интерпретация по порогам, типы дрейфа, порядок безопасной выкатки.",
+          "distinctInstances": 299,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1,
+            "MATCHING": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "qa.requirement-defects",
+      "version": 1,
+      "specialization": "MANUAL_QA",
+      "group": "QA_REQUIREMENTS",
+      "groupTitle": "Анализ требований",
+      "title": "Анализ требований: дефекты и трассируемость",
+      "description": "Классификация дефектов формулировок требований, поиск противоречий и анализ влияния изменений.",
+      "skillTags": [
+        "requirements-analysis",
+        "test-design"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Классификация отдельных требований по заданным определениям дефектов.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "MATCHING": 1,
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Противоречие между двумя требованиями, подсчёт пропущенных категорий, отбор требований на уточнение.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "SINGLE_CHOICE": 1,
+            "MULTI_SELECT": 1,
+            "NUMERIC": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Трассируемость: транзитивное влияние изменения требования на тесты и пробелы покрытия.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "MULTI_SELECT": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "qa.decision-tables",
+      "version": 1,
+      "specialization": "MANUAL_QA",
+      "group": "QA_REQUIREMENTS",
+      "groupTitle": "Анализ требований",
+      "title": "Комбинации условий и таблицы решений",
+      "description": "Результаты для комбинаций условий, затенённые правила, пробелы и конфликты в таблице решений.",
+      "skillTags": [
+        "requirements-analysis",
+        "test-design"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Правила «если … иначе» на трёх условиях: число комбинаций с результатом и результат для заданной комбинации.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Четыре условия, затенённое правило, которое никогда не сработает.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 2
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Независимые правила с безразличными значениями: пробелы, конфликты и минимальный набор проверок.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "qa.boundary-values",
+      "version": 1,
+      "specialization": "MANUAL_QA",
+      "group": "QA_TEST_DESIGN",
+      "groupTitle": "Границы и классы эквивалентности",
+      "title": "Граничные значения и классы эквивалентности",
+      "description": "Допустимые интервалы по словесным требованиям, наборы граничных значений, точность и периоды.",
+      "skillTags": [
+        "boundary-testing",
+        "test-design"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Перевод «больше / не менее / менее / не более» в допустимый интервал; двухзначный анализ границ.",
+          "distinctInstances": 299,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "MULTI_SELECT": 1,
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Тарифные диапазоны: число уникальных значений трёхзначного анализа; результат на границе классов.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 1,
+            "MULTI_SELECT": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Десятичная точность, период с включёнными датами, число тестов robust BVA для нескольких полей.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "SINGLE_CHOICE": 2,
+            "NUMERIC": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "qa.minimal-suite",
+      "version": 2,
+      "specialization": "MANUAL_QA",
+      "group": "QA_TEST_DESIGN",
+      "groupTitle": "Границы и классы эквивалентности",
+      "title": "Минимально достаточный набор проверок",
+      "description": "Число комбинаций, покрытие пар значений и классов эквивалентности, минимальный набор по функциям и приоритизация по риску.",
+      "skillTags": [
+        "test-design",
+        "test-prioritization",
+        "boundary-testing"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Полный перебор, покрытие каждого значения (классов эквивалентности), выбор техники сокращения.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Попарное покрытие: непокрытые пары, нижняя оценка набора, лучший тест; классы эквивалентности с одним недопустимым значением на тест.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 4,
+            "max": 4
+          },
+          "formats": {
+            "NUMERIC": 3,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Минимальный набор для покрытия функций, порядок запуска по риску за минуту, ограничение по времени; классы эквивалентности.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 4,
+            "max": 4
+          },
+          "formats": {
+            "NUMERIC": 3,
+            "ORDERING": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "qa.severity-priority",
+      "version": 2,
+      "specialization": "MANUAL_QA",
+      "group": "QA_DEFECTS",
+      "groupTitle": "Тест-кейсы, дефекты и приоритизация",
+      "title": "Критичность и приоритет дефектов",
+      "description": "Определение severity и priority по заданным правилам, порядок исправления и правила выпуска релиза.",
+      "skillTags": [
+        "bug-reporting",
+        "test-prioritization"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Критичность по техническому влиянию; число дефектов, блокирующих релиз по критичности.",
+          "distinctInstances": 240,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "MATCHING": 1,
+            "NUMERIC": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Приоритет по бизнес-контексту; порядок исправления; различие осей severity и priority.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "MATCHING": 1,
+            "ORDERING": 1,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Правила выпуска: блокирующие дефекты, минимальное число исправлений, дефекты с несовпадающими осями.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "qa.test-cases",
+      "version": 1,
+      "specialization": "MANUAL_QA",
+      "group": "QA_DEFECTS",
+      "groupTitle": "Тест-кейсы, дефекты и приоритизация",
+      "title": "Тест-кейсы и отчёты о дефектах",
+      "description": "Качество отчёта о дефекте, ожидаемые ответы API по правилам и анализ воспроизводимости.",
+      "skillTags": [
+        "bug-reporting",
+        "test-design"
+      ],
+      "grades": [
+        {
+          "grade": "JUNIOR",
+          "note": "Обязательные поля и шаги воспроизведения, выбор лучшего отчёта о дефекте.",
+          "distinctInstances": 270,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "SINGLE_CHOICE": 1,
+            "NUMERIC": 1,
+            "ORDERING": 1
+          }
+        },
+        {
+          "grade": "MIDDLE",
+          "note": "Ожидаемые коды ответа API при приоритете проверок; непокрытые тестами коды.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 4,
+            "max": 4
+          },
+          "formats": {
+            "MATCHING": 1,
+            "NUMERIC": 2,
+            "SINGLE_CHOICE": 1
+          }
+        },
+        {
+          "grade": "SENIOR",
+          "note": "Условие дефекта по таблице запусков, число окружений полного перебора, информативный заголовок отчёта.",
+          "distinctInstances": 300,
+          "seedsTried": 300,
+          "parts": {
+            "min": 3,
+            "max": 3
+          },
+          "formats": {
+            "SINGLE_CHOICE": 2,
+            "NUMERIC": 1
+          }
+        }
+      ]
+    }
+  ],
+  "skillsBySpecialization": [
+    {
+      "specialization": "FRONTEND",
+      "skills": [
+        {
+          "skill": "async-js",
+          "title": "Асинхронность JS (event loop, Promise)",
+          "families": [
+            "fe.event-loop",
+            "fe.promise-combinators",
+            "fe.request-races"
+          ]
+        },
+        {
+          "skill": "error-handling",
+          "title": "Обработка ошибок на клиенте",
+          "families": [
+            "fe.http-client-errors",
+            "fe.request-races"
+          ]
+        },
+        {
+          "skill": "http",
+          "title": "HTTP",
+          "families": [
+            "fe.http-client-errors",
+            "fe.request-races"
+          ]
+        },
+        {
+          "skill": "javascript",
+          "title": "JavaScript",
+          "families": [
+            "fe.event-loop",
+            "fe.promise-combinators"
+          ]
+        },
+        {
+          "skill": "react",
+          "title": "React",
+          "families": [
+            "fe.react-effects",
+            "fe.ui-state"
+          ]
+        },
+        {
+          "skill": "state-management",
+          "title": "Управление состоянием UI",
+          "families": [
+            "fe.react-effects",
+            "fe.ui-state"
+          ]
+        },
+        {
+          "skill": "typescript",
+          "title": "TypeScript",
+          "families": [
+            "fe.promise-combinators",
+            "fe.request-races"
+          ]
+        }
+      ]
+    },
+    {
+      "specialization": "BACKEND",
+      "skills": [
+        {
+          "skill": "concurrency",
+          "title": "Конкурентность и надёжность",
+          "families": [
+            "be.reliability-patterns",
+            "be.tx-isolation"
+          ]
+        },
+        {
+          "skill": "http",
+          "title": "HTTP",
+          "families": [
+            "be.http-semantics",
+            "be.idempotency"
+          ]
+        },
+        {
+          "skill": "postgresql",
+          "title": "PostgreSQL",
+          "families": [
+            "be.data-modeling",
+            "be.reliability-patterns",
+            "be.tx-isolation"
+          ]
+        },
+        {
+          "skill": "rest-api",
+          "title": "REST API",
+          "families": [
+            "be.http-semantics",
+            "be.idempotency"
+          ]
+        },
+        {
+          "skill": "sql",
+          "title": "SQL",
+          "families": [
+            "be.data-modeling",
+            "be.sql-query-result"
+          ]
+        },
+        {
+          "skill": "transactions",
+          "title": "Транзакции и уровни изоляции",
+          "families": [
+            "be.reliability-patterns",
+            "be.tx-isolation"
+          ]
+        }
+      ]
+    },
+    {
+      "specialization": "ML_ENGINEER",
+      "skills": [
+        {
+          "skill": "classification",
+          "title": "Задачи классификации",
+          "families": [
+            "ml.confusion-metrics",
+            "ml.imbalance-metrics",
+            "ml.model-ops"
+          ]
+        },
+        {
+          "skill": "data-preparation",
+          "title": "Подготовка данных",
+          "families": [
+            "ml.leakage",
+            "ml.pandas-prep"
+          ]
+        },
+        {
+          "skill": "ml-metrics",
+          "title": "Метрики качества моделей",
+          "families": [
+            "ml.confusion-metrics",
+            "ml.imbalance-metrics"
+          ]
+        },
+        {
+          "skill": "model-validation",
+          "title": "Валидация моделей",
+          "families": [
+            "ml.model-ops",
+            "ml.validation-schemes"
+          ]
+        },
+        {
+          "skill": "pandas",
+          "title": "pandas",
+          "families": [
+            "ml.leakage",
+            "ml.pandas-prep"
+          ]
+        },
+        {
+          "skill": "python",
+          "title": "Python",
+          "families": [
+            "ml.leakage",
+            "ml.pandas-prep"
+          ]
+        },
+        {
+          "skill": "scikit-learn",
+          "title": "scikit-learn",
+          "families": [
+            "ml.leakage",
+            "ml.pandas-prep",
+            "ml.validation-schemes"
+          ]
+        }
+      ]
+    },
+    {
+      "specialization": "MANUAL_QA",
+      "skills": [
+        {
+          "skill": "boundary-testing",
+          "title": "Граничные значения и классы эквивалентности",
+          "families": [
+            "qa.boundary-values",
+            "qa.minimal-suite"
+          ]
+        },
+        {
+          "skill": "bug-reporting",
+          "title": "Баг-репорты, severity и priority",
+          "families": [
+            "qa.severity-priority",
+            "qa.test-cases"
+          ]
+        },
+        {
+          "skill": "requirements-analysis",
+          "title": "Анализ требований",
+          "families": [
+            "qa.decision-tables",
+            "qa.requirement-defects"
+          ]
+        },
+        {
+          "skill": "test-design",
+          "title": "Тест-дизайн",
+          "families": [
+            "qa.boundary-values",
+            "qa.decision-tables",
+            "qa.minimal-suite",
+            "qa.requirement-defects",
+            "qa.test-cases"
+          ]
+        },
+        {
+          "skill": "test-prioritization",
+          "title": "Приоритизация проверок",
+          "families": [
+            "qa.minimal-suite",
+            "qa.severity-priority"
+          ]
+        }
+      ]
+    }
+  ]
+}

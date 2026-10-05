@@ -1,0 +1,23 @@
+{
+  "name": "@fsp/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Общие настройки TypeScript и ESLint монорепозитория",
+  "files": [
+    "tsconfig.base.json",
+    "eslint.base.mjs"
+  ],
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./eslint": "./eslint.base.mjs"
+  },
+  "scripts": {
+    "lint": "echo \"@fsp/config: nothing to lint\"",
+    "typecheck": "echo \"@fsp/config: nothing to typecheck\""
+  },
+  "peerDependencies": {
+    "@eslint/js": "^9.39.0",
+    "eslint": "^9.39.0",
+    "typescript-eslint": "^8.71.0"
+  }
+}

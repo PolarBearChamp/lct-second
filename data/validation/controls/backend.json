@@ -1,0 +1,83 @@
+[
+  { "family": "be.http-semantics", "familyVersion": 1, "grade": "JUNIOR", "seed": "control-1", "fingerprint": "2e343f19645e1c297ebdb4d4ef0ec686",
+    "solution": {
+      "p1": { "Пользователь с ролью «наблюдатель»": "403 Forbidden", "Запрос пришёл без токена": "401 Unauthorized", "POST /tickets: создан": "201 Created", "DELETE /tickets/{id}: ресурс удалён": "204 No Content" },
+      "p2": "GET"
+    },
+    "notes": "Нет прав у аутентифицированного — 403; нет токена — 401; создание с Location — 201; удаление без тела — 204; список с фильтром — GET." },
+  { "family": "be.http-semantics", "familyVersion": 1, "grade": "MIDDLE", "seed": "control-1", "fingerprint": "0ffb95381121e592fbed53dddd0b17ed",
+    "solution": {
+      "p1": { "POST /bookings/export": "202 Accepted", "Клиент превысил лимит": "429 Too Many Requests", "Запрос пришёл без токена": "401 Unauthorized", "PATCH /bookings/{id}": "405 Method Not Allowed" },
+      "p2": ["PUT", "OPTIONS", "HEAD"]
+    },
+    "notes": "Принято в очередь — 202; лимит — 429; нет токена — 401; метод не поддержан — 405. Идемпотентны по RFC 9110: GET, HEAD, OPTIONS, PUT, DELETE, TRACE — из списка PUT, OPTIONS, HEAD; POST и PATCH — нет." },
+  { "family": "be.http-semantics", "familyVersion": 1, "grade": "SENIOR", "seed": "control-1", "fingerprint": "d63ad0b86a06a437eacb0ec198609e49",
+    "solution": {
+      "p1": { "POST /invoices с Content-Type": "415 Unsupported Media Type", "PATCH /invoices/{id}": "405 Method Not Allowed", "Клиент превысил лимит": "429 Too Many Requests", "POST /invoices: объект «счёт»": "409 Conflict" },
+      "p2": "Да: метод идемпотентен, повтор приведёт к тому же состоянию"
+    },
+    "notes": "Неподдерживаемый тип содержимого — 415; метод не поддержан — 405; лимит — 429; конфликт уникальности — 409. PUT с полным представлением идемпотентен: повтор безопасен." },
+
+  { "family": "be.idempotency", "familyVersion": 1, "grade": "JUNIOR", "seed": "control-1", "fingerprint": "bde8a44be0fe92d4165f12837fedd1ae",
+    "solution": { "p1": 2, "p2": "Ответ 422: ключ уже использован с другим телом, запись не создаётся" },
+    "notes": "№1 создаёт заказ; №2 тот же ключ с другой суммой — 422 без записи; №3 повтор того же тела — сохранённый ответ; №4 новый ключ — второй заказ. Итого 2." },
+  { "family": "be.idempotency", "familyVersion": 1, "grade": "MIDDLE", "seed": "control-1", "fingerprint": "086e184749b6c7c1a8de6d62f9304bbe",
+    "solution": { "p1": 4, "p2": "Новая запись не создаётся, возвращается сохранённый ответ первого запроса" },
+    "notes": "№1 (10:00) создаёт; №2 новый ключ — создаёт; №3 создаёт; №4 тот же ключ с другим телом — 422; №5 (12:20) — ключ k-7a93 истёк в 11:00 → считается новым, создаёт; №6 (12:22) — повтор в пределах срока от №5, сохранённый ответ. Создано 4." },
+  { "family": "be.idempotency", "familyVersion": 1, "grade": "SENIOR", "seed": "control-1", "fingerprint": "fdafd6e884ff4957f339e573a4a60001",
+    "solution": { "p1": 4, "p2": "Ответ 409: запрос с этим ключом ещё обрабатывается, запись не создаётся", "p3": ["Запрос №2", "Запрос №4", "Запрос №5"] },
+    "notes": "№1 создаёт (обработка до 10:06). №2 в 10:03 — ещё обрабатывается, 409. №3 новый ключ — создаёт. №4 в 10:25 — первый запрос завершён, повтор того же тела, сохранённый ответ. №5 тот же ключ k-3b41 с другой суммой в пределах срока — 422. №6 без ключа — создаёт. №7 в 11:31 — ключ k-6f15 истёк в 11:00, новый — создаёт. Создано 4 (№1, №3, №6, №7)." },
+
+  { "family": "be.sql-query-result", "familyVersion": 1, "grade": "JUNIOR", "seed": "control-1", "fingerprint": "596894fce216fd07f1f1ca6c11f50f47",
+    "solution": { "p1": 0, "p2": 2 },
+    "notes": "Запрос 1: заказы с суммой > 2500 имеют статус new (102, 103), paid среди них нет — 0. Запрос 2: у пользователей 5 и 3 по три заказа, у 4 — один; HAVING COUNT(*) >= 2 вернёт две строки." },
+  { "family": "be.sql-query-result", "familyVersion": 1, "grade": "MIDDLE", "seed": "control-1", "fingerprint": "0b926ca1fd7ea91882a60d3ca2073118",
+    "solution": { "p1": 7, "p2": 6 },
+    "notes": "COUNT(status) не считает NULL: из 8 заказов у одного NULL — 7. LEFT JOIN с условием отмены в ON: Вера и Анна без совпадений — по 1 строке; у Жанны отменены 103 и 107 — 2; у Бориса 104 и 106 — 2. Итого 1+1+2+2 = 6." },
+  { "family": "be.sql-query-result", "familyVersion": 1, "grade": "SENIOR", "seed": "control-1", "fingerprint": "4ae0599712e0011ad89a90bd0d89a11f",
+    "solution": { "p1": 4700, "p2": 0 },
+    "notes": "Запрос 1: максимум суммы по каждому пользователю без NULL: пользователь 1 — 2500, пользователь 4 — 2200; сумма 4700. Запрос 2: в подзапросе есть NULL (user_id заказа 108), поэтому NOT IN даёт UNKNOWN для всех — строк нет, COUNT = 0." },
+
+  { "family": "be.data-modeling", "familyVersion": 1, "grade": "JUNIOR", "seed": "control-1", "fingerprint": "7c2259a1b97346966648ea24719a5899",
+    "solution": {
+      "p1": { "Сумма платежа должна храниться точно": "Тип NUMERIC(12,2) вместо double precision", "Остаток товара на складе не может быть отрицательным": "Ограничение CHECK (значение >= 0)", "Сотрудник может пройти конкретный обязательный курс только один раз": "UNIQUE на паре столбцов" },
+      "p2": "Многие-ко-многим: отдельная связующая таблица"
+    },
+    "notes": "Деньги — NUMERIC, неотрицательность — CHECK, «один раз для пары» — UNIQUE по двум столбцам; книги и авторы — многие-ко-многим через связующую таблицу." },
+  { "family": "be.data-modeling", "familyVersion": 1, "grade": "MIDDLE", "seed": "control-1", "fingerprint": "8445457c4581f718192a053c8421280c",
+    "solution": {
+      "p1": { "Склад нельзя удалить, пока к нему привязаны остатки": "FOREIGN KEY … ON DELETE RESTRICT", "При удалении опроса удаляются все его вопросы": "FOREIGN KEY … ON DELETE CASCADE", "Пользователь может применить конкретный промокод": "UNIQUE на паре столбцов", "У пользователя может быть только одна активная подписка": "Частичный уникальный индекс" },
+      "p2": "CREATE INDEX ON orders (customer_id, ordered_at);"
+    },
+    "notes": "RESTRICT запрещает удаление, CASCADE каскадирует, UNIQUE по паре, частичный уникальный индекс для «одна активная». Запрос с равенством по customer_id и диапазоном/сортировкой по ordered_at — составной индекс (customer_id, ordered_at)." },
+  { "family": "be.data-modeling", "familyVersion": 1, "grade": "SENIOR", "seed": "control-1", "fingerprint": "d957fd15deeb1717bfac47f38d308503",
+    "solution": {
+      "p1": { "У сотрудника может быть только одна открытая смена": "Частичный уникальный индекс", "Интервалы бронирования одной переговорной": "Ограничение EXCLUDE USING gist", "При удалении черновика документа удаляются все его вложения": "FOREIGN KEY … ON DELETE CASCADE", "Остаток товара на складе не может быть отрицательным": "Ограничение CHECK (значение >= 0)" },
+      "p2": ["pg_advisory_xact_lock по employee_id перед проверкой и вставкой в той же транзакции", "Частичный уникальный индекс по employee_id WHERE status = 'active'"]
+    },
+    "notes": "Непересечение интервалов — EXCLUDE USING gist. При конкурентных вставках инвариант гарантируют частичный уникальный индекс и сериализация advisory-блокировкой; проверка SELECT/триггер в READ COMMITTED допускает гонку, а уникальный индекс по всем строкам запретил бы закрытые смены." },
+
+  { "family": "be.tx-isolation", "familyVersion": 1, "grade": "JUNIOR", "seed": "control-1", "fingerprint": "e77f16fe0fa12ec018b58640dca28320",
+    "solution": { "p1": 480, "p2": "Изменение T1 отменено, а T2 после ожидания применила своё списание к исходному значению" },
+    "notes": "T2 ждёт блокировку строки T1; после ROLLBACK T1 она применяет −70 к исходным 550 → 480." },
+  { "family": "be.tx-isolation", "familyVersion": 1, "grade": "MIDDLE", "seed": "control-1", "fingerprint": "7d809e53e9ac559ea65f17c8d22606e9",
+    "solution": { "p1": "T1 получит ошибку could not serialize access due to concurrent update; транзакцию нужно повторить", "p2": 450 },
+    "notes": "Строка изменена и зафиксирована другой транзакцией после снимка T1 (REPEATABLE READ) — ошибка сериализации; T1 откатывается, остаётся 590 − 140 = 450." },
+  { "family": "be.tx-isolation", "familyVersion": 1, "grade": "SENIOR", "seed": "control-1", "fingerprint": "9a7e959a7667898a7ce8bff7da98f267",
+    "solution": { "p1": 1, "p2": "Обновлять строки в едином порядке, например по возрастанию id" },
+    "notes": "T1 держит строку 1 и ждёт строку 2, T2 держит строку 2 и ждёт строку 1 — взаимоблокировка; СУБД прерывает одну транзакцию, вторая фиксируется. Предотвращает единый порядок захвата блокировок." },
+
+  { "family": "be.reliability-patterns", "familyVersion": 1, "grade": "JUNIOR", "seed": "control-1", "fingerprint": "d27f6db78e2b943b1bdd891d306bf66d",
+    "solution": { "p1": 1750, "p2": ["429 Too Many Requests (с учётом Retry-After)", "Таймаут соединения", "504 Gateway Timeout"], "p3": "Оба значения останутся прежними: незафиксированная транзакция будет отменена" },
+    "notes": "Задержки 250 + 500 + 1000 = 1750 мс. Повторять оправданно при 429, таймаутах и 504; 400 и 404 повтором не исправить. Незафиксированная транзакция откатывается." },
+  { "family": "be.reliability-patterns", "familyVersion": 1, "grade": "MIDDLE", "seed": "control-1", "fingerprint": "95375f15a894821d77d8f92cde3e1981",
+    "solution": { "p1": 12, "p2": "Не менее одного раза: после сбоя возможны повторы" },
+    "notes": "Три воркера берут по 4 задачи (SKIP LOCKED). Двое фиксируют 8 задач, у третьего откат: 4 задачи остаются pending вместе с 8 нетронутыми — 12. Вебхук уже вызван, а задача не помечена — при повторной обработке вызов повторится: at-least-once." },
+  { "family": "be.reliability-patterns", "familyVersion": 1, "grade": "SENIOR", "seed": "control-1", "fingerprint": "12020b9c0493433c2aee779172c260c5",
+    "solution": {
+      "p1": 4,
+      "p2": ["Возможны повторные публикации: потребители должны обрабатывать события идемпотентно", "Запись сущности и запись события в outbox фиксируются атомарно"],
+      "p3": ["BEGIN", "INSERT INTO users …", "INSERT INTO outbox (событие UserRegistered)", "COMMIT", "Relay выбирает неопубликованные события (FOR UPDATE SKIP LOCKED)", "Relay публикует событие в брокер", "Relay отмечает событие опубликованным (published_at)"]
+    },
+    "notes": "Отметка published_at ставится одним UPDATE после всей пачки, поэтому после перезапуска пачка читается заново: 4 уже опубликованных события уйдут повторно. Outbox даёт атомарную запись сущности и события и доставку «минимум один раз»." }
+]

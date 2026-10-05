@@ -1,0 +1,1861 @@
+{
+  "_comment": "СИНТЕТИЧЕСКИЕ данные демонстрационного провайдера ФСП. Не являются реальными записями Федерации спортивного программирования. Формат намеренно отличается от внутренней модели платформы: MockFspProvider преобразует его в FspAchievementRecord.",
+  "registry": "fsp-demo-registry",
+  "participants": [
+    {
+      "participant_id": "FSP-DEMO-1001",
+      "one_time_code": "731905",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-1001-01",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "TEAM",
+          "place": 2,
+          "role": "BACKEND",
+          "skills": [
+            "rest-api",
+            "postgresql"
+          ],
+          "verified_at": "2025-11-20T10:00:00Z"
+        },
+        {
+          "record_id": "rec-1001-02",
+          "event": {
+            "id": "ev-2024-algo-regional",
+            "title": "Демо: региональный этап по алгоритмическому программированию 2024",
+            "discipline": "ALGORITHMIC",
+            "level": "REGIONAL",
+            "date": "2024-10-05"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 1,
+          "skills": [
+            "sql"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-DEMO-1002",
+      "one_time_code": "284613",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-1002-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 5,
+          "role": "FRONTEND",
+          "skills": [
+            "react",
+            "typescript"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-DEMO-1003",
+      "one_time_code": "905172",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-1003-01",
+          "event": {
+            "id": "ev-2025-uav-national",
+            "title": "Демо: всероссийские соревнования по программированию БАС 2025",
+            "discipline": "UAV",
+            "level": "NATIONAL",
+            "date": "2025-09-12"
+          },
+          "participation": "TEAM",
+          "place": 1,
+          "role": "ML",
+          "skills": [
+            "python",
+            "model-validation"
+          ]
+        },
+        {
+          "record_id": "rec-1003-02",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "TEAM",
+          "place": 3,
+          "role": "ML",
+          "skills": [
+            "pandas"
+          ]
+        },
+        {
+          "record_id": "rec-1003-03",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "ML",
+          "skills": []
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-DEMO-1004",
+      "one_time_code": "118402",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-1004-01",
+          "event": {
+            "id": "ev-2025-security-regional",
+            "title": "Демо: региональные соревнования по программированию систем ИБ 2025",
+            "discipline": "SECURITY",
+            "level": "REGIONAL",
+            "date": "2025-04-18"
+          },
+          "participation": "TEAM",
+          "place": 2,
+          "role": "QA",
+          "skills": [
+            "test-design"
+          ]
+        },
+        {
+          "record_id": "rec-1004-02",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 1,
+          "skills": []
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-DEMO-1005",
+      "one_time_code": "640027",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-1005-01",
+          "event": {
+            "id": "ev-2024-algo-national",
+            "title": "Демо: всероссийская олимпиада по алгоритмическому программированию 2024",
+            "discipline": "ALGORITHMIC",
+            "level": "NATIONAL",
+            "date": "2024-12-07"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 1,
+          "skills": [
+            "sql",
+            "python"
+          ]
+        },
+        {
+          "record_id": "rec-1005-02",
+          "event": {
+            "id": "ev-2025-algo-international",
+            "title": "Демо: международный турнир по алгоритмическому программированию 2025",
+            "discipline": "ALGORITHMIC",
+            "level": "INTERNATIONAL",
+            "date": "2025-08-02"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 4,
+          "skills": []
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-DEMO-2001",
+      "one_time_code": "502288",
+      "mode": "OK",
+      "results": []
+    },
+    {
+      "participant_id": "FSP-DEMO-2002",
+      "one_time_code": "377190",
+      "mode": "OK",
+      "results": []
+    },
+    {
+      "participant_id": "FSP-DEMO-3001",
+      "one_time_code": "860431",
+      "mode": "UNAVAILABLE",
+      "results": [
+        {
+          "record_id": "rec-3001-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 1,
+          "role": "BACKEND",
+          "skills": [
+            "rest-api"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-DEMO-4001",
+      "one_time_code": "411950",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-4001-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 3,
+          "role": "QA",
+          "skills": [
+            "test-design",
+            "bug-reporting"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-DEMO-5001",
+      "one_time_code": "123456",
+      "mode": "OK",
+      "results": []
+    },
+    {
+      "participant_id": "FSP-DEMO-5002",
+      "one_time_code": "654321",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-5002-01",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "TEAM",
+          "place": 1,
+          "role": "FULLSTACK",
+          "skills": [
+            "react",
+            "rest-api"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-001",
+      "one_time_code": "995488",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-001-01",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": 4,
+          "role": "FULLSTACK",
+          "skills": [
+            "javascript"
+          ],
+          "verified_at": "2023-11-12T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-002",
+      "one_time_code": "129323",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-002-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 3,
+          "role": "FULLSTACK",
+          "skills": [],
+          "verified_at": "2025-06-21T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-002-02",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "TEAM",
+          "place": 1,
+          "role": "BACKEND",
+          "skills": [
+            "sql",
+            "postgresql"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-002-03",
+          "event": {
+            "id": "ev-2024-product-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2024",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2024-06-22"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "CAPTAIN",
+          "skills": [
+            "sql"
+          ],
+          "verified_at": "2024-06-22T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-003",
+      "one_time_code": "837212",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-003-01",
+          "event": {
+            "id": "ev-2025-uav-national",
+            "title": "Демо: всероссийские соревнования по программированию БАС 2025",
+            "discipline": "UAV",
+            "level": "NATIONAL",
+            "date": "2025-09-12"
+          },
+          "participation": "TEAM",
+          "place": 8,
+          "role": "ML",
+          "skills": [],
+          "verified_at": "2025-09-12T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-004",
+      "one_time_code": "952551",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-004-01",
+          "event": {
+            "id": "ev-2025-uav-national",
+            "title": "Демо: всероссийские соревнования по программированию БАС 2025",
+            "discipline": "UAV",
+            "level": "NATIONAL",
+            "date": "2025-09-12"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 1,
+          "role": "CAPTAIN",
+          "skills": [
+            "test-design",
+            "boundary-testing"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-004-03",
+          "event": {
+            "id": "ev-2025-security-regional",
+            "title": "Демо: региональные соревнования по программированию систем ИБ 2025",
+            "discipline": "SECURITY",
+            "level": "REGIONAL",
+            "date": "2025-04-18"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "QA",
+          "skills": [
+            "boundary-testing"
+          ],
+          "verified_at": "2025-04-18T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-005",
+      "one_time_code": "201865",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-005-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 12,
+          "role": "FRONTEND",
+          "skills": [
+            "react"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-005-02",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "TEAM",
+          "place": 12,
+          "role": "FRONTEND",
+          "skills": [
+            "http",
+            "javascript"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-006",
+      "one_time_code": "913327",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-006-01",
+          "event": {
+            "id": "ev-2025-security-regional",
+            "title": "Демо: региональные соревнования по программированию систем ИБ 2025",
+            "discipline": "SECURITY",
+            "level": "REGIONAL",
+            "date": "2025-04-18"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 1,
+          "role": "CAPTAIN",
+          "skills": [],
+          "verified_at": "2025-04-18T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-006-02",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "FULLSTACK",
+          "skills": [
+            "http"
+          ],
+          "verified_at": "2025-11-14T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-006-03",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 2,
+          "role": "BACKEND",
+          "skills": [
+            "http"
+          ],
+          "verified_at": "2025-06-21T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-006-04",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "FULLSTACK",
+          "skills": [
+            "postgresql"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-007",
+      "one_time_code": "468333",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-007-01",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "CAPTAIN",
+          "skills": []
+        },
+        {
+          "record_id": "rec-fsp-seed-007-02",
+          "event": {
+            "id": "ev-2024-product-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2024",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2024-06-22"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 2,
+          "role": "ML",
+          "skills": [],
+          "verified_at": "2024-06-22T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-008",
+      "one_time_code": "587518",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-008-01",
+          "event": {
+            "id": "ev-2025-security-regional",
+            "title": "Демо: региональные соревнования по программированию систем ИБ 2025",
+            "discipline": "SECURITY",
+            "level": "REGIONAL",
+            "date": "2025-04-18"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 9,
+          "role": "QA",
+          "skills": [
+            "test-design"
+          ],
+          "verified_at": "2025-04-18T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-008-02",
+          "event": {
+            "id": "ev-2025-uav-national",
+            "title": "Демо: всероссийские соревнования по программированию БАС 2025",
+            "discipline": "UAV",
+            "level": "NATIONAL",
+            "date": "2025-09-12"
+          },
+          "participation": "TEAM",
+          "place": 2,
+          "role": "QA",
+          "skills": [
+            "test-design"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-009",
+      "one_time_code": "333478",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-009-01",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "TEAM",
+          "place": 11,
+          "role": "FRONTEND",
+          "skills": [
+            "typescript"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-009-03",
+          "event": {
+            "id": "ev-2024-product-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2024",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2024-06-22"
+          },
+          "participation": "INDIVIDUAL",
+          "place": null,
+          "role": "FRONTEND",
+          "skills": [
+            "javascript"
+          ],
+          "verified_at": "2024-06-22T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-010",
+      "one_time_code": "430316",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-010-01",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": 6,
+          "role": "BACKEND",
+          "skills": [
+            "sql",
+            "postgresql"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-010-02",
+          "event": {
+            "id": "ev-2024-product-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2024",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2024-06-22"
+          },
+          "participation": "TEAM",
+          "place": 10,
+          "role": "FULLSTACK",
+          "skills": [
+            "http",
+            "postgresql"
+          ],
+          "verified_at": "2024-06-22T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-010-03",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "CAPTAIN",
+          "skills": [],
+          "verified_at": "2025-06-21T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-011",
+      "one_time_code": "908729",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-011-01",
+          "event": {
+            "id": "ev-2024-algo-regional",
+            "title": "Демо: региональный этап по алгоритмическому программированию 2024",
+            "discipline": "ALGORITHMIC",
+            "level": "REGIONAL",
+            "date": "2024-10-05"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 5,
+          "skills": [
+            "python",
+            "pandas"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-011-02",
+          "event": {
+            "id": "ev-2025-algo-international",
+            "title": "Демо: международный турнир по алгоритмическому программированию 2025",
+            "discipline": "ALGORITHMIC",
+            "level": "INTERNATIONAL",
+            "date": "2025-08-02"
+          },
+          "participation": "TEAM",
+          "place": 2,
+          "skills": [
+            "model-validation"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-012",
+      "one_time_code": "602105",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-012-01",
+          "event": {
+            "id": "ev-2025-security-regional",
+            "title": "Демо: региональные соревнования по программированию систем ИБ 2025",
+            "discipline": "SECURITY",
+            "level": "REGIONAL",
+            "date": "2025-04-18"
+          },
+          "participation": "TEAM",
+          "place": 1,
+          "role": "CAPTAIN",
+          "skills": [
+            "boundary-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-013",
+      "one_time_code": "492382",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-013-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 10,
+          "role": "CAPTAIN",
+          "skills": [
+            "javascript"
+          ],
+          "verified_at": "2025-06-21T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-013-02",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "TEAM",
+          "place": 4,
+          "role": "CAPTAIN",
+          "skills": [
+            "react"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-013-03",
+          "event": {
+            "id": "ev-2024-product-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2024",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2024-06-22"
+          },
+          "participation": "TEAM",
+          "place": 2,
+          "role": "FRONTEND",
+          "skills": [
+            "http",
+            "typescript"
+          ],
+          "verified_at": "2024-06-22T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-013-04",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "TEAM",
+          "place": 7,
+          "role": "FULLSTACK",
+          "skills": [
+            "http"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-014",
+      "one_time_code": "159041",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-014-01",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 3,
+          "role": "CAPTAIN",
+          "skills": []
+        },
+        {
+          "record_id": "rec-fsp-seed-014-02",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 11,
+          "role": "BACKEND",
+          "skills": [
+            "sql",
+            "http"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-015",
+      "one_time_code": "975964",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-015-01",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 8,
+          "role": "ML",
+          "skills": [
+            "python",
+            "scikit-learn"
+          ],
+          "verified_at": "2023-03-11T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-016",
+      "one_time_code": "273261",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-016-01",
+          "event": {
+            "id": "ev-2025-uav-national",
+            "title": "Демо: всероссийские соревнования по программированию БАС 2025",
+            "discipline": "UAV",
+            "level": "NATIONAL",
+            "date": "2025-09-12"
+          },
+          "participation": "TEAM",
+          "place": 1,
+          "role": "QA",
+          "skills": [
+            "bug-reporting",
+            "boundary-testing"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-016-03",
+          "event": {
+            "id": "ev-2025-security-regional",
+            "title": "Демо: региональные соревнования по программированию систем ИБ 2025",
+            "discipline": "SECURITY",
+            "level": "REGIONAL",
+            "date": "2025-04-18"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 1,
+          "role": "QA",
+          "skills": [],
+          "verified_at": "2025-04-18T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-017",
+      "one_time_code": "789106",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-017-01",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 9,
+          "role": "CAPTAIN",
+          "skills": []
+        },
+        {
+          "record_id": "rec-fsp-seed-017-02",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 9,
+          "role": "FULLSTACK",
+          "skills": []
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-018",
+      "one_time_code": "915158",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-018-01",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": 1,
+          "role": "FULLSTACK",
+          "skills": []
+        },
+        {
+          "record_id": "rec-fsp-seed-018-02",
+          "event": {
+            "id": "ev-2025-algo-international",
+            "title": "Демо: международный турнир по алгоритмическому программированию 2025",
+            "discipline": "ALGORITHMIC",
+            "level": "INTERNATIONAL",
+            "date": "2025-08-02"
+          },
+          "participation": "TEAM",
+          "place": 7,
+          "skills": [
+            "http",
+            "rest-api"
+          ],
+          "verified_at": "2025-08-02T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-019",
+      "one_time_code": "126031",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-019-01",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 1,
+          "role": "ML",
+          "skills": [],
+          "verified_at": "2025-11-14T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-019-02",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "INDIVIDUAL",
+          "place": null,
+          "role": "ML",
+          "skills": [
+            "model-validation",
+            "scikit-learn"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-020",
+      "one_time_code": "163838",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-020-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "QA",
+          "skills": [
+            "test-design"
+          ],
+          "verified_at": "2025-06-21T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-020-02",
+          "event": {
+            "id": "ev-2025-uav-national",
+            "title": "Демо: всероссийские соревнования по программированию БАС 2025",
+            "discipline": "UAV",
+            "level": "NATIONAL",
+            "date": "2025-09-12"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "QA",
+          "skills": [
+            "bug-reporting"
+          ],
+          "verified_at": "2025-09-12T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-021",
+      "one_time_code": "662555",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-021-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 4,
+          "role": "FULLSTACK",
+          "skills": [
+            "typescript"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-021-02",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": 5,
+          "role": "CAPTAIN",
+          "skills": [
+            "typescript",
+            "http"
+          ],
+          "verified_at": "2023-11-12T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-022",
+      "one_time_code": "202983",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-022-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "CAPTAIN",
+          "skills": [
+            "rest-api",
+            "postgresql"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-022-02",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 10,
+          "role": "CAPTAIN",
+          "skills": [
+            "sql",
+            "rest-api"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-023",
+      "one_time_code": "429388",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-023-01",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 2,
+          "role": "ML",
+          "skills": [
+            "python",
+            "model-validation"
+          ],
+          "verified_at": "2023-03-11T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-023-04",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 5,
+          "role": "ML",
+          "skills": [
+            "pandas",
+            "model-validation"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-024",
+      "one_time_code": "897262",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-024-01",
+          "event": {
+            "id": "ev-2025-security-regional",
+            "title": "Демо: региональные соревнования по программированию систем ИБ 2025",
+            "discipline": "SECURITY",
+            "level": "REGIONAL",
+            "date": "2025-04-18"
+          },
+          "participation": "INDIVIDUAL",
+          "place": null,
+          "role": "CAPTAIN",
+          "skills": [
+            "bug-reporting",
+            "test-design"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-024-02",
+          "event": {
+            "id": "ev-2025-uav-national",
+            "title": "Демо: всероссийские соревнования по программированию БАС 2025",
+            "discipline": "UAV",
+            "level": "NATIONAL",
+            "date": "2025-09-12"
+          },
+          "participation": "TEAM",
+          "place": 1,
+          "role": "CAPTAIN",
+          "skills": [
+            "boundary-testing",
+            "test-design"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-024-03",
+          "event": {
+            "id": "ev-2024-product-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2024",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2024-06-22"
+          },
+          "participation": "TEAM",
+          "place": 3,
+          "role": "QA",
+          "skills": [
+            "bug-reporting",
+            "test-design"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-024-04",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "QA",
+          "skills": [
+            "boundary-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-025",
+      "one_time_code": "917327",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-025-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "FULLSTACK",
+          "skills": [
+            "react",
+            "typescript"
+          ],
+          "verified_at": "2025-06-21T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-025-02",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": 2,
+          "role": "FULLSTACK",
+          "skills": [
+            "react"
+          ],
+          "verified_at": "2023-11-12T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-026",
+      "one_time_code": "806689",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-026-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 4,
+          "role": "CAPTAIN",
+          "skills": [
+            "postgresql",
+            "rest-api"
+          ],
+          "verified_at": "2025-06-21T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-027",
+      "one_time_code": "593395",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-027-01",
+          "event": {
+            "id": "ev-2025-uav-national",
+            "title": "Демо: всероссийские соревнования по программированию БАС 2025",
+            "discipline": "UAV",
+            "level": "NATIONAL",
+            "date": "2025-09-12"
+          },
+          "participation": "TEAM",
+          "place": 11,
+          "role": "ML",
+          "skills": [
+            "model-validation",
+            "python"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-027-02",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "INDIVIDUAL",
+          "place": null,
+          "role": "ML",
+          "skills": []
+        },
+        {
+          "record_id": "rec-fsp-seed-027-03",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": 10,
+          "role": "ML",
+          "skills": [
+            "model-validation",
+            "scikit-learn"
+          ],
+          "verified_at": "2023-11-12T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-028",
+      "one_time_code": "139208",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-028-01",
+          "event": {
+            "id": "ev-2025-uav-national",
+            "title": "Демо: всероссийские соревнования по программированию БАС 2025",
+            "discipline": "UAV",
+            "level": "NATIONAL",
+            "date": "2025-09-12"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "QA",
+          "skills": []
+        },
+        {
+          "record_id": "rec-fsp-seed-028-02",
+          "event": {
+            "id": "ev-2025-security-regional",
+            "title": "Демо: региональные соревнования по программированию систем ИБ 2025",
+            "discipline": "SECURITY",
+            "level": "REGIONAL",
+            "date": "2025-04-18"
+          },
+          "participation": "TEAM",
+          "place": 3,
+          "role": "QA",
+          "skills": [],
+          "verified_at": "2025-04-18T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-029",
+      "one_time_code": "610737",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-029-01",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "FRONTEND",
+          "skills": [],
+          "verified_at": "2023-11-12T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-029-02",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 5,
+          "role": "FRONTEND",
+          "skills": [],
+          "verified_at": "2023-03-11T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-030",
+      "one_time_code": "891270",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-030-01",
+          "event": {
+            "id": "ev-2024-algo-regional",
+            "title": "Демо: региональный этап по алгоритмическому программированию 2024",
+            "discipline": "ALGORITHMIC",
+            "level": "REGIONAL",
+            "date": "2024-10-05"
+          },
+          "participation": "TEAM",
+          "place": 12,
+          "skills": [
+            "sql",
+            "rest-api"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-030-02",
+          "event": {
+            "id": "ev-2024-algo-national",
+            "title": "Демо: всероссийская олимпиада по алгоритмическому программированию 2024",
+            "discipline": "ALGORITHMIC",
+            "level": "NATIONAL",
+            "date": "2024-12-07"
+          },
+          "participation": "TEAM",
+          "place": 1,
+          "skills": [],
+          "verified_at": "2024-12-07T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-031",
+      "one_time_code": "543440",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-031-01",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "TEAM",
+          "place": 11,
+          "role": "ML",
+          "skills": []
+        },
+        {
+          "record_id": "rec-fsp-seed-031-02",
+          "event": {
+            "id": "ev-2025-algo-international",
+            "title": "Демо: международный турнир по алгоритмическому программированию 2025",
+            "discipline": "ALGORITHMIC",
+            "level": "INTERNATIONAL",
+            "date": "2025-08-02"
+          },
+          "participation": "TEAM",
+          "place": 10,
+          "skills": [
+            "scikit-learn"
+          ],
+          "verified_at": "2025-08-02T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-031-03",
+          "event": {
+            "id": "ev-2025-uav-national",
+            "title": "Демо: всероссийские соревнования по программированию БАС 2025",
+            "discipline": "UAV",
+            "level": "NATIONAL",
+            "date": "2025-09-12"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "CAPTAIN",
+          "skills": [
+            "python",
+            "pandas"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-032",
+      "one_time_code": "566183",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-032-01",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "CAPTAIN",
+          "skills": [
+            "boundary-testing",
+            "test-design"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-032-02",
+          "event": {
+            "id": "ev-2025-security-regional",
+            "title": "Демо: региональные соревнования по программированию систем ИБ 2025",
+            "discipline": "SECURITY",
+            "level": "REGIONAL",
+            "date": "2025-04-18"
+          },
+          "participation": "TEAM",
+          "place": null,
+          "role": "CAPTAIN",
+          "skills": [
+            "boundary-testing",
+            "bug-reporting"
+          ],
+          "verified_at": "2025-04-18T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-033",
+      "one_time_code": "979511",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-033-01",
+          "event": {
+            "id": "ev-2024-product-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2024",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2024-06-22"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 4,
+          "role": "CAPTAIN",
+          "skills": [
+            "react",
+            "http"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-033-02",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 2,
+          "role": "FRONTEND",
+          "skills": [
+            "typescript",
+            "javascript"
+          ],
+          "verified_at": "2025-06-21T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-033-03",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "TEAM",
+          "place": 4,
+          "role": "CAPTAIN",
+          "skills": [],
+          "verified_at": "2025-11-14T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-034",
+      "one_time_code": "248912",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-034-01",
+          "event": {
+            "id": "ev-2024-product-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2024",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2024-06-22"
+          },
+          "participation": "TEAM",
+          "place": 10,
+          "role": "FULLSTACK",
+          "skills": []
+        },
+        {
+          "record_id": "rec-fsp-seed-034-02",
+          "event": {
+            "id": "ev-2025-product-cup-final",
+            "title": "Демо: финал кубка по продуктовому программированию 2025",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2025-11-14"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 8,
+          "role": "CAPTAIN",
+          "skills": [],
+          "verified_at": "2025-11-14T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-034-03",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "TEAM",
+          "place": 5,
+          "role": "CAPTAIN",
+          "skills": [
+            "http",
+            "sql"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-035",
+      "one_time_code": "454393",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-035-01",
+          "event": {
+            "id": "ev-2023-robotics-school",
+            "title": "Демо: школьные соревнования по робототехнике 2023",
+            "discipline": "ROBOTICS",
+            "level": "REGIONAL",
+            "date": "2023-03-11"
+          },
+          "participation": "TEAM",
+          "place": 8,
+          "role": "CAPTAIN",
+          "skills": [
+            "pandas"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-036",
+      "one_time_code": "634693",
+      "mode": "OK",
+      "results": [
+        {
+          "record_id": "rec-fsp-seed-036-01",
+          "event": {
+            "id": "ev-2025-product-hack-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2025",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2025-06-21"
+          },
+          "participation": "TEAM",
+          "place": 10,
+          "role": "QA",
+          "skills": [
+            "bug-reporting"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-036-02",
+          "event": {
+            "id": "ev-2024-product-volga",
+            "title": "Демо: межрегиональный хакатон «Волга» 2024",
+            "discipline": "PRODUCT",
+            "level": "INTERREGIONAL",
+            "date": "2024-06-22"
+          },
+          "participation": "TEAM",
+          "place": 3,
+          "role": "CAPTAIN",
+          "skills": [
+            "test-design",
+            "boundary-testing"
+          ]
+        },
+        {
+          "record_id": "rec-fsp-seed-036-03",
+          "event": {
+            "id": "ev-2025-security-regional",
+            "title": "Демо: региональные соревнования по программированию систем ИБ 2025",
+            "discipline": "SECURITY",
+            "level": "REGIONAL",
+            "date": "2025-04-18"
+          },
+          "participation": "INDIVIDUAL",
+          "place": 2,
+          "role": "QA",
+          "skills": [
+            "bug-reporting"
+          ],
+          "verified_at": "2025-04-18T12:00:00Z"
+        },
+        {
+          "record_id": "rec-fsp-seed-036-04",
+          "event": {
+            "id": "ev-2023-product-cup",
+            "title": "Демо: кубок по продуктовому программированию 2023",
+            "discipline": "PRODUCT",
+            "level": "NATIONAL",
+            "date": "2023-11-12"
+          },
+          "participation": "INDIVIDUAL",
+          "place": null,
+          "role": "QA",
+          "skills": [
+            "bug-reporting",
+            "boundary-testing"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "FSP-SEED-037",
+      "one_time_code": "377126",
+      "mode": "OK",
+      "results": []
+    },
+    {
+      "participant_id": "FSP-SEED-038",
+      "one_time_code": "560993",
+      "mode": "OK",
+      "results": []
+    },
+    {
+      "participant_id": "FSP-SEED-039",
+      "one_time_code": "689670",
+      "mode": "OK",
+      "results": []
+    },
+    {
+      "participant_id": "FSP-SEED-040",
+      "one_time_code": "172949",
+      "mode": "OK",
+      "results": []
+    }
+  ]
+}

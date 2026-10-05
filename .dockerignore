@@ -1,0 +1,23 @@
+# Контекст сборки Docker: только исходники. Зависимости и артефакты сборки ставятся/создаются внутри образа.
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/*.tsbuildinfo
+apps/api/src/generated
+
+# Секреты и локальные настройки (в образ попадает только .env.example как документация)
+.env
+.env.*
+!.env.example
+
+# Служебное
+.git
+.kilo
+.vscode
+**/*.log
+e2e/test-results
+e2e/playwright-report
+docs/export
+resources
+Claude_Code_FSP_MVP_Prompt.md

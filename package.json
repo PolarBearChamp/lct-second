@@ -1,0 +1,46 @@
+{
+  "name": "fsp-talent-platform",
+  "private": true,
+  "description": "Платформа обратного подбора ИТ-специалистов с подтверждённой квалификацией (MVP для хакатона ФСП)",
+  "packageManager": "pnpm@10.34.6",
+  "engines": {
+    "node": ">=24.11.0 <25"
+  },
+  "scripts": {
+    "infra:up": "docker compose --profile local up -d postgres mailpit",
+    "infra:down": "docker compose --profile local down",
+    "dev": "pnpm --filter @fsp/contracts build && pnpm --parallel --filter @fsp/contracts --filter @fsp/api --filter @fsp/web run dev",
+    "build": "pnpm --filter @fsp/contracts build && pnpm --filter @fsp/api build && pnpm --filter @fsp/web build",
+    "start": "pnpm --parallel --filter @fsp/api --filter @fsp/web run start",
+    "lint": "pnpm -r --no-bail run lint",
+    "typecheck": "pnpm --filter @fsp/contracts build && pnpm -r --no-bail run typecheck",
+    "test": "pnpm --filter @fsp/api test",
+    "test:integration": "pnpm --filter @fsp/api test:integration",
+    "test:e2e": "pnpm --filter @fsp/e2e test",
+    "db:migrate": "pnpm --filter @fsp/api db:migrate",
+    "db:seed": "pnpm --filter @fsp/api db:seed",
+    "bank:manifest": "pnpm --filter @fsp/api bank:manifest",
+    "validate:quality": "pnpm --filter @fsp/api validate:quality",
+    "openapi:export": "pnpm --filter @fsp/api openapi:export",
+    "docs:export": "pnpm --filter @fsp/api openapi:export && node scripts/export-docs.mjs",
+    "load:test": "node scripts/load-test.mjs"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@prisma/engines",
+      "@swc/core",
+      "argon2",
+      "esbuild",
+      "prisma",
+      "sharp",
+      "unrs-resolver"
+    ]
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "docx": "9.8.1",
+    "jszip": "3.10.1",
+    "marked": "18.1.0"
+  }
+}

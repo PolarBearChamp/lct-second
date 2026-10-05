@@ -1,0 +1,108 @@
+{
+  "specialization": "MANUAL_QA",
+  "candidates": [
+    { "id": "QA-01", "note": "Senior 91, всё подтверждено, гибрид/удалённо, призёр ФСП", "grade": "SENIOR", "overall": 91, "verified": ["test-design", "requirements-analysis", "test-prioritization", "boundary-testing", "bug-reporting"], "self": ["api-testing", "test-management", "jira", "web-testing"], "formats": ["REMOTE", "HYBRID"], "city": "Москва", "salary": [240000, 290000], "fsp": [{ "event": "ev-a", "discipline": "SECURITY", "place": 2, "role": null }], "experienceMonths": 100 },
+    { "id": "QA-02", "note": "Senior 86, требования и приоритизация подтверждены, удалённо", "grade": "SENIOR", "overall": 86, "verified": ["test-design", "requirements-analysis", "test-prioritization", "bug-reporting"], "self": ["api-testing", "jira"], "formats": ["REMOTE"], "city": "Санкт-Петербург", "salary": [230000, 280000], "fsp": [], "experienceMonths": 96 },
+    { "id": "QA-03", "note": "Middle 88, всё нужное подтверждено, Санкт-Петербург, гибрид/удалённо, призёр ФСП", "grade": "MIDDLE", "overall": 88, "verified": ["test-design", "bug-reporting", "boundary-testing", "requirements-analysis"], "self": ["api-testing", "web-testing", "jira"], "formats": ["HYBRID", "REMOTE"], "city": "Санкт-Петербург", "salary": [130000, 165000], "fsp": [{ "event": "ev-b", "discipline": "PRODUCT", "place": 3, "role": "QA" }], "experienceMonths": 50 },
+    { "id": "QA-04", "note": "Middle 79, обязательное подтверждено, остальное слабо", "grade": "MIDDLE", "overall": 79, "verified": ["test-design", "bug-reporting"], "self": ["jira"], "formats": ["HYBRID"], "city": "Санкт-Петербург", "salary": [110000, 150000], "fsp": [], "experienceMonths": 36 },
+    { "id": "QA-05", "note": "Middle 92, всё подтверждено, гибрид/офис, Санкт-Петербург", "grade": "MIDDLE", "overall": 92, "verified": ["test-design", "bug-reporting", "boundary-testing", "test-prioritization", "requirements-analysis"], "self": ["api-testing", "web-testing", "jira", "test-management"], "formats": ["HYBRID", "OFFICE"], "city": "Санкт-Петербург", "salary": [150000, 190000], "fsp": [], "experienceMonths": 60 },
+    { "id": "QA-06", "note": "Middle 83, баг-репорты только заявлены", "grade": "MIDDLE", "overall": 83, "verified": ["test-design", "boundary-testing", "requirements-analysis"], "self": ["bug-reporting", "jira", "web-testing"], "formats": ["HYBRID"], "city": "Санкт-Петербург", "salary": [120000, 160000], "fsp": [], "experienceMonths": 40 },
+    { "id": "QA-07", "note": "Junior 85, тест-дизайн, баг-репорты и границы подтверждены, удалённо", "grade": "JUNIOR", "overall": 85, "verified": ["test-design", "bug-reporting", "boundary-testing"], "self": ["jira", "test-management", "web-testing"], "formats": ["REMOTE", "HYBRID"], "city": "Пермь", "salary": [50000, 80000], "fsp": [{ "event": "ev-c", "discipline": "PRODUCT", "place": 5, "role": "QA" }], "experienceMonths": 10 },
+    { "id": "QA-08", "note": "Junior 77 у нижней границы, подтверждён только тест-дизайн", "grade": "JUNIOR", "overall": 77, "verified": ["test-design"], "self": ["jira"], "formats": ["REMOTE"], "city": "Тюмень", "salary": [45000, 70000], "fsp": [], "experienceMonths": 6 },
+    { "id": "QA-09", "note": "Junior 90, сильный, удалённо, призёр ФСП", "grade": "JUNIOR", "overall": 90, "verified": ["test-design", "requirements-analysis", "bug-reporting", "boundary-testing"], "self": ["jira", "test-management", "api-testing"], "formats": ["REMOTE"], "city": "Омск", "salary": [55000, 85000], "fsp": [{ "event": "ev-d", "discipline": "PRODUCT", "place": 2, "role": "QA" }], "experienceMonths": 15 },
+    { "id": "QA-10", "note": "Senior 80, требования и приоритизация только заявлены", "grade": "SENIOR", "overall": 80, "verified": ["test-design", "bug-reporting"], "self": ["requirements-analysis", "test-prioritization"], "formats": ["REMOTE"], "city": "Самара", "salary": [230000, 290000], "fsp": [], "experienceMonths": 90 },
+    { "id": "QA-11", "note": "Senior 93, всё подтверждено, только офис", "grade": "SENIOR", "overall": 93, "verified": ["test-design", "requirements-analysis", "test-prioritization", "boundary-testing", "bug-reporting"], "self": ["api-testing", "jira", "test-management", "mobile-testing"], "formats": ["OFFICE"], "city": "Москва", "salary": [250000, 320000], "fsp": [], "experienceMonths": 105 },
+    { "id": "QA-12", "note": "Senior 89, всё подтверждено, ожидания выше вилки", "grade": "SENIOR", "overall": 89, "verified": ["test-design", "requirements-analysis", "test-prioritization", "boundary-testing", "bug-reporting"], "self": ["api-testing", "test-management"], "formats": ["REMOTE"], "city": "Красноярск", "salary": [340000, 400000], "fsp": [], "experienceMonths": 92 },
+    { "id": "QA-13", "note": "Middle 94, всё подтверждено, Санкт-Петербург, гибрид", "grade": "MIDDLE", "overall": 94, "verified": ["test-design", "requirements-analysis", "test-prioritization", "boundary-testing", "bug-reporting"], "self": ["api-testing", "web-testing", "jira"], "formats": ["HYBRID"], "city": "Санкт-Петербург", "salary": [140000, 180000], "fsp": [], "experienceMonths": 62 },
+    { "id": "QA-14", "note": "Senior 84, всё подтверждено, желательное не заявлено, удалённо", "grade": "SENIOR", "overall": 84, "verified": ["test-design", "requirements-analysis", "test-prioritization", "bug-reporting", "boundary-testing"], "self": [], "formats": ["REMOTE"], "city": "Ульяновск", "salary": [220000, 270000], "fsp": [], "experienceMonths": 88 },
+    { "id": "QA-15", "note": "Скрытый профиль (не опубликован), по данным — отличный Senior", "grade": "SENIOR", "overall": 90, "verified": ["test-design", "requirements-analysis", "test-prioritization", "boundary-testing", "bug-reporting"], "self": ["api-testing"], "formats": ["REMOTE"], "city": "Москва", "salary": [240000, 280000], "fsp": [], "experienceMonths": 95, "discoverable": false },
+    { "id": "QA-16", "note": "Middle 77 у нижней границы, границы только заявлены", "grade": "MIDDLE", "overall": 77, "verified": ["test-design", "bug-reporting"], "self": ["boundary-testing", "api-testing", "web-testing", "jira"], "formats": ["HYBRID"], "city": "Санкт-Петербург", "salary": [120000, 150000], "fsp": [], "experienceMonths": 34 },
+    { "id": "QA-17", "note": "Middle 90, сильный, но только удалённо и другой город", "grade": "MIDDLE", "overall": 90, "verified": ["test-design", "bug-reporting", "boundary-testing"], "self": [], "formats": ["REMOTE"], "city": "Казань", "salary": [120000, 160000], "fsp": [], "experienceMonths": 46 },
+    { "id": "QA-18", "note": "Junior 88, только офис в Москве", "grade": "JUNIOR", "overall": 88, "verified": ["test-design", "requirements-analysis", "boundary-testing"], "self": ["jira"], "formats": ["OFFICE"], "city": "Москва", "salary": [70000, 95000], "fsp": [], "experienceMonths": 9 }
+  ],
+  "needs": [
+    {
+      "id": "QA-N1", "split": "tuning", "title": "Тестировщик веб-портала (Санкт-Петербург, гибрид)",
+      "scenario": "Команда веб-портала в Санкт-Петербурге ищет Middle QA на гибрид: обязательны тест-дизайн и баг-репорты, желательно подтверждённые граничные значения, API/web-тестирование и Jira приветствуются; 120–170 тыс. ₽.",
+      "allowedGrades": ["MIDDLE"], "requiredSkills": ["test-design", "bug-reporting"],
+      "preferredSkills": [{ "skill": "boundary-testing", "mode": "VERIFIED_ONLY" }, { "skill": "api-testing", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "web-testing", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "jira", "mode": "SELF_REPORTED_ALLOWED" }],
+      "workFormat": "HYBRID", "city": "Санкт-Петербург", "salary": [120000, 170000]
+    },
+    {
+      "id": "QA-N2", "split": "final", "title": "Junior QA удалённо",
+      "scenario": "Продуктовая команда берёт Junior QA на удалёнку: обязателен тест-дизайн, желательно подтверждённый анализ требований, Jira и TMS приветствуются; 60–90 тыс. ₽.",
+      "allowedGrades": ["JUNIOR"], "requiredSkills": ["test-design"],
+      "preferredSkills": [{ "skill": "requirements-analysis", "mode": "VERIFIED_ONLY" }, { "skill": "jira", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "test-management", "mode": "SELF_REPORTED_ALLOWED" }],
+      "workFormat": "REMOTE", "city": null, "salary": [60000, 90000]
+    },
+    {
+      "id": "QA-N3", "split": "final", "title": "Senior QA: требования и риск-приоритизация",
+      "scenario": "Нужен Senior QA, отвечающий за анализ требований и приоритизацию проверок: обязательны подтверждённые анализ требований, приоритизация и тест-дизайн; желательно подтверждённые баг-репорты и граничные значения, API-тестирование и TMS приветствуются; удалённо; 220–300 тыс. ₽.",
+      "allowedGrades": ["SENIOR"], "requiredSkills": ["requirements-analysis", "test-prioritization", "test-design"],
+      "preferredSkills": [{ "skill": "bug-reporting", "mode": "VERIFIED_ONLY" }, { "skill": "api-testing", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "test-management", "mode": "SELF_REPORTED_ALLOWED" }, { "skill": "boundary-testing", "mode": "VERIFIED_ONLY" }],
+      "workFormat": "REMOTE", "city": null, "salary": [220000, 300000]
+    }
+  ],
+  "labels": {
+    "QA-N1": {
+      "QA-01": { "l": 0, "v": true, "why": "Senior: грейд вне допустимых (только Middle)" },
+      "QA-02": { "l": 0, "v": true, "why": "Senior: грейд вне допустимых" },
+      "QA-03": { "l": 2, "v": false, "why": "Middle 88: обязательные и граничные значения подтверждены, API/web/Jira заявлены, Санкт-Петербург, гибрид, ожидания 130–165 тыс. внутри вилки, призёр ФСП" },
+      "QA-04": { "l": 1, "v": false, "why": "Обязательные подтверждены, Санкт-Петербург, гибрид; результат 79 близок к проходному, из желательного только Jira заявлена" },
+      "QA-05": { "l": 2, "v": false, "why": "Middle 92: всё подтверждено, Санкт-Петербург, гибрид/офис, ожидания 150–190 тыс. пересекаются с вилкой" },
+      "QA-06": { "l": 1, "v": true, "why": "Баг-репорты заявлены, но не подтверждены тестом; тест-дизайн и границы подтверждены — допустим для собеседования" },
+      "QA-07": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых (только Middle)" },
+      "QA-08": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" },
+      "QA-09": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" },
+      "QA-10": { "l": 0, "v": true, "why": "Senior: грейд вне допустимых" },
+      "QA-11": { "l": 0, "v": true, "why": "Senior: грейд вне допустимых" },
+      "QA-12": { "l": 0, "v": true, "why": "Senior: грейд вне допустимых" },
+      "QA-13": { "l": 2, "v": false, "why": "Middle 94: всё подтверждено, Санкт-Петербург, гибрид, ожидания 140–180 тыс. пересекаются с вилкой" },
+      "QA-14": { "l": 0, "v": true, "why": "Senior: грейд вне допустимых" },
+      "QA-15": { "l": 0, "v": true, "why": "Профиль скрыт: кандидат недоступен для поиска" },
+      "QA-16": { "l": 1, "v": false, "why": "Обязательные подтверждены, Санкт-Петербург, гибрид; результат 77 у нижней границы, граничные значения только заявлены" },
+      "QA-17": { "l": 0, "v": true, "why": "Только удалённо и в другом городе: гибрид в Санкт-Петербурге невозможен" },
+      "QA-18": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" }
+    },
+    "QA-N2": {
+      "QA-01": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-02": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-03": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-04": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-05": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-06": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-07": { "l": 2, "v": false, "why": "Junior 85: тест-дизайн, баг-репорты и границы подтверждены, удалённо, ожидания 50–80 тыс. пересекаются с вилкой" },
+      "QA-08": { "l": 1, "v": false, "why": "Тест-дизайн подтверждён, удалённо, ожидания 45–70 тыс. пересекаются с вилкой; результат 77 у нижней границы, остальное не подтверждено" },
+      "QA-09": { "l": 2, "v": false, "why": "Junior 90: тест-дизайн и анализ требований подтверждены, удалённо, ожидания 55–85 тыс. внутри вилки, призёр ФСП" },
+      "QA-10": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-11": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-12": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-13": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-14": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-15": { "l": 0, "v": true, "why": "Профиль скрыт: кандидат недоступен для поиска" },
+      "QA-16": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-17": { "l": 0, "v": true, "why": "Грейд вне допустимых (только Junior)" },
+      "QA-18": { "l": 0, "v": true, "why": "Только офис, вакансия удалённая" }
+    },
+    "QA-N3": {
+      "QA-01": { "l": 2, "v": false, "why": "Senior 91: все обязательные, баг-репорты и границы подтверждены, API/TMS заявлены, ожидания 240–290 тыс. внутри вилки, призёр ФСП" },
+      "QA-02": { "l": 2, "v": false, "why": "Senior 86: все обязательные и баг-репорты подтверждены, API-тестирование заявлено, ожидания 230–280 тыс. внутри вилки" },
+      "QA-03": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых (только Senior)" },
+      "QA-04": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых" },
+      "QA-05": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых" },
+      "QA-06": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых" },
+      "QA-07": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" },
+      "QA-08": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" },
+      "QA-09": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" },
+      "QA-10": { "l": 1, "v": true, "why": "Senior 80: тест-дизайн и баг-репорты подтверждены, анализ требований и приоритизация только заявлены; ожидания внутри вилки — допустим для собеседования" },
+      "QA-11": { "l": 0, "v": true, "why": "Только офис, вакансия удалённая" },
+      "QA-12": { "l": 0, "v": true, "why": "Ожидания 340–400 тыс. значительно выше вилки 220–300 тыс." },
+      "QA-13": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых (даже при сильных результатах)" },
+      "QA-14": { "l": 2, "v": false, "why": "Senior 84: все обязательные, баг-репорты и границы подтверждены, удалённо, ожидания 220–270 тыс. внутри вилки; заявленных навыков нет, но подтверждений достаточно" },
+      "QA-15": { "l": 0, "v": true, "why": "Профиль скрыт: кандидат недоступен для поиска" },
+      "QA-16": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых" },
+      "QA-17": { "l": 0, "v": true, "why": "Middle: грейд вне допустимых" },
+      "QA-18": { "l": 0, "v": true, "why": "Junior: грейд вне допустимых" }
+    }
+  }
+}
