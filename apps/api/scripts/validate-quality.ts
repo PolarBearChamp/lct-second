@@ -13,6 +13,7 @@ import { FSP_RELEVANCE_VERSION } from '../src/domain/matching/fsp-relevance';
 import { MATCHING_ALGORITHM_VERSION } from '../src/domain/matching/rank';
 import { environmentInfo, gitInfo, repoRoot } from './validation/common';
 import { runMatchingValidation } from './validation/matching';
+import { runResumeValidation } from './validation/resume';
 import { renderMarkdown, type Finding, type ValidationResults } from './validation/report';
 import { DEFAULT_OPTIONS, runTestingValidation, type TestingOptions } from './validation/testing';
 
@@ -40,10 +41,12 @@ function main(): void {
   const matching = runMatchingValidation();
   log('Тестирование…');
   const testing = runTestingValidation(options, log);
+  log('Распознавание резюме…');
+  const resume = runResumeValidation(quick ? 20 : 60);
 
   const findingsFile = path.join(repoRoot(), 'data', 'validation', 'findings.json');
   const findings = JSON.parse(readFileSync(findingsFile, 'utf8')) as Finding[];
-  const gates = [...matching.gates, ...testing.gates];
+  const gates = [...matching.gates, ...testing.gates, ...resume.gates];
   const policy = getAssessmentPolicy('assessment-policy-v1');
   const formula = getMatchingFormula('matching-formula-v1');
 
@@ -64,6 +67,7 @@ function main(): void {
     },
     matching,
     testing,
+    resume,
     findings,
     limitations: LIMITATIONS,
     gatesOk: gates.every((g) => g.ok),

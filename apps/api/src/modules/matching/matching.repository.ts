@@ -25,7 +25,11 @@ type Loaded = Prisma.CandidateProfileGetPayload<{ include: typeof include }>;
 export class MatchingRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async load(options: { specialization?: string; ids?: string[]; prefilter?: boolean } = {}): Promise<MatchCandidate[]> {
+  /**
+   * qualificationFor — оценивать кандидата по квалификации этой специализации, а не по активной (отклик на вакансию другой
+   * специализации, по которой у кандидата тоже есть подтверждение). Без подтверждения квалификация остаётся null.
+   */
+  async load(options: { specialization?: string; ids?: string[]; prefilter?: boolean; qualificationFor?: string } = {}): Promise<MatchCandidate[]> {
     const prefilter = options.prefilter ?? true;
     const where: Prisma.CandidateProfileWhereInput = {
       ...(options.ids ? { id: { in: options.ids } } : {}),
@@ -46,22 +50,23 @@ export class MatchingRepository {
       select: { userId: true },
     });
     const withConsent = new Set(consents.map((consent) => consent.userId));
-    return profiles.map((profile) => this.toMatchCandidate(profile, withConsent.has(profile.userId)));
+    return profiles.map((profile) => this.toMatchCandidate(profile, withConsent.has(profile.userId), options.qualificationFor));
   }
 
-  private toMatchCandidate(profile: Loaded, consent: boolean): MatchCandidate {
+  private toMatchCandidate(profile: Loaded, consent: boolean, qualificationFor?: string): MatchCandidate {
     const facts = toDiscoverabilityFacts(
       { ...profile, qualifications: profile.qualifications.map((q) => ({ specializationCode: q.specializationCode })) },
       consent,
     );
-    const qualification = profile.qualifications.find((q) => q.specializationCode === profile.activeSpecializationCode) ?? null;
+    const specialization = qualificationFor ?? profile.activeSpecializationCode;
+    const qualification = profile.qualifications.find((q) => q.specializationCode === specialization) ?? null;
     const hasSalary = profile.salaryFrom !== null || profile.salaryTo !== null;
     const fspVisible = profile.showFspToEmployers && Boolean(profile.fspLink);
     return {
       candidateId: profile.id,
       alias: profile.alias,
       discoverable: evaluateDiscoverability(facts).discoverable,
-      specialization: profile.activeSpecializationCode,
+      specialization: qualification ? specialization : profile.activeSpecializationCode,
       qualification: qualification
         ? {
             specialization: qualification.specializationCode,

@@ -2,6 +2,7 @@ import { getSpecialization, type GradeCode } from '../../src/domain/catalog/cata
 import type { GitInfo } from './common';
 import { num, pct } from './common';
 import type { Aggregate, MatchingResults, NeedMetrics } from './matching';
+import type { ResumeResults } from './resume';
 import type { CellResult, TestingResults } from './testing';
 
 export interface Finding {
@@ -23,6 +24,7 @@ export interface ValidationResults {
   versions: Record<string, string>;
   matching: MatchingResults;
   testing: TestingResults;
+  resume: ResumeResults;
   findings: Finding[];
   limitations: string[];
   gatesOk: boolean;
@@ -327,6 +329,43 @@ function testingSection(r: ValidationResults): string {
   return lines.join('\n');
 }
 
+function resumeSection(r: ValidationResults): string {
+  const res = r.resume;
+  const table = (scores: ResumeResults['synthetic']['scores']) =>
+    md([['Поле', 'Метрика', 'Значение', 'Проверено'], ...scores.map((s) => [s.field, s.metric, s.value === null ? '—' : pct(s.value), String(s.n)])]);
+  const out: string[] = [];
+  out.push('## 3. Распознавание PDF-резюме');
+  out.push('');
+  out.push('Правила и словари справочников платформы, без ML и внешних сервисов (`apps/api/src/domain/resume/parse.ts`). Результат — предложения для профиля; кандидат применяет их сам.');
+  out.push('');
+  out.push(`### 3.1 Синтетическая выборка: ${res.synthetic.resumes} резюме (${res.synthetic.perLayout} на каждую из ${res.synthetic.layouts.length} вёрсток), разметка известна заранее`);
+  out.push('');
+  out.push(table(res.synthetic.scores));
+  out.push('');
+  out.push('Вёрстки: ' + res.synthetic.layouts.map((l, i) => `${i + 1}) ${l}`).join('; ') + '.');
+  out.push('');
+  out.push('По вёрсткам (F1 навыков / ФИО / стаж ±12 мес.):');
+  out.push('');
+  const cell = (scores: ResumeResults['synthetic']['scores'], field: string, metric: string) => {
+    const v = scores.find((s) => s.field === field && s.metric === metric)?.value;
+    return v === null || v === undefined ? '—' : pct(v);
+  };
+  out.push(md([['Вёрстка', 'F1 навыков', 'ФИО', 'Стаж ±12 мес.', 'Телефон', 'Email'], ...res.synthetic.byLayout.map((l) => [l.layout, cell(l.scores, 'Навыки', 'F1'), cell(l.scores, 'ФИО', 'точное совпадение'), cell(l.scores, 'Стаж', 'отклонение ≤ 12 мес.'), cell(l.scores, 'Телефон', 'точное совпадение (после нормализации)'), cell(l.scores, 'Email', 'точное совпадение')])]));
+  out.push('');
+  out.push(`### 3.2 Независимый ручной набор: ${res.handwritten.cases} резюме`);
+  out.push('');
+  out.push(table(res.handwritten.scores));
+  out.push('');
+  out.push(res.handwritten.misses.length ? 'Расхождения с разметкой (парсер не подгонялся под эти случаи):' : 'Расхождений с разметкой нет.');
+  out.push('');
+  if (res.handwritten.misses.length) out.push(md([['Резюме', 'Поле', 'Ожидалось', 'Получено'], ...res.handwritten.misses.map((m) => [m.caseId, m.field, m.expected, m.actual])]));
+  out.push('');
+  out.push('Ограничения этого раздела:');
+  out.push('');
+  for (const item of res.limitations) out.push(`* ${item}`);
+  return out.join('\n');
+}
+
 export function renderMarkdown(r: ValidationResults): string {
   const lines: string[] = [];
   lines.push('# Результаты валидации качества');
@@ -349,7 +388,7 @@ export function renderMarkdown(r: ValidationResults): string {
   lines.push('');
   lines.push('## Сводка проверок');
   lines.push('');
-  const gates = [...r.matching.gates, ...r.testing.gates];
+  const gates = [...r.matching.gates, ...r.testing.gates, ...r.resume.gates];
   lines.push(md([['Проверка', 'Итог', 'Данные'], ...gates.map((g) => [g.name, mark(g.ok), g.detail])]));
   lines.push('');
   lines.push(`Итог: ${r.gatesOk ? '**все проверки пройдены**' : '**есть непройденные проверки**'}.`);
@@ -358,7 +397,9 @@ export function renderMarkdown(r: ValidationResults): string {
   lines.push('');
   lines.push(testingSection(r));
   lines.push('');
-  lines.push('## 3. Ограничения');
+  lines.push(resumeSection(r));
+  lines.push('');
+  lines.push('## 4. Ограничения');
   lines.push('');
   for (const item of r.limitations) lines.push(`* ${item}`);
   lines.push('');

@@ -38,7 +38,10 @@ export function needView(need: HiringNeed & { _count?: { selectionRuns: number }
   };
 }
 
-export function needSpecOf(need: HiringNeed): NeedSpec {
+/** Требования потребности или вакансии в виде, пригодном для подбора (структурно у них одни и те же поля). */
+export type RequirementsSource = Pick<HiringNeed, 'specializationCode' | 'allowedGrades' | 'requiredSkills' | 'preferredSkills' | 'workFormat' | 'city' | 'salaryFrom' | 'salaryTo'>;
+
+export function needSpecOf(need: RequirementsSource): NeedSpec {
   return {
     specialization: need.specializationCode,
     allowedGrades: need.allowedGrades as GradeCode[],
@@ -51,6 +54,41 @@ export function needSpecOf(need: HiringNeed): NeedSpec {
   };
 }
 
+/**
+ * Проверка структурированных требований (общая для потребностей и вакансий): навыки из справочника, обязательные навыки проверяются
+ * заданиями, город для не удалённой работы, корректная вилка.
+ */
+export function validateRequirements(input: {
+  specialization: string;
+  requiredSkills: string[];
+  preferredSkills: PreferredSkill[];
+  workFormat: string;
+  city?: string | null;
+  salaryFrom: number;
+  salaryTo: number;
+}) {
+  const fields: Record<string, string[]> = {};
+  const add = (field: string, message: string) => (fields[field] = [...(fields[field] ?? []), message]);
+  for (const skill of input.requiredSkills) {
+    if (!isKnownSkill(skill)) add('requiredSkills', `Навыка нет в справочнике: ${skill}`);
+    else if (!isAssessable(input.specialization as SpecializationCode, skill)) {
+      add(
+        'requiredSkills',
+        `«${getSkill(skill)?.title}» пока не проверяется тестами этой специализации — укажите его как желательный навык`,
+      );
+    }
+  }
+  const preferredCodes = input.preferredSkills.map((p) => p.skill);
+  if (new Set(preferredCodes).size !== preferredCodes.length) add('preferredSkills', 'Желательные навыки повторяются');
+  for (const skill of preferredCodes) {
+    if (!isKnownSkill(skill)) add('preferredSkills', `Навыка нет в справочнике: ${skill}`);
+    if (input.requiredSkills.includes(skill)) add('preferredSkills', `«${getSkill(skill)?.title ?? skill}» уже указан как обязательный`);
+  }
+  if (input.workFormat !== 'REMOTE' && !input.city?.trim()) add('city', 'Для офисного и гибридного формата укажите город');
+  if (input.salaryFrom > input.salaryTo) add('salaryTo', 'Значение «до» должно быть не меньше «от»');
+  if (Object.keys(fields).length) throw unprocessable('VALIDATION_FAILED', 'Проверьте требования', { fields });
+}
+
 /** Внутреннее описание потребности компании (не публикуемая вакансия). */
 @Injectable()
 export class HiringNeedsService {
@@ -60,39 +98,8 @@ export class HiringNeedsService {
     private readonly audit: AuditService,
   ) {}
 
-  private validate(input: {
-    specialization: string;
-    requiredSkills: string[];
-    preferredSkills: PreferredSkill[];
-    workFormat: string;
-    city?: string | null;
-    salaryFrom: number;
-    salaryTo: number;
-  }) {
-    const fields: Record<string, string[]> = {};
-    const add = (field: string, message: string) => (fields[field] = [...(fields[field] ?? []), message]);
-    for (const skill of input.requiredSkills) {
-      if (!isKnownSkill(skill)) add('requiredSkills', `Навыка нет в справочнике: ${skill}`);
-      else if (!isAssessable(input.specialization as SpecializationCode, skill)) {
-        add(
-          'requiredSkills',
-          `«${getSkill(skill)?.title}» пока не проверяется тестами этой специализации — укажите его как желательный навык`,
-        );
-      }
-    }
-    const preferredCodes = input.preferredSkills.map((p) => p.skill);
-    if (new Set(preferredCodes).size !== preferredCodes.length) add('preferredSkills', 'Желательные навыки повторяются');
-    for (const skill of preferredCodes) {
-      if (!isKnownSkill(skill)) add('preferredSkills', `Навыка нет в справочнике: ${skill}`);
-      if (input.requiredSkills.includes(skill)) add('preferredSkills', `«${getSkill(skill)?.title ?? skill}» уже указан как обязательный`);
-    }
-    if (input.workFormat !== 'REMOTE' && !input.city?.trim()) add('city', 'Для офисного и гибридного формата укажите город');
-    if (input.salaryFrom > input.salaryTo) add('salaryTo', 'Значение «до» должно быть не меньше «от»');
-    if (Object.keys(fields).length) throw unprocessable('VALIDATION_FAILED', 'Проверьте требования потребности', { fields });
-  }
-
   async create(company: Company, userId: string, dto: CreateNeedDto, requestId: string) {
-    this.validate(dto);
+    validateRequirements(dto);
     const need = await this.prisma.hiringNeed.create({
       data: {
         companyId: company.id,
@@ -149,7 +156,7 @@ export class HiringNeedsService {
       salaryFrom: dto.salaryFrom ?? current.salaryFrom,
       salaryTo: dto.salaryTo ?? current.salaryTo,
     };
-    this.validate(merged);
+    validateRequirements(merged);
     const updated = await this.prisma.hiringNeed.update({
       where: { id: current.id },
       data: {

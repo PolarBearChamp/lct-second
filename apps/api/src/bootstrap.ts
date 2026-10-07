@@ -2,7 +2,7 @@ import { HttpStatus, type INestApplication, Logger, ValidationPipe, type Validat
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, type OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
-import { json, type NextFunction, type Response, urlencoded } from 'express';
+import { json, type NextFunction, raw, type Response, urlencoded } from 'express';
 import helmet from 'helmet';
 import { AppError, badRequest, unprocessable } from './common/errors';
 import { AppExceptionFilter } from './common/http-exception.filter';
@@ -45,6 +45,8 @@ export function configureApp(app: NestExpressApplication): void {
   app.use(requestIdMiddleware);
   // API отдаёт только JSON и PDF; CSP для HTML-страниц задаёт веб-приложение.
   app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'same-origin' } }));
+  // Единственный маршрут с бинарным телом — загрузка PDF-резюме (до 5 МБ); остальное — JSON не более 256 КБ.
+  app.use(`/${API_PREFIX}/candidate/profile/resume`, raw({ type: 'application/pdf', limit: '5mb' }));
   app.use(json({ limit: '256kb' }));
   app.use(urlencoded({ extended: false, limit: '64kb' }));
   app.use(bodyParserErrors);

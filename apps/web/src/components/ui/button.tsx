@@ -15,8 +15,9 @@ const variants: Record<Variant, string> = {
   danger: 'bg-danger-600 text-white hover:bg-danger-700',
 };
 const sizes: Record<Size, string> = {
-  sm: 'h-8 px-3 text-sm',
-  md: 'h-10 px-4 text-[15px]',
+  // На телефоне цели касания крупнее (≥ 40 px), на широких экранах прежние размеры.
+  sm: 'h-10 px-3 text-sm sm:h-8',
+  md: 'h-11 px-4 text-[15px] sm:h-10',
   lg: 'h-12 px-6 text-base',
 };
 

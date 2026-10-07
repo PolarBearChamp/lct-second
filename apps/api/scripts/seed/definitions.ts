@@ -216,8 +216,229 @@ export const INVITATIONS: InvitationDef[] = [
   { company: 'fintech', candidate: 'fe-senior-1', need: 'fintech-frontend', daysAgo: 0, outcome: 'SENT', title: 'Frontend-разработчик личного кабинета', description: 'React и TypeScript, формы платежей, отчёты. Гибрид, Москва.', salaryFrom: 280_000, salaryTo: 330_000, workFormat: 'HYBRID' },
 ];
 
+export type VacancyState = 'PUBLISHED' | 'DRAFT' | 'CLOSED';
+
+/** Публичные вакансии демо-компаний. Требования берутся из потребности с ключом `need`; описание — публичное, для кандидатов. */
+export interface VacancyDef {
+  key: string;
+  need: string;
+  description: string;
+  state: VacancyState;
+  /** Сколько дней назад опубликована (для CLOSED — закрыта примерно через неделю после публикации). */
+  publishedDaysAgo: number;
+  /** Публичная вакансия может отличаться от внутренней потребности, например форматом работы. */
+  workFormat?: 'REMOTE' | 'HYBRID' | 'OFFICE';
+  city?: string | null;
+}
+
+export const VACANCIES: VacancyDef[] = [
+  { key: 'fintech-backend', need: 'fintech-backend', state: 'PUBLISHED', publishedDaysAgo: 14, description: 'Развиваем API приёма платежей: идемпотентность операций, PostgreSQL, очереди. Команда из шести человек, релизы раз в неделю, работа полностью удалённо. Зарплатная вилка указана до вычета налогов.' },
+  { key: 'fintech-frontend', need: 'fintech-frontend', state: 'PUBLISHED', publishedDaysAgo: 10, workFormat: 'REMOTE', city: null, description: 'Личный кабинет клиента платёжной платформы: формы платежей, отчёты, доступность. React и TypeScript, тесты интерфейса. Полностью удалённо (внутренняя потребность допускала гибрид — публичная вакансия шире).' },
+  { key: 'fintech-qa', need: 'fintech-qa', state: 'DRAFT', publishedDaysAgo: 0, description: 'Планирование регрессии по рискам, ведение отчётов о дефектах, участие в приёмке релизов. Удалённо.' },
+  { key: 'retail-frontend', need: 'retail-frontend', state: 'PUBLISHED', publishedDaysAgo: 12, description: 'Каталог, корзина и оформление заказа интернет-магазина. Важна скорость интерфейса и аккуратная работа с API. Подходит для уровня Junior и Middle.' },
+  { key: 'retail-qa', need: 'retail-qa', state: 'PUBLISHED', publishedDaysAgo: 9, description: 'Ручное тестирование веб-интерфейса и API заказов, регрессия перед релизами, отчёты о дефектах. Офис в Санкт-Петербурге.' },
+  { key: 'industry-ml', need: 'industry-ml', state: 'PUBLISHED', publishedDaysAgo: 11, description: 'Модели отказов оборудования на временных рядах датчиков, валидация без утечек, мониторинг в эксплуатации. Удалённо.' },
+  { key: 'edu-qa', need: 'edu-qa', state: 'CLOSED', publishedDaysAgo: 25, description: 'Анализ требований к учебным модулям, тест-дизайн, граничные значения оценивания. Вакансия закрыта: набор завершён.' },
+  { key: 'edu-ml', need: 'edu-ml', state: 'PUBLISHED', publishedDaysAgo: 6, description: 'Подготовка данных об учениках, модели рекомендаций следующего задания, оценка качества. Удалённо; подходит для уровня Junior и Middle.' },
+];
+
+export type ApplicationOutcome = 'SENT' | 'VIEWED' | 'SHORTLISTED' | 'REJECTED' | 'WITHDRAWN';
+
+/** Самостоятельные отклики кандидатов на вакансии — во всех статусах. */
+export interface ApplicationDef {
+  candidate: string;
+  vacancy: string;
+  daysAgo: number;
+  outcome: ApplicationOutcome;
+  coverNote?: string;
+  note: string;
+}
+
+export const APPLICATIONS: ApplicationDef[] = [
+  { candidate: 'fe-middle-3', vacancy: 'fintech-frontend', daysAgo: 1, outcome: 'SENT', coverNote: 'Делал личные кабинеты на React и TypeScript, работаю удалённо. Готов обсудить формат и условия.', note: 'новый отклик с сообщением, подходит по всем условиям: «Демо Финтех» видит счётчик новых откликов' },
+  { candidate: 'hero-igor', vacancy: 'fintech-frontend', daysAgo: 3, outcome: 'VIEWED', note: 'просмотрен; в профиле только офис — отклик не отсекается, но помечен «не все обязательные условия»' },
+  { candidate: 'fe-middle-4', vacancy: 'fintech-frontend', daysAgo: 4, outcome: 'SHORTLISTED', note: 'в шорт-листе' },
+  { candidate: 'be-junior-1', vacancy: 'fintech-backend', daysAgo: 2, outcome: 'SENT', coverNote: 'Недавно подтвердил Junior, но очень хочу в платежи — готов быстро расти.', note: 'грейд вне допустимых: отклик не отсекается, но помечен «не все обязательные условия»' },
+  { candidate: 'fe-junior-2', vacancy: 'retail-frontend', daysAgo: 5, outcome: 'SHORTLISTED', note: 'в шорт-листе' },
+  { candidate: 'fe-junior-5', vacancy: 'retail-frontend', daysAgo: 7, outcome: 'REJECTED', note: 'отклонён работодателем' },
+  { candidate: 'nopublish', vacancy: 'retail-frontend', daysAgo: 1, outcome: 'SENT', coverNote: 'Профиль в общем поиске скрыт, но на эту вакансию откликаюсь сам.', note: 'кандидат без публикации профиля: компания видит его только благодаря отклику' },
+  { candidate: 'hero-oleg', vacancy: 'retail-qa', daysAgo: 2, outcome: 'SENT', note: 'QA Junior с нерелевантным достижением ФСП' },
+  { candidate: 'qa-middle-3', vacancy: 'retail-qa', daysAgo: 6, outcome: 'WITHDRAWN', note: 'отозван кандидатом вместе с доступом к контактам' },
+  { candidate: 'ml-middle-1', vacancy: 'industry-ml', daysAgo: 4, outcome: 'VIEWED', note: 'просмотрен' },
+  { candidate: 'ml-junior-2', vacancy: 'edu-ml', daysAgo: 3, outcome: 'SHORTLISTED', note: 'в шорт-листе' },
+  { candidate: 'qa-senior-1', vacancy: 'edu-qa', daysAgo: 18, outcome: 'SHORTLISTED', note: 'отклик на вакансию, которая потом закрыта: остаётся в работе' },
+];
+
 export const SELECTION_NEEDS = ['fintech-backend', 'retail-frontend', 'industry-ml', 'edu-qa'];
 export const BOOKMARKS: Array<{ company: string; need: string; take: number }> = [
   { company: 'fintech', need: 'fintech-backend', take: 3 },
   { company: 'retail', need: 'retail-frontend', take: 2 },
+];
+
+export type TaskState = 'ACTIVE' | 'DRAFT' | 'CLOSED';
+
+/** Короткое задание работодателя. */
+export interface TaskDef {
+  key: string;
+  company: string;
+  title: string;
+  prompt: string;
+  specialization: SpecializationCode;
+  allowedGrades: Array<'JUNIOR' | 'MIDDLE' | 'SENIOR'>;
+  kind: 'QUIZ' | 'APPROACH';
+  options?: string[];
+  correctIndex?: number;
+  explanation?: string;
+  state: TaskState;
+  publishedDaysAgo: number;
+}
+
+export const TASKS: TaskDef[] = [
+  {
+    key: 'fintech-idempotency',
+    company: 'fintech',
+    title: 'Повтор платёжного запроса',
+    prompt: 'Клиент повторил POST /payments после таймаута. Как сделать так, чтобы деньги не списались дважды?',
+    specialization: 'BACKEND',
+    allowedGrades: ['MIDDLE', 'SENIOR'],
+    kind: 'QUIZ',
+    options: ['Игнорировать повторные запросы по IP', 'Ключ идемпотентности и уникальный индекс в базе', 'Увеличить таймаут клиента до минуты'],
+    correctIndex: 1,
+    explanation: 'Ключ идемпотентности делает повтор безопасным: второй запрос получает результат первого, а уникальный индекс защищает от гонки.',
+    state: 'ACTIVE',
+    publishedDaysAgo: 20,
+  },
+  {
+    key: 'fintech-slow-report',
+    company: 'fintech',
+    title: 'Отчёт открывается 12 секунд',
+    prompt: 'Страница отчёта по платежам загружается около 12 секунд. Опишите, как вы будете искать причину и что проверите в первую очередь.',
+    specialization: 'BACKEND',
+    allowedGrades: [],
+    kind: 'APPROACH',
+    state: 'ACTIVE',
+    publishedDaysAgo: 15,
+  },
+  {
+    key: 'fintech-react-key',
+    company: 'fintech',
+    title: 'Ключи в списке React',
+    prompt: 'В таблице платежей строки могут вставляться в середину списка. Что использовать в качестве key?',
+    specialization: 'FRONTEND',
+    allowedGrades: [],
+    kind: 'QUIZ',
+    options: ['Индекс элемента в массиве', 'Стабильный идентификатор платежа', 'Случайное число при каждом рендере'],
+    correctIndex: 1,
+    explanation: 'Стабильный идентификатор позволяет React сопоставлять элементы между рендерами; индекс или случайное значение ломают это сопоставление.',
+    state: 'ACTIVE',
+    publishedDaysAgo: 12,
+  },
+  {
+    key: 'retail-a11y',
+    company: 'retail',
+    title: 'Доступность кнопки без текста',
+    prompt: 'Кнопка корзины в шапке — только иконка. Что нужно, чтобы её понимали пользователи скринридеров?',
+    specialization: 'FRONTEND',
+    allowedGrades: ['JUNIOR', 'MIDDLE'],
+    kind: 'QUIZ',
+    options: ['Ничего: иконка очевидна', 'Доступное имя через aria-label или скрытый текст', 'Заменить кнопку на div с обработчиком клика'],
+    correctIndex: 1,
+    explanation: 'Элементу нужно доступное имя; нативная кнопка с aria-label сохраняет и роль, и работу с клавиатуры.',
+    state: 'ACTIVE',
+    publishedDaysAgo: 9,
+  },
+  {
+    key: 'retail-boundaries',
+    company: 'retail',
+    title: 'Граничные значения скидки',
+    prompt: 'Промокод даёт скидку от 1 до 50 % и не суммируется с акциями. Какой набор значений процента лучше всего проверяет границы?',
+    specialization: 'MANUAL_QA',
+    allowedGrades: [],
+    kind: 'QUIZ',
+    options: ['25', '0, 1, 50, 51', '10, 20, 30, 40'],
+    correctIndex: 1,
+    explanation: 'Граничные значения проверяют по обе стороны каждой границы: 0 и 1 для нижней, 50 и 51 для верхней.',
+    state: 'ACTIVE',
+    publishedDaysAgo: 8,
+  },
+  {
+    key: 'industry-leakage',
+    company: 'industry',
+    title: 'Утечка данных при валидации',
+    prompt: 'Модель отказов оборудования обучена на временных рядах датчиков. Как разбить данные на обучение и проверку, чтобы не получить утечку?',
+    specialization: 'ML_ENGINEER',
+    allowedGrades: ['MIDDLE', 'SENIOR'],
+    kind: 'QUIZ',
+    options: ['Случайно перемешать все точки и взять 20 % на проверку', 'Разбить по времени: проверка — строго более поздний период', 'Обучать и проверять на одних и тех же данных'],
+    correctIndex: 1,
+    explanation: 'Для временных рядов проверка должна быть позже обучения по времени; случайное перемешивание «подсматривает в будущее».',
+    state: 'ACTIVE',
+    publishedDaysAgo: 10,
+  },
+  {
+    key: 'edu-closed',
+    company: 'edu',
+    title: 'Приоритизация проверок (завершено)',
+    prompt: 'Релиз через день, времени на полную регрессию нет. По какому принципу вы выберете проверки?',
+    specialization: 'MANUAL_QA',
+    allowedGrades: [],
+    kind: 'APPROACH',
+    state: 'CLOSED',
+    publishedDaysAgo: 30,
+  },
+  {
+    key: 'fintech-draft',
+    company: 'fintech',
+    title: 'Транзакции и уровни изоляции (черновик)',
+    prompt: 'Два платежа одновременно списывают с одного счёта. Какой уровень изоляции и какие средства вы выберете?',
+    specialization: 'BACKEND',
+    allowedGrades: ['SENIOR'],
+    kind: 'APPROACH',
+    state: 'DRAFT',
+    publishedDaysAgo: 0,
+  },
+];
+
+/** Ответы кандидатов на задания (для демонстрации кабинета автора и истории кандидата). */
+export interface TaskResponseDef {
+  candidate: string;
+  task: string;
+  daysAgo: number;
+  answer: { selectedIndex?: number; answerText?: string };
+  review?: { verdict: 'STRONG' | 'ACCEPTABLE' | 'WEAK'; comment?: string };
+  note: string;
+}
+
+export const TASK_RESPONSES: TaskResponseDef[] = [
+  { candidate: 'be-middle-1', task: 'fintech-idempotency', daysAgo: 9, answer: { selectedIndex: 1 }, note: 'верный ответ на тест' },
+  { candidate: 'be-middle-2', task: 'fintech-idempotency', daysAgo: 8, answer: { selectedIndex: 0 }, note: 'неверный ответ на тест' },
+  {
+    candidate: 'be-middle-1',
+    task: 'fintech-slow-report',
+    daysAgo: 1,
+    answer: {
+      answerText:
+        'Сначала включу логирование времени запросов и посмотрю, где тратится время: база, сеть или обработка. Затем разберу EXPLAIN ANALYZE самого тяжёлого запроса, проверю индексы и N+1. После — кэш или предагрегация, если отчёт строится по неизменным данным.',
+    },
+    note: 'разбор без оценки — работодатель увидит счётчик «ждут оценки»',
+  },
+  {
+    candidate: 'be-middle-2',
+    task: 'fintech-slow-report',
+    daysAgo: 6,
+    answer: { answerText: 'Замерю, где тратится время, посмотрю план запроса и индексы, проверю объём выгрузки и необходимость пагинации.' },
+    review: { verdict: 'ACCEPTABLE', comment: 'Верное направление; добавьте, как проверите, что узкое место действительно найдено.' },
+    note: 'разбор с оценкой и комментарием — кандидат видит обратную связь',
+  },
+  { candidate: 'fe-middle-3', task: 'fintech-react-key', daysAgo: 5, answer: { selectedIndex: 1 }, note: 'верный ответ, Frontend' },
+  { candidate: 'hero-igor', task: 'retail-a11y', daysAgo: 4, answer: { selectedIndex: 1 }, note: 'верный ответ, Frontend Middle' },
+  { candidate: 'hero-maria', task: 'industry-leakage', daysAgo: 3, answer: { selectedIndex: 1 }, note: 'верный ответ, ML Middle' },
+  {
+    candidate: 'qa-middle-1',
+    task: 'edu-closed',
+    daysAgo: 22,
+    answer: { answerText: 'Опираюсь на риски: сначала сквозные сценарии оплаты и входа, затем изменённые модули и места, где недавно были дефекты.' },
+    review: { verdict: 'STRONG', comment: 'Чёткий принцип отбора, по рискам.' },
+    note: 'ответ на закрытое задание сохраняется',
+  },
 ];

@@ -73,6 +73,10 @@ export interface MeResponse {
     companyName: string | null;
     companyComplete: boolean;
     activeNeeds: number;
+    /** Новые (непросмотренные) отклики на вакансии компании. */
+    newApplications: number;
+    /** Ответы кандидатов на короткие задания компании, ожидающие оценки (текстовые разборы). */
+    pendingTaskReviews: number;
   } | null;
 }
 
@@ -427,3 +431,51 @@ export interface AttemptResult extends AttemptSummary {
 }
 
 export type { AnswerFormat };
+
+// ───────────────────────────── Автораспознавание резюме ─────────────────────────────
+
+export type ResumeConfidence = 'HIGH' | 'MEDIUM' | 'LOW';
+
+export type ResumeFieldKey =
+  | 'fullName'
+  | 'contactEmail'
+  | 'phone'
+  | 'messenger'
+  | 'city'
+  | 'timezone'
+  | 'externalLinks'
+  | 'experienceMonths'
+  | 'skills'
+  | 'teamRoles'
+  | 'softSkills'
+  | 'industries'
+  | 'activeSpecialization'
+  | 'declaredGrade'
+  | 'experienceDescription';
+
+/** Предложения для профиля по тексту резюме. Ничего не применено: кандидат проверяет поля и применяет их обычным PATCH профиля. */
+export interface ResumeSuggestion {
+  fullName: string | null;
+  contactEmail: string | null;
+  phone: string | null;
+  messenger: string | null;
+  city: string | null;
+  timezone: string | null;
+  externalLinks: string[];
+  experienceMonths: number | null;
+  skills: Array<{ code: string; title: string; months: number | null }>;
+  teamRoles: string[];
+  softSkills: string[];
+  industries: string[];
+  activeSpecialization: Specialization | null;
+  declaredGrade: Grade | null;
+  experienceDescription: string | null;
+  confidence: Partial<Record<ResumeFieldKey, ResumeConfidence>>;
+  warnings: string[];
+}
+
+export interface ResumeAnalysisResponse {
+  suggestion: ResumeSuggestion;
+  source: { pages: number; characters: number; truncated: boolean; recognizedFields: number };
+  notice: string;
+}

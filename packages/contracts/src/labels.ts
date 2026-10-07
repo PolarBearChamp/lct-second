@@ -5,7 +5,13 @@ import type {
   FspLinkState,
   Grade,
   HiringNeedStatus,
+  ApplicationStatus,
+  ShortTaskKind,
+  ShortTaskStatus,
+  TaskAssignmentStatus,
+  TaskVerdict,
   InvitationStatus,
+  VacancyStatus,
   SkillEvidenceStatus,
   SkillRequirementMode,
   Specialization,
@@ -58,6 +64,44 @@ export const INVITATION_STATUS_LABELS: Record<InvitationStatus, string> = {
   DECLINED: 'Отклонено',
   WITHDRAWN: 'Отозвано',
   EXPIRED: 'Истёк срок',
+};
+
+export const VACANCY_STATUS_LABELS: Record<VacancyStatus, string> = {
+  DRAFT: 'Черновик',
+  PUBLISHED: 'Опубликована',
+  CLOSED: 'Закрыта',
+};
+
+export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
+  SENT: 'Отправлен',
+  VIEWED: 'Просмотрен',
+  SHORTLISTED: 'В шорт-листе',
+  REJECTED: 'Отклонён',
+  WITHDRAWN: 'Отозван',
+};
+
+export const SHORT_TASK_KIND_LABELS: Record<ShortTaskKind, string> = {
+  QUIZ: 'Тест с одним верным ответом',
+  APPROACH: 'Короткий разбор (текст)',
+};
+
+export const SHORT_TASK_STATUS_LABELS: Record<ShortTaskStatus, string> = {
+  DRAFT: 'Черновик',
+  ACTIVE: 'Активно',
+  CLOSED: 'Закрыто',
+};
+
+export const TASK_ASSIGNMENT_STATUS_LABELS: Record<TaskAssignmentStatus, string> = {
+  OFFERED: 'Ждёт ответа',
+  SUBMITTED: 'Ответ отправлен',
+  SKIPPED: 'Пропущено',
+  EXPIRED: 'Срок истёк',
+};
+
+export const TASK_VERDICT_LABELS: Record<TaskVerdict, string> = {
+  STRONG: 'Сильный ответ',
+  ACCEPTABLE: 'Приемлемо',
+  WEAK: 'Слабый ответ',
 };
 
 export const NEED_STATUS_LABELS: Record<HiringNeedStatus, string> = {

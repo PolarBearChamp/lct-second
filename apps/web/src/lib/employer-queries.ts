@@ -27,7 +27,8 @@ export const employerKeys = {
 export const useCompany = () => useQuery({ queryKey: employerKeys.company, queryFn: () => api.get<{ company: CompanyView | null }>('/employer/company') });
 export const useNeeds = (enabled = true) =>
   useQuery({ queryKey: employerKeys.needs, queryFn: () => api.get<HiringNeedView[]>('/employer/needs'), enabled });
-export const useNeed = (id: string) => useQuery({ queryKey: employerKeys.need(id), queryFn: () => api.get<HiringNeedView>(`/employer/needs/${id}`) });
+export const useNeed = (id: string, enabled = true) =>
+  useQuery({ queryKey: employerKeys.need(id), queryFn: () => api.get<HiringNeedView>(`/employer/needs/${id}`), enabled });
 export const useSelections = (needId: string) =>
   useQuery({ queryKey: employerKeys.selections(needId), queryFn: () => api.get<SelectionRunSummary[]>(`/employer/needs/${needId}/selections`) });
 export const useSelection = (id: string, page: number) =>

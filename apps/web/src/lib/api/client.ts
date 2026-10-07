@@ -47,13 +47,16 @@ async function ensureCsrf(force = false): Promise<string> {
 
 export interface RequestOptions {
   body?: unknown;
+  /** Бинарное тело (загрузка файла); не сериализуется в JSON. */
+  raw?: { data: Blob; contentType: string };
   headers?: Record<string, string>;
   signal?: AbortSignal;
 }
 
 async function request<T>(method: string, path: string, options: RequestOptions = {}, retried = false): Promise<T> {
   const headers: Record<string, string> = { Accept: 'application/json', ...options.headers };
-  if (options.body !== undefined) headers['Content-Type'] = 'application/json';
+  if (options.raw) headers['Content-Type'] = options.raw.contentType;
+  else if (options.body !== undefined) headers['Content-Type'] = 'application/json';
   if (MUTATING.has(method)) headers['X-CSRF-Token'] = await ensureCsrf();
 
   let response: Response;
@@ -61,7 +64,7 @@ async function request<T>(method: string, path: string, options: RequestOptions 
     response = await fetch(`/api/v1${path}`, {
       method,
       headers,
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      body: options.raw ? options.raw.data : options.body === undefined ? undefined : JSON.stringify(options.body),
       credentials: 'same-origin',
       cache: 'no-store',
       signal: options.signal,
@@ -104,6 +107,8 @@ export const api = {
   put: <T>(path: string, body?: unknown, options?: RequestOptions) => request<T>('PUT', path, { ...options, body }),
   patch: <T>(path: string, body?: unknown, options?: RequestOptions) => request<T>('PATCH', path, { ...options, body }),
   delete: <T>(path: string, options?: RequestOptions) => request<T>('DELETE', path, options),
+  /** Загрузка файла как тела запроса (например, PDF-резюме). */
+  upload: <T>(path: string, file: Blob, contentType: string, options?: RequestOptions) => request<T>('POST', path, { ...options, raw: { data: file, contentType } }),
 };
 
 /** Ключ идемпотентности для защиты от двойной отправки. */

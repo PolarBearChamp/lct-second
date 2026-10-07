@@ -41,6 +41,12 @@ export function EmployerDashboard() {
             <LinkButton href="/employer/candidates" variant="outline">
               Банк кандидатов
             </LinkButton>
+            <LinkButton href="/employer/vacancies" variant="outline">
+              Вакансии{employer.newApplications > 0 ? ` (новых откликов: ${employer.newApplications})` : ''}
+            </LinkButton>
+            <LinkButton href="/employer/tasks" variant="outline">
+              Короткие задания{employer.pendingTaskReviews > 0 ? ` (ждут оценки: ${employer.pendingTaskReviews})` : ''}
+            </LinkButton>
           </>
         }
       />

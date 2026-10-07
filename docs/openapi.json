@@ -3967,6 +3967,2604 @@
         ]
       }
     },
+    "/api/v1/employer/vacancies": {
+      "post": {
+        "description": "Зарплатная вилка обязательна (₽/мес, GROSS). Требования — те же структурированные поля, что у потребности; обязательный навык должен проверяться заданиями.",
+        "operationId": "EmployerVacancies_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVacancyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Вакансия создана (черновик или опубликована)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerVacancyView"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "COMPANY_PROFILE_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED. VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Создать вакансию (черновик или сразу публикация)",
+        "tags": [
+          "employer-vacancies"
+        ]
+      },
+      "get": {
+        "operationId": "EmployerVacancies_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "PUBLISHED",
+                "CLOSED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmployerVacancyView"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Вакансии своей компании со счётчиками откликов",
+        "tags": [
+          "employer-vacancies"
+        ]
+      }
+    },
+    "/api/v1/employer/vacancies/{id}": {
+      "get": {
+        "operationId": "EmployerVacancies_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerVacancyView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Вакансия своей компании",
+        "tags": [
+          "employer-vacancies"
+        ]
+      },
+      "patch": {
+        "description": "Уже поданные отклики хранят снимок вакансии, по которой поданы. Статус меняется отдельными действиями.",
+        "operationId": "EmployerVacancies_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVacancyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerVacancyView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Изменить вакансию (создаёт новую версию)",
+        "tags": [
+          "employer-vacancies"
+        ]
+      }
+    },
+    "/api/v1/employer/vacancies/{id}/publish": {
+      "post": {
+        "description": "Повтор на опубликованной вакансии идемпотентен.",
+        "operationId": "EmployerVacancies_publish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerVacancyView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Опубликовать вакансию (DRAFT/CLOSED → PUBLISHED)",
+        "tags": [
+          "employer-vacancies"
+        ]
+      }
+    },
+    "/api/v1/employer/vacancies/{id}/close": {
+      "post": {
+        "description": "Новые отклики не принимаются; поданные остаются в работе.",
+        "operationId": "EmployerVacancies_close",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerVacancyView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VACANCY_NOT_PUBLISHED — черновик нельзя закрыть",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Закрыть вакансию (PUBLISHED → CLOSED)",
+        "tags": [
+          "employer-vacancies"
+        ]
+      }
+    },
+    "/api/v1/employer/vacancies/{id}/applications": {
+      "get": {
+        "description": "Сортировка по умолчанию — по соответствию (подходящие выше); sort=DATE — по дате. ФИО показывается только при действующем доступе к контактам.",
+        "operationId": "EmployerVacancies_listApplications",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SENT",
+                "VIEWED",
+                "SHORTLISTED",
+                "REJECTED",
+                "WITHDRAWN",
+                "ACTIVE"
+              ]
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "description": "FIT — по соответствию требованиям вакансии, DATE — по дате отклика",
+            "schema": {
+              "default": "FIT",
+              "type": "string",
+              "enum": [
+                "FIT",
+                "DATE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerApplicationList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Отклики на вакансию с оценкой соответствия требованиям",
+        "tags": [
+          "employer-vacancies"
+        ]
+      }
+    },
+    "/api/v1/employer/applications/{id}": {
+      "get": {
+        "operationId": "EmployerApplications_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerApplicationDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Отклик на вакансию своей компании: сообщение, соответствие, карточка кандидата в объёме прав",
+        "tags": [
+          "employer-vacancies"
+        ]
+      }
+    },
+    "/api/v1/employer/applications/{id}/view": {
+      "post": {
+        "description": "Открытие списка или карточки статус не меняет.",
+        "operationId": "EmployerApplications_view",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerApplicationDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Явно отметить отклик просмотренным (SENT → VIEWED)",
+        "tags": [
+          "employer-vacancies"
+        ]
+      }
+    },
+    "/api/v1/employer/applications/{id}/shortlist": {
+      "post": {
+        "operationId": "EmployerApplications_shortlist",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerApplicationDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "APPLICATION_FINAL — отклик уже отклонён или отозван",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Взять кандидата в шорт-лист (SENT/VIEWED → SHORTLISTED)",
+        "tags": [
+          "employer-vacancies"
+        ]
+      }
+    },
+    "/api/v1/employer/applications/{id}/reject": {
+      "post": {
+        "operationId": "EmployerApplications_reject",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerApplicationDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "APPLICATION_FINAL — отклик уже отозван кандидатом",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Отклонить отклик (SENT/VIEWED/SHORTLISTED → REJECTED)",
+        "tags": [
+          "employer-vacancies"
+        ]
+      }
+    },
+    "/api/v1/candidate/vacancies": {
+      "get": {
+        "description": "Зарплатная вилка видна до отклика. Соответствие считается по подтверждённым тестом данным кандидата и не блокирует отклик.",
+        "operationId": "CandidateVacancies_list",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "specialization",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FRONTEND",
+                "BACKEND",
+                "ML_ENGINEER",
+                "MANUAL_QA"
+              ]
+            }
+          },
+          {
+            "name": "workFormat",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "REMOTE",
+                "HYBRID",
+                "OFFICE"
+              ]
+            }
+          },
+          {
+            "name": "grade",
+            "required": false,
+            "in": "query",
+            "description": "Только вакансии, где этот грейд входит в допустимые",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "JUNIOR",
+                "MIDDLE",
+                "SENIOR"
+              ]
+            }
+          },
+          {
+            "name": "city",
+            "required": false,
+            "in": "query",
+            "description": "Город (точное совпадение без учёта регистра); удалённые вакансии подходят любому городу",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Поиск по названию и описанию",
+            "schema": {
+              "maxLength": 80,
+              "type": "string"
+            }
+          },
+          {
+            "name": "onlyMine",
+            "required": false,
+            "in": "query",
+            "description": "Только вакансии по специализации, подтверждённой у кандидата",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CandidateVacancyItem"
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "pageSize": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total",
+                    "page",
+                    "pageSize"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Опубликованные вакансии: зарплата, требования, соответствие кандидата и возможность откликнуться",
+        "tags": [
+          "candidate-vacancies"
+        ]
+      }
+    },
+    "/api/v1/candidate/vacancies/{id}": {
+      "get": {
+        "operationId": "CandidateVacancies_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateVacancyDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Вакансия: условия, соответствие, препятствия к отклику и список данных, которые будут раскрыты",
+        "tags": [
+          "candidate-vacancies"
+        ]
+      }
+    },
+    "/api/v1/candidate/vacancies/{id}/applications": {
+      "post": {
+        "description": "Требуется подтверждённая тестом квалификация по специализации вакансии, заполненный профиль и канал связи; отклик — явное согласие на раскрытие контактов (confirmDisclosure).",
+        "operationId": "CandidateVacancies_apply",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Отклик отправлен, выбранные контакты раскрыты этой компании",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateApplicationDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "VACANCY_CLOSED | QUALIFICATION_REQUIRED | PROFILE_INCOMPLETE | NO_CONTACT_CHANNEL | ACTIVE_APPLICATION_EXISTS",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Откликнуться на вакансию и раскрыть выбранные контакты только этой компании",
+        "tags": [
+          "candidate-vacancies"
+        ]
+      }
+    },
+    "/api/v1/candidate/applications": {
+      "get": {
+        "operationId": "CandidateVacancies_listApplications",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SENT",
+                "VIEWED",
+                "SHORTLISTED",
+                "REJECTED",
+                "WITHDRAWN",
+                "ACTIVE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ApplicationBase"
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "pageSize": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total",
+                    "page",
+                    "pageSize"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Мои отклики и их статусы",
+        "tags": [
+          "candidate-vacancies"
+        ]
+      }
+    },
+    "/api/v1/candidate/applications/{id}": {
+      "get": {
+        "operationId": "CandidateVacancies_getApplication",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateApplicationDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Мой отклик: условия вакансии на момент отклика, история статусов, доступ к контактам",
+        "tags": [
+          "candidate-vacancies"
+        ]
+      }
+    },
+    "/api/v1/candidate/applications/{id}/withdraw": {
+      "post": {
+        "description": "revokeContactAccess=true дополнительно закрывает компании доступ к контактам; иначе доступ сохраняется до явного отзыва в «Приватность и ФСП».",
+        "operationId": "CandidateVacancies_withdraw",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateApplicationDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "APPLICATION_FINAL — отклик уже отклонён работодателем",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Отозвать отклик (SENT/VIEWED/SHORTLISTED → WITHDRAWN)",
+        "tags": [
+          "candidate-vacancies"
+        ]
+      }
+    },
+    "/api/v1/employer/tasks": {
+      "post": {
+        "description": "QUIZ — 2–6 вариантов и один верный, проверяется автоматически; APPROACH — короткий текстовый разбор, оценивает автор. Опубликованное задание не редактируется.",
+        "operationId": "EmployerTasks_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTaskDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Задание создано (черновик или активно)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerTaskView"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "COMPANY_PROFILE_REQUIRED | TASK_LIMIT_REACHED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED. VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Создать короткое задание (черновик или сразу публикация)",
+        "tags": [
+          "employer-tasks"
+        ]
+      },
+      "get": {
+        "operationId": "EmployerTasks_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "ACTIVE",
+                "CLOSED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmployerTaskView"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Задания своей компании со счётчиками ответов",
+        "tags": [
+          "employer-tasks"
+        ]
+      }
+    },
+    "/api/v1/employer/tasks/{id}": {
+      "get": {
+        "operationId": "EmployerTasks_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerTaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Задание своей компании (верный ответ виден только автору)",
+        "tags": [
+          "employer-tasks"
+        ]
+      },
+      "patch": {
+        "description": "Опубликованное и закрытое задание не редактируется (TASK_NOT_EDITABLE): ответы оцениваются по одному условию.",
+        "operationId": "EmployerTasks_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTaskDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerTaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "TASK_NOT_EDITABLE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Изменить черновик задания",
+        "tags": [
+          "employer-tasks"
+        ]
+      }
+    },
+    "/api/v1/employer/tasks/{id}/publish": {
+      "post": {
+        "description": "Повтор на активном задании идемпотентен. Одновременно активно не более 10 заданий компании.",
+        "operationId": "EmployerTasks_publish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerTaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "TASK_CLOSED | TASK_LIMIT_REACHED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Опубликовать задание (DRAFT → ACTIVE)",
+        "tags": [
+          "employer-tasks"
+        ]
+      }
+    },
+    "/api/v1/employer/tasks/{id}/close": {
+      "post": {
+        "description": "Неотвеченные предложения истекают; уже отправленные ответы остаются.",
+        "operationId": "EmployerTasks_close",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployerTaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "TASK_NOT_ACTIVE — черновик нельзя закрыть",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Закрыть задание (ACTIVE → CLOSED)",
+        "tags": [
+          "employer-tasks"
+        ]
+      }
+    },
+    "/api/v1/employer/tasks/{id}/submissions": {
+      "get": {
+        "description": "Псевдоним и подтверждённый грейд; ФИО и контакты не раскрываются. pendingOnly=true — только разборы без оценки.",
+        "operationId": "EmployerTasks_submissions",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pendingOnly",
+            "required": false,
+            "in": "query",
+            "description": "Только ответы без оценки автора (текстовые разборы)",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskSubmissionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Ответы кандидатов на задание",
+        "tags": [
+          "employer-tasks"
+        ]
+      }
+    },
+    "/api/v1/employer/task-submissions/{id}/review": {
+      "post": {
+        "description": "Оценка и комментарий видны кандидату. Повторная оценка заменяет предыдущую.",
+        "operationId": "EmployerTasks_review",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewSubmissionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskSubmissionItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "TASK_AUTO_SCORED | SUBMISSION_NOT_SUBMITTED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Оценить текстовый разбор кандидата",
+        "tags": [
+          "employer-tasks"
+        ]
+      }
+    },
+    "/api/v1/candidate/tasks": {
+      "get": {
+        "description": "Новое задание предлагается при открытии раздела, не чаще раза в 7 дней и только если нет неотвеченного. Задания подбираются по подтверждённой тестом квалификации и показываются кандидатам, которых видят работодатели. Выполнение не меняет подтверждённый грейд и не влияет на подбор.",
+        "operationId": "CandidateTasks_overview",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateTasksResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Короткие задания: текущее, история и регулярность",
+        "tags": [
+          "candidate-tasks"
+        ]
+      }
+    },
+    "/api/v1/candidate/tasks/{id}": {
+      "get": {
+        "operationId": "CandidateTasks_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateTaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Задание (по идентификатору предложения); результат и верный вариант — только после ответа",
+        "tags": [
+          "candidate-tasks"
+        ]
+      }
+    },
+    "/api/v1/candidate/tasks/{id}/submit": {
+      "post": {
+        "description": "QUIZ — selectedIndex; APPROACH — answerText (20–2000 символов). Ответ видит автор задания под псевдонимом.",
+        "operationId": "CandidateTasks_submit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitTaskDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateTaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "TASK_ALREADY_SUBMITTED | TASK_EXPIRED | TASK_NOT_OPEN | PUBLICATION_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED. VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Отправить ответ",
+        "tags": [
+          "candidate-tasks"
+        ]
+      }
+    },
+    "/api/v1/candidate/tasks/{id}/skip": {
+      "post": {
+        "description": "Следующее задание предлагается не раньше чем через 7 дней после предыдущего предложения.",
+        "operationId": "CandidateTasks_skip",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateTaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "TASK_NOT_OPEN",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Пропустить задание",
+        "tags": [
+          "candidate-tasks"
+        ]
+      }
+    },
     "/api/v1/candidate/fsp-link": {
       "get": {
         "operationId": "Fsp_state",
@@ -4307,6 +6905,95 @@
           "profile-pdf"
         ]
       }
+    },
+    "/api/v1/candidate/profile/resume": {
+      "post": {
+        "description": "Тело запроса — сам PDF (Content-Type: application/pdf, до 5 МБ, до 10 страниц). Файл не сохраняется. Возвращает предложения, ничего не применяет: кандидат проверяет поля и применяет их обычным PATCH /candidate/profile. OCR не выполняется — нужен PDF с текстовым слоем.",
+        "operationId": "Resume_analyze",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/pdf": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Предложения для профиля по PDF-резюме (файл не сохраняется, ничего не применено)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumeAnalysisResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "PAYLOAD_TOO_LARGE — файл больше 5 МБ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "UNSUPPORTED_MEDIA_TYPE — не application/pdf",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "RESUME_NOT_PDF | RESUME_ENCRYPTED | RESUME_UNREADABLE | RESUME_NO_TEXT. VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Автораспознавание PDF-резюме: предложения для профиля (ФИО, контакты, стек, грейд, роли, стаж, soft skills)",
+        "tags": [
+          "candidate"
+        ]
+      }
     }
   },
   "info": {
@@ -4526,13 +7213,21 @@
           },
           "activeNeeds": {
             "type": "number"
+          },
+          "newApplications": {
+            "type": "number"
+          },
+          "pendingTaskReviews": {
+            "type": "number"
           }
         },
         "required": [
           "companyId",
           "companyName",
           "companyComplete",
-          "activeNeeds"
+          "activeNeeds",
+          "newApplications",
+          "pendingTaskReviews"
         ]
       },
       "MeUserDto": {
@@ -5618,6 +8313,446 @@
               "OTHER"
             ],
             "type": "string"
+          }
+        }
+      },
+      "CreateVacancyDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 120,
+            "example": "Backend-разработчик в команду платежей"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 3000,
+            "example": "Команда развивает API приёма платежей: высокая нагрузка, идемпотентность, PostgreSQL."
+          },
+          "specialization": {
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "ML_ENGINEER",
+              "MANUAL_QA"
+            ],
+            "type": "string"
+          },
+          "allowedGrades": {
+            "type": "array",
+            "description": "Явный список допустимых грейдов: Senior не считается автоматически подходящим для Junior.",
+            "uniqueItems": true,
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "JUNIOR",
+                "MIDDLE",
+                "SENIOR"
+              ]
+            }
+          },
+          "requiredSkills": {
+            "description": "Обязательные навыки, которые должны быть подтверждены тестом.",
+            "uniqueItems": true,
+            "maxItems": 10,
+            "example": [
+              "sql",
+              "postgresql"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preferredSkills": {
+            "maxItems": 15,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreferredSkillDto"
+            }
+          },
+          "workFormat": {
+            "enum": [
+              "REMOTE",
+              "HYBRID",
+              "OFFICE"
+            ],
+            "type": "string"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true,
+            "description": "Обязателен для офисного и гибридного формата.",
+            "maxLength": 80,
+            "example": "Москва"
+          },
+          "salaryFrom": {
+            "type": "number",
+            "description": "Зарплата «от», ₽ в месяц до вычета налогов.",
+            "minimum": 1,
+            "maximum": 10000000,
+            "example": 220000
+          },
+          "salaryTo": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10000000,
+            "example": 320000
+          },
+          "salaryType": {
+            "type": "string",
+            "description": "Обязательное обозначение: суммы указаны до вычета налогов.",
+            "enum": [
+              "GROSS"
+            ]
+          },
+          "needId": {
+            "type": "string",
+            "description": "Потребность, из которой создаётся вакансия (необязательно; связь информационная).",
+            "format": "uuid"
+          },
+          "publish": {
+            "type": "boolean",
+            "description": "true — сразу опубликовать (иначе вакансия остаётся черновиком).",
+            "default": false
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "specialization",
+          "allowedGrades",
+          "requiredSkills",
+          "preferredSkills",
+          "workFormat",
+          "salaryFrom",
+          "salaryTo",
+          "salaryType"
+        ]
+      },
+      "UpdateVacancyDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 120,
+            "example": "Backend-разработчик в команду платежей"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 3000,
+            "example": "Команда развивает API приёма платежей: высокая нагрузка, идемпотентность, PostgreSQL."
+          },
+          "specialization": {
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "ML_ENGINEER",
+              "MANUAL_QA"
+            ],
+            "type": "string"
+          },
+          "allowedGrades": {
+            "type": "array",
+            "description": "Явный список допустимых грейдов: Senior не считается автоматически подходящим для Junior.",
+            "uniqueItems": true,
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "JUNIOR",
+                "MIDDLE",
+                "SENIOR"
+              ]
+            }
+          },
+          "requiredSkills": {
+            "description": "Обязательные навыки, которые должны быть подтверждены тестом.",
+            "uniqueItems": true,
+            "maxItems": 10,
+            "example": [
+              "sql",
+              "postgresql"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preferredSkills": {
+            "maxItems": 15,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreferredSkillDto"
+            }
+          },
+          "workFormat": {
+            "enum": [
+              "REMOTE",
+              "HYBRID",
+              "OFFICE"
+            ],
+            "type": "string"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true,
+            "description": "Обязателен для офисного и гибридного формата.",
+            "maxLength": 80,
+            "example": "Москва"
+          },
+          "salaryFrom": {
+            "type": "number",
+            "description": "Зарплата «от», ₽ в месяц до вычета налогов.",
+            "minimum": 1,
+            "maximum": 10000000,
+            "example": 220000
+          },
+          "salaryTo": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10000000,
+            "example": 320000
+          },
+          "salaryType": {
+            "type": "string",
+            "description": "Обязательное обозначение: суммы указаны до вычета налогов.",
+            "enum": [
+              "GROSS"
+            ]
+          }
+        }
+      },
+      "ApplyDto": {
+        "type": "object",
+        "properties": {
+          "confirmDisclosure": {
+            "type": "boolean",
+            "description": "Кандидат подтверждает, что видел список данных, которые будут раскрыты компании.",
+            "example": true
+          },
+          "coverNote": {
+            "type": "string",
+            "description": "Сопроводительное сообщение (необязательно). Показывается только компании-получателю.",
+            "maxLength": 1000,
+            "example": "Работал с платёжными API, готов обсудить детали."
+          }
+        },
+        "required": [
+          "confirmDisclosure"
+        ]
+      },
+      "WithdrawApplicationDto": {
+        "type": "object",
+        "properties": {
+          "revokeContactAccess": {
+            "type": "boolean",
+            "description": "Закрыть компании доступ к контактам вместе с отзывом отклика (по умолчанию доступ сохраняется до явного отзыва).",
+            "default": false
+          }
+        }
+      },
+      "CreateTaskDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 120,
+            "example": "Идемпотентность платежного запроса"
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 2000,
+            "example": "Клиент повторил POST /payments из-за таймаута. Как избежать двойного списания?"
+          },
+          "specialization": {
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "ML_ENGINEER",
+              "MANUAL_QA"
+            ],
+            "type": "string"
+          },
+          "allowedGrades": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "JUNIOR",
+                "MIDDLE",
+                "SENIOR"
+              ]
+            },
+            "description": "Пусто или не указано — любой подтверждённый грейд специализации"
+          },
+          "kind": {
+            "enum": [
+              "QUIZ",
+              "APPROACH"
+            ],
+            "type": "string",
+            "description": "QUIZ — один верный вариант, оценивается автоматически; APPROACH — короткий текстовый разбор, оценивает автор"
+          },
+          "options": {
+            "maxItems": 6,
+            "description": "Только QUIZ: 2–6 вариантов",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 200,
+              "minLength": 1
+            }
+          },
+          "correctIndex": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5,
+            "description": "Только QUIZ: индекс верного варианта (с нуля)"
+          },
+          "explanation": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 1000,
+            "description": "Пояснение, которое кандидат увидит после ответа"
+          },
+          "deadlineAt": {
+            "type": "string",
+            "nullable": true,
+            "description": "Срок приёма ответов (ISO 8601); после него предложения истекают",
+            "example": "2026-12-01T00:00:00.000Z"
+          },
+          "publish": {
+            "type": "boolean",
+            "default": false,
+            "description": "true — сразу опубликовать (иначе черновик)"
+          }
+        },
+        "required": [
+          "title",
+          "prompt",
+          "specialization",
+          "kind"
+        ]
+      },
+      "UpdateTaskDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 120,
+            "example": "Идемпотентность платежного запроса"
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 2000,
+            "example": "Клиент повторил POST /payments из-за таймаута. Как избежать двойного списания?"
+          },
+          "specialization": {
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "ML_ENGINEER",
+              "MANUAL_QA"
+            ],
+            "type": "string"
+          },
+          "allowedGrades": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "JUNIOR",
+                "MIDDLE",
+                "SENIOR"
+              ]
+            },
+            "description": "Пусто или не указано — любой подтверждённый грейд специализации"
+          },
+          "kind": {
+            "enum": [
+              "QUIZ",
+              "APPROACH"
+            ],
+            "type": "string",
+            "description": "QUIZ — один верный вариант, оценивается автоматически; APPROACH — короткий текстовый разбор, оценивает автор"
+          },
+          "options": {
+            "maxItems": 6,
+            "description": "Только QUIZ: 2–6 вариантов",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 200,
+              "minLength": 1
+            }
+          },
+          "correctIndex": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5,
+            "description": "Только QUIZ: индекс верного варианта (с нуля)"
+          },
+          "explanation": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 1000,
+            "description": "Пояснение, которое кандидат увидит после ответа"
+          },
+          "deadlineAt": {
+            "type": "string",
+            "nullable": true,
+            "description": "Срок приёма ответов (ISO 8601); после него предложения истекают",
+            "example": "2026-12-01T00:00:00.000Z"
+          }
+        }
+      },
+      "ReviewSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "verdict": {
+            "enum": [
+              "STRONG",
+              "ACCEPTABLE",
+              "WEAK"
+            ],
+            "type": "string"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500,
+            "description": "Комментарий увидит кандидат"
+          }
+        },
+        "required": [
+          "verdict"
+        ]
+      },
+      "SubmitTaskDto": {
+        "type": "object",
+        "properties": {
+          "selectedIndex": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5,
+            "description": "QUIZ: индекс выбранного варианта"
+          },
+          "answerText": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "APPROACH: текст разбора (20–2000 символов)"
           }
         }
       },
@@ -6734,6 +9869,234 @@
           "title"
         ],
         "additionalProperties": false
+      },
+      "ResumeAnalysisResponse": {
+        "type": "object",
+        "properties": {
+          "suggestion": {
+            "$ref": "#/components/schemas/ResumeSuggestion"
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "pages": {
+                "type": "number"
+              },
+              "characters": {
+                "type": "number"
+              },
+              "truncated": {
+                "type": "boolean"
+              },
+              "recognizedFields": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "pages",
+              "characters",
+              "truncated",
+              "recognizedFields"
+            ],
+            "additionalProperties": false
+          },
+          "notice": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "suggestion",
+          "source",
+          "notice"
+        ],
+        "additionalProperties": false
+      },
+      "ResumeSuggestion": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "messenger": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "timezone": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalLinks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "experienceMonths": {
+            "type": "number",
+            "nullable": true
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "months": {
+                  "type": "number",
+                  "nullable": true
+                }
+              },
+              "required": [
+                "code",
+                "title",
+                "months"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "teamRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "softSkills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "industries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "activeSpecialization": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Specialization"
+              }
+            ]
+          },
+          "declaredGrade": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Grade"
+              }
+            ]
+          },
+          "experienceDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "confidence": {
+            "type": "object",
+            "properties": {
+              "fullName": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "contactEmail": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "phone": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "messenger": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "city": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "timezone": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "externalLinks": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "experienceMonths": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "skills": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "teamRoles": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "softSkills": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "industries": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "activeSpecialization": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "declaredGrade": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              },
+              "experienceDescription": {
+                "$ref": "#/components/schemas/ResumeConfidence"
+              }
+            },
+            "additionalProperties": false
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "fullName",
+          "contactEmail",
+          "phone",
+          "messenger",
+          "city",
+          "timezone",
+          "externalLinks",
+          "experienceMonths",
+          "skills",
+          "teamRoles",
+          "softSkills",
+          "industries",
+          "activeSpecialization",
+          "declaredGrade",
+          "experienceDescription",
+          "confidence",
+          "warnings"
+        ],
+        "additionalProperties": false,
+        "description": "Предложения для профиля по тексту резюме. Ничего не применено: кандидат проверяет поля и применяет их обычным PATCH профиля."
+      },
+      "ResumeConfidence": {
+        "type": "string",
+        "enum": [
+          "HIGH",
+          "MEDIUM",
+          "LOW"
+        ]
       },
       "EligibilityResponse": {
         "type": "object",
@@ -8136,7 +11499,14 @@
             "type": "boolean"
           },
           "sourceInvitationId": {
-            "type": "string"
+            "type": "string",
+            "description": "Принятое приглашение, которым выдан доступ (null — доступ выдан самостоятельным откликом).",
+            "nullable": true
+          },
+          "sourceApplicationId": {
+            "type": "string",
+            "description": "Отклик на вакансию, которым выдан доступ (null — доступ выдан принятием приглашения).",
+            "nullable": true
           }
         },
         "required": [
@@ -8146,7 +11516,8 @@
           "grantedAt",
           "revokedAt",
           "active",
-          "sourceInvitationId"
+          "sourceInvitationId",
+          "sourceApplicationId"
         ],
         "additionalProperties": false
       },
@@ -9824,6 +13195,1708 @@
           "workFormat"
         ],
         "additionalProperties": false
+      },
+      "EmployerVacancyView": {
+        "type": "object",
+        "properties": {
+          "specialization": {
+            "$ref": "#/components/schemas/Specialization"
+          },
+          "specializationTitle": {
+            "type": "string"
+          },
+          "allowedGrades": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Grade"
+            }
+          },
+          "requiredSkills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CodeTitle"
+            }
+          },
+          "preferredSkills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mode": {
+                  "$ref": "#/components/schemas/SkillRequirementMode"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "mode",
+                "title"
+              ]
+            }
+          },
+          "workFormat": {
+            "$ref": "#/components/schemas/WorkFormat"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "salaryFrom": {
+            "type": "number"
+          },
+          "salaryTo": {
+            "type": "number"
+          },
+          "salaryType": {
+            "type": "string",
+            "enum": [
+              "GROSS"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/VacancyStatus"
+          },
+          "statusTitle": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          },
+          "needId": {
+            "type": "string",
+            "nullable": true
+          },
+          "publishedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "closedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicationsCount": {
+            "type": "number"
+          },
+          "newApplicationsCount": {
+            "type": "number"
+          },
+          "activeApplicationsCount": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "activeApplicationsCount",
+          "allowedGrades",
+          "applicationsCount",
+          "city",
+          "closedAt",
+          "createdAt",
+          "description",
+          "id",
+          "needId",
+          "newApplicationsCount",
+          "preferredSkills",
+          "publishedAt",
+          "requiredSkills",
+          "salaryFrom",
+          "salaryTo",
+          "salaryType",
+          "specialization",
+          "specializationTitle",
+          "status",
+          "statusTitle",
+          "title",
+          "updatedAt",
+          "version",
+          "workFormat"
+        ],
+        "additionalProperties": false,
+        "description": "Вакансия в кабинете работодателя."
+      },
+      "VacancyStatus": {
+        "type": "string",
+        "enum": [
+          "DRAFT",
+          "PUBLISHED",
+          "CLOSED"
+        ]
+      },
+      "EmployerApplicationList": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "sorting": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmployerApplicationItem"
+            }
+          }
+        },
+        "required": [
+          "page",
+          "pageSize",
+          "total",
+          "sorting",
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "EmployerApplicationItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "statusTitle": {
+            "type": "string"
+          },
+          "vacancyId": {
+            "type": "string"
+          },
+          "vacancyTitle": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "specialization": {
+            "$ref": "#/components/schemas/Specialization"
+          },
+          "specializationTitle": {
+            "type": "string"
+          },
+          "salaryFrom": {
+            "type": "number"
+          },
+          "salaryTo": {
+            "type": "number"
+          },
+          "salaryType": {
+            "type": "string",
+            "enum": [
+              "GROSS"
+            ]
+          },
+          "workFormat": {
+            "$ref": "#/components/schemas/WorkFormat"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "viewedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "decidedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "withdrawnAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "candidateId": {
+            "type": "string"
+          },
+          "candidateAlias": {
+            "type": "string"
+          },
+          "candidateName": {
+            "type": "string",
+            "description": "ФИО — только при действующем доступе к контактам, иначе «Кандидат XXXX»."
+          },
+          "hasContactAccess": {
+            "type": "boolean"
+          },
+          "hasCoverNote": {
+            "type": "boolean"
+          },
+          "grade": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Grade"
+              }
+            ]
+          },
+          "gradeTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "overallScore": {
+            "type": "number",
+            "nullable": true
+          },
+          "fit": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VacancyFitSummary"
+              }
+            ]
+          }
+        },
+        "required": [
+          "candidateAlias",
+          "candidateId",
+          "candidateName",
+          "companyName",
+          "createdAt",
+          "decidedAt",
+          "fit",
+          "grade",
+          "gradeTitle",
+          "hasContactAccess",
+          "hasCoverNote",
+          "id",
+          "overallScore",
+          "salaryFrom",
+          "salaryTo",
+          "salaryType",
+          "specialization",
+          "specializationTitle",
+          "status",
+          "statusTitle",
+          "vacancyId",
+          "vacancyTitle",
+          "viewedAt",
+          "withdrawnAt",
+          "workFormat"
+        ],
+        "additionalProperties": false
+      },
+      "ApplicationStatus": {
+        "type": "string",
+        "enum": [
+          "SENT",
+          "VIEWED",
+          "SHORTLISTED",
+          "REJECTED",
+          "WITHDRAWN"
+        ]
+      },
+      "VacancyFitSummary": {
+        "type": "object",
+        "properties": {
+          "passes": {
+            "type": "boolean"
+          },
+          "violations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "score": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "passes",
+          "violations",
+          "score"
+        ],
+        "additionalProperties": false,
+        "description": "Соответствие кандидата требованиям вакансии (то же правило, что при подборе по потребности)."
+      },
+      "EmployerApplicationDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "statusTitle": {
+            "type": "string"
+          },
+          "vacancyId": {
+            "type": "string"
+          },
+          "vacancyTitle": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "specialization": {
+            "$ref": "#/components/schemas/Specialization"
+          },
+          "specializationTitle": {
+            "type": "string"
+          },
+          "salaryFrom": {
+            "type": "number"
+          },
+          "salaryTo": {
+            "type": "number"
+          },
+          "salaryType": {
+            "type": "string",
+            "enum": [
+              "GROSS"
+            ]
+          },
+          "workFormat": {
+            "$ref": "#/components/schemas/WorkFormat"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "viewedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "decidedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "withdrawnAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string"
+          },
+          "coverNote": {
+            "type": "string",
+            "nullable": true
+          },
+          "candidateId": {
+            "type": "string"
+          },
+          "candidateAlias": {
+            "type": "string"
+          },
+          "vacancyCurrentVersion": {
+            "type": "number"
+          },
+          "vacancyStatus": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "CLOSED"
+            ]
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationEventView"
+            }
+          },
+          "fit": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VacancyFit"
+              }
+            ]
+          },
+          "profile": {
+            "description": "Карточка кандидата в объёме прав компании; null — кандидат скрыт и доступа нет.",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CandidateProfileView"
+              }
+            ]
+          },
+          "canDecide": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "canDecide",
+          "candidateAlias",
+          "candidateId",
+          "companyName",
+          "coverNote",
+          "createdAt",
+          "decidedAt",
+          "description",
+          "events",
+          "fit",
+          "id",
+          "profile",
+          "salaryFrom",
+          "salaryTo",
+          "salaryType",
+          "specialization",
+          "specializationTitle",
+          "status",
+          "statusTitle",
+          "vacancyCurrentVersion",
+          "vacancyId",
+          "vacancyStatus",
+          "vacancyTitle",
+          "viewedAt",
+          "withdrawnAt",
+          "workFormat"
+        ],
+        "additionalProperties": false
+      },
+      "ApplicationEventView": {
+        "type": "object",
+        "properties": {
+          "fromStatus": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              }
+            ]
+          },
+          "toStatus": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "occurredAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fromStatus",
+          "toStatus",
+          "occurredAt"
+        ],
+        "additionalProperties": false
+      },
+      "VacancyFit": {
+        "type": "object",
+        "properties": {
+          "passes": {
+            "type": "boolean"
+          },
+          "violations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "score": {
+            "type": "number",
+            "nullable": true
+          },
+          "explanation": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatchExplanation"
+              }
+            ]
+          }
+        },
+        "required": [
+          "explanation",
+          "passes",
+          "score",
+          "violations"
+        ],
+        "additionalProperties": false
+      },
+      "CandidateVacancyItem": {
+        "type": "object",
+        "properties": {
+          "specialization": {
+            "$ref": "#/components/schemas/Specialization"
+          },
+          "specializationTitle": {
+            "type": "string"
+          },
+          "allowedGrades": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Grade"
+            }
+          },
+          "requiredSkills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CodeTitle"
+            }
+          },
+          "preferredSkills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mode": {
+                  "$ref": "#/components/schemas/SkillRequirementMode"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "mode",
+                "title"
+              ]
+            }
+          },
+          "workFormat": {
+            "$ref": "#/components/schemas/WorkFormat"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "salaryFrom": {
+            "type": "number"
+          },
+          "salaryTo": {
+            "type": "number"
+          },
+          "salaryType": {
+            "type": "string",
+            "enum": [
+              "GROSS"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "companyIndustry": {
+            "type": "string",
+            "nullable": true
+          },
+          "publishedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "myApplication": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              }
+            },
+            "required": [
+              "id",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          "fit": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VacancyFitSummary"
+              }
+            ]
+          },
+          "canApply": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "allowedGrades",
+          "canApply",
+          "city",
+          "companyIndustry",
+          "companyName",
+          "fit",
+          "id",
+          "myApplication",
+          "preferredSkills",
+          "publishedAt",
+          "requiredSkills",
+          "salaryFrom",
+          "salaryTo",
+          "salaryType",
+          "specialization",
+          "specializationTitle",
+          "title",
+          "workFormat"
+        ],
+        "additionalProperties": false,
+        "description": "Вакансия в общем списке кандидата."
+      },
+      "CandidateVacancyDetail": {
+        "type": "object",
+        "properties": {
+          "specialization": {
+            "$ref": "#/components/schemas/Specialization"
+          },
+          "specializationTitle": {
+            "type": "string"
+          },
+          "allowedGrades": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Grade"
+            }
+          },
+          "requiredSkills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CodeTitle"
+            }
+          },
+          "preferredSkills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mode": {
+                  "$ref": "#/components/schemas/SkillRequirementMode"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "mode",
+                "title"
+              ]
+            }
+          },
+          "workFormat": {
+            "$ref": "#/components/schemas/WorkFormat"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "salaryFrom": {
+            "type": "number"
+          },
+          "salaryTo": {
+            "type": "number"
+          },
+          "salaryType": {
+            "type": "string",
+            "enum": [
+              "GROSS"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "companyIndustry": {
+            "type": "string",
+            "nullable": true
+          },
+          "publishedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/VacancyStatus"
+          },
+          "company": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "industry": {
+                "type": "string",
+                "nullable": true
+              },
+              "industryTitle": {
+                "type": "string",
+                "nullable": true
+              },
+              "website": {
+                "type": "string",
+                "nullable": true
+              },
+              "description": {
+                "type": "string",
+                "nullable": true
+              },
+              "contactType": {
+                "type": "string",
+                "nullable": true
+              },
+              "contactValue": {
+                "type": "string",
+                "nullable": true
+              },
+              "verified": {
+                "type": "boolean",
+                "enum": [
+                  false
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "industry",
+              "industryTitle",
+              "website",
+              "description",
+              "contactType",
+              "contactValue",
+              "verified"
+            ],
+            "additionalProperties": false
+          },
+          "myApplication": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              }
+            },
+            "required": [
+              "id",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          "fit": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VacancyFit"
+              }
+            ]
+          },
+          "canApply": {
+            "type": "boolean"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplyBlockerView"
+            }
+          },
+          "disclosure": {
+            "type": "object",
+            "properties": {
+              "fullName": {
+                "type": "string",
+                "nullable": true
+              },
+              "channels": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "channel": {
+                      "$ref": "#/components/schemas/ContactChannel"
+                    },
+                    "value": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "channel",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "alsoShared": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "fullName",
+              "channels",
+              "alsoShared"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "allowedGrades",
+          "blockers",
+          "canApply",
+          "city",
+          "company",
+          "companyIndustry",
+          "companyName",
+          "description",
+          "disclosure",
+          "fit",
+          "id",
+          "myApplication",
+          "preferredSkills",
+          "publishedAt",
+          "requiredSkills",
+          "salaryFrom",
+          "salaryTo",
+          "salaryType",
+          "specialization",
+          "specializationTitle",
+          "status",
+          "title",
+          "workFormat"
+        ],
+        "additionalProperties": false
+      },
+      "ApplyBlockerView": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "VACANCY_NOT_OPEN",
+              "QUALIFICATION_REQUIRED",
+              "PROFILE_INCOMPLETE",
+              "NO_CONTACT_CHANNEL",
+              "ACTIVE_APPLICATION_EXISTS"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "missingFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "CandidateApplicationDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "statusTitle": {
+            "type": "string"
+          },
+          "vacancyId": {
+            "type": "string"
+          },
+          "vacancyTitle": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "specialization": {
+            "$ref": "#/components/schemas/Specialization"
+          },
+          "specializationTitle": {
+            "type": "string"
+          },
+          "salaryFrom": {
+            "type": "number"
+          },
+          "salaryTo": {
+            "type": "number"
+          },
+          "salaryType": {
+            "type": "string",
+            "enum": [
+              "GROSS"
+            ]
+          },
+          "workFormat": {
+            "$ref": "#/components/schemas/WorkFormat"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "viewedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "decidedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "withdrawnAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Описание вакансии на момент отклика."
+          },
+          "coverNote": {
+            "type": "string",
+            "nullable": true
+          },
+          "company": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "industry": {
+                "type": "string",
+                "nullable": true
+              },
+              "industryTitle": {
+                "type": "string",
+                "nullable": true
+              },
+              "website": {
+                "type": "string",
+                "nullable": true
+              },
+              "description": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "name",
+              "industry",
+              "industryTitle",
+              "website",
+              "description"
+            ],
+            "additionalProperties": false
+          },
+          "companyContact": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "vacancyStatus": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "CLOSED"
+            ]
+          },
+          "canWithdraw": {
+            "type": "boolean"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationEventView"
+            }
+          },
+          "contactAccess": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "active": {
+                "type": "boolean"
+              },
+              "grantedAt": {
+                "type": "string"
+              },
+              "revokedAt": {
+                "type": "string",
+                "nullable": true
+              },
+              "channels": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ContactChannel"
+                }
+              }
+            },
+            "required": [
+              "active",
+              "grantedAt",
+              "revokedAt",
+              "channels"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "canWithdraw",
+          "company",
+          "companyContact",
+          "companyName",
+          "contactAccess",
+          "coverNote",
+          "createdAt",
+          "decidedAt",
+          "description",
+          "events",
+          "id",
+          "salaryFrom",
+          "salaryTo",
+          "salaryType",
+          "specialization",
+          "specializationTitle",
+          "status",
+          "statusTitle",
+          "vacancyId",
+          "vacancyStatus",
+          "vacancyTitle",
+          "viewedAt",
+          "withdrawnAt",
+          "workFormat"
+        ],
+        "additionalProperties": false
+      },
+      "ApplicationBase": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "statusTitle": {
+            "type": "string"
+          },
+          "vacancyId": {
+            "type": "string"
+          },
+          "vacancyTitle": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "specialization": {
+            "$ref": "#/components/schemas/Specialization"
+          },
+          "specializationTitle": {
+            "type": "string"
+          },
+          "salaryFrom": {
+            "type": "number"
+          },
+          "salaryTo": {
+            "type": "number"
+          },
+          "salaryType": {
+            "type": "string",
+            "enum": [
+              "GROSS"
+            ]
+          },
+          "workFormat": {
+            "$ref": "#/components/schemas/WorkFormat"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "viewedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "decidedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "withdrawnAt": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "statusTitle",
+          "vacancyId",
+          "vacancyTitle",
+          "companyName",
+          "specialization",
+          "specializationTitle",
+          "salaryFrom",
+          "salaryTo",
+          "salaryType",
+          "workFormat",
+          "createdAt",
+          "viewedAt",
+          "decidedAt",
+          "withdrawnAt"
+        ],
+        "additionalProperties": false
+      },
+      "EmployerTaskView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "specialization": {
+            "$ref": "#/components/schemas/Specialization"
+          },
+          "specializationTitle": {
+            "type": "string"
+          },
+          "allowedGrades": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Grade"
+            },
+            "description": "Пусто — подходит любому подтверждённому грейду."
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ShortTaskKind"
+          },
+          "kindTitle": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correctIndex": {
+            "type": "number",
+            "nullable": true
+          },
+          "explanation": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/ShortTaskStatus"
+          },
+          "statusTitle": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "closedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "deadlineAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "offeredCount": {
+            "type": "number"
+          },
+          "submittedCount": {
+            "type": "number"
+          },
+          "pendingReviewCount": {
+            "type": "number",
+            "description": "Текстовые разборы без оценки автора."
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "prompt",
+          "specialization",
+          "specializationTitle",
+          "allowedGrades",
+          "kind",
+          "kindTitle",
+          "options",
+          "correctIndex",
+          "explanation",
+          "status",
+          "statusTitle",
+          "publishedAt",
+          "closedAt",
+          "deadlineAt",
+          "offeredCount",
+          "submittedCount",
+          "pendingReviewCount",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false,
+        "description": "Задание в кабинете работодателя. Верный ответ виден только автору."
+      },
+      "ShortTaskKind": {
+        "type": "string",
+        "enum": [
+          "QUIZ",
+          "APPROACH"
+        ]
+      },
+      "ShortTaskStatus": {
+        "type": "string",
+        "enum": [
+          "DRAFT",
+          "ACTIVE",
+          "CLOSED"
+        ]
+      },
+      "TaskSubmissionsResponse": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "task": {
+            "$ref": "#/components/schemas/EmployerTaskView"
+          },
+          "quiz": {
+            "description": "Только QUIZ.",
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "answered": {
+                "type": "number"
+              },
+              "correct": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "answered",
+              "correct"
+            ],
+            "additionalProperties": false
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskSubmissionItem"
+            }
+          }
+        },
+        "required": [
+          "page",
+          "pageSize",
+          "total",
+          "task",
+          "quiz",
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "TaskSubmissionItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "candidateId": {
+            "type": "string"
+          },
+          "candidateAlias": {
+            "type": "string"
+          },
+          "confirmedGrade": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Grade"
+              }
+            ]
+          },
+          "confirmedGradeTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "submittedAt": {
+            "type": "string"
+          },
+          "selectedIndex": {
+            "type": "number",
+            "nullable": true
+          },
+          "answerText": {
+            "type": "string",
+            "nullable": true
+          },
+          "isCorrect": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "needsReview": {
+            "type": "boolean"
+          },
+          "verdict": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TaskVerdict"
+              }
+            ]
+          },
+          "verdictTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewedAt": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "candidateId",
+          "candidateAlias",
+          "confirmedGrade",
+          "confirmedGradeTitle",
+          "submittedAt",
+          "selectedIndex",
+          "answerText",
+          "isCorrect",
+          "needsReview",
+          "verdict",
+          "verdictTitle",
+          "reviewComment",
+          "reviewedAt"
+        ],
+        "additionalProperties": false,
+        "description": "Ответ кандидата для автора задания. Без ФИО и контактов: только псевдоним и подтверждённый грейд."
+      },
+      "TaskVerdict": {
+        "type": "string",
+        "enum": [
+          "STRONG",
+          "ACCEPTABLE",
+          "WEAK"
+        ]
+      },
+      "CandidateTasksResponse": {
+        "type": "object",
+        "properties": {
+          "current": {
+            "description": "Задание, ожидающее ответа. Новое предлагается не чаще раза в `intervalDays` дней, пока нет неотвеченного.",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CandidateTaskView"
+              }
+            ]
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CandidateTaskView"
+            }
+          },
+          "intervalDays": {
+            "type": "number"
+          },
+          "nextOfferAt": {
+            "type": "string",
+            "description": "Когда можно ждать следующее задание; null — если есть текущее или предложений нет по причине из `blocker`.",
+            "nullable": true
+          },
+          "blocker": {
+            "description": "Почему задания не предлагаются (null — предлагаются).",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TaskOfferBlocker"
+              }
+            ]
+          },
+          "blockerMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "practice": {
+            "type": "object",
+            "properties": {
+              "solvedLast90Days": {
+                "type": "number"
+              },
+              "lastSubmittedAt": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "solvedLast90Days",
+              "lastSubmittedAt"
+            ],
+            "additionalProperties": false,
+            "description": "Регулярность: сколько заданий решено за 90 дней. Подтверждённый грейд и подбор от неё не зависят."
+          }
+        },
+        "required": [
+          "current",
+          "history",
+          "intervalDays",
+          "nextOfferAt",
+          "blocker",
+          "blockerMessage",
+          "practice"
+        ],
+        "additionalProperties": false
+      },
+      "CandidateTaskView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Идентификатор предложения (не задания)."
+          },
+          "status": {
+            "$ref": "#/components/schemas/TaskAssignmentStatus"
+          },
+          "statusTitle": {
+            "type": "string"
+          },
+          "offeredAt": {
+            "type": "string"
+          },
+          "dueAt": {
+            "type": "string"
+          },
+          "submittedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "task": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "prompt": {
+                "type": "string"
+              },
+              "kind": {
+                "$ref": "#/components/schemas/ShortTaskKind"
+              },
+              "kindTitle": {
+                "type": "string"
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Варианты (QUIZ) без отметки верного."
+              },
+              "specialization": {
+                "$ref": "#/components/schemas/Specialization"
+              },
+              "specializationTitle": {
+                "type": "string"
+              },
+              "companyName": {
+                "type": "string"
+              },
+              "closed": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "title",
+              "prompt",
+              "kind",
+              "kindTitle",
+              "options",
+              "specialization",
+              "specializationTitle",
+              "companyName",
+              "closed"
+            ],
+            "additionalProperties": false
+          },
+          "result": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CandidateTaskResult"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "statusTitle",
+          "offeredAt",
+          "dueAt",
+          "submittedAt",
+          "canSubmit",
+          "task",
+          "result"
+        ],
+        "additionalProperties": false
+      },
+      "TaskAssignmentStatus": {
+        "type": "string",
+        "enum": [
+          "OFFERED",
+          "SUBMITTED",
+          "SKIPPED",
+          "EXPIRED"
+        ]
+      },
+      "CandidateTaskResult": {
+        "type": "object",
+        "properties": {
+          "selectedIndex": {
+            "type": "number",
+            "nullable": true
+          },
+          "answerText": {
+            "type": "string",
+            "nullable": true
+          },
+          "isCorrect": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "correctIndex": {
+            "type": "number",
+            "nullable": true
+          },
+          "explanation": {
+            "type": "string",
+            "nullable": true
+          },
+          "verdict": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TaskVerdict"
+              }
+            ]
+          },
+          "verdictTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewedAt": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "selectedIndex",
+          "answerText",
+          "isCorrect",
+          "correctIndex",
+          "explanation",
+          "verdict",
+          "verdictTitle",
+          "reviewComment",
+          "reviewedAt"
+        ],
+        "additionalProperties": false,
+        "description": "Результат ответа. Верный вариант раскрывается только после отправки."
+      },
+      "TaskOfferBlocker": {
+        "type": "string",
+        "enum": [
+          "NOT_DISCOVERABLE",
+          "PAUSED",
+          "NO_CONFIRMED_QUALIFICATION"
+        ]
       }
     }
   }

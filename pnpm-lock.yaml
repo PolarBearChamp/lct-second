@@ -68,6 +68,9 @@ importers:
       nodemailer:
         specifier: 10.0.14
         version: 10.0.14
+      pdfjs-dist:
+        specifier: 6.4.299
+        version: 6.4.299
       pdfkit:
         specifier: 0.20.2
         version: 0.20.2
@@ -138,9 +141,6 @@ importers:
       jest:
         specifier: 30.5.2
         version: 30.5.2(@types/node@24.19.1)
-      pdfjs-dist:
-        specifier: 6.4.299
-        version: 6.4.299
       supertest:
         specifier: 7.3.1
         version: 7.3.1

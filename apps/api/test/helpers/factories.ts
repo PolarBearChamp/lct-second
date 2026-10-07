@@ -122,3 +122,35 @@ export const invitationBody = (candidateId: string, overrides: Record<string, un
   employerContact: 'hr@test-company.example',
   ...overrides,
 });
+
+export const vacancyBody = (overrides: Record<string, unknown> = {}) => ({
+  title: 'Backend-разработчик в команду платежей',
+  description: 'Развитие платёжного API: идемпотентность, PostgreSQL, очереди задач. Команда из шести человек.',
+  specialization: 'BACKEND',
+  allowedGrades: ['MIDDLE', 'SENIOR'],
+  requiredSkills: ['sql', 'postgresql'],
+  preferredSkills: [],
+  workFormat: 'REMOTE',
+  city: null,
+  salaryFrom: 200_000,
+  salaryTo: 300_000,
+  salaryType: 'GROSS',
+  publish: true,
+  ...overrides,
+});
+
+export const taskBody = (overrides: Record<string, unknown> = {}) => ({
+  title: 'Идемпотентность платёжного запроса',
+  prompt: 'Клиент повторил POST /payments из-за таймаута. Что нужно сделать, чтобы не списать деньги дважды?',
+  specialization: 'BACKEND',
+  allowedGrades: [],
+  kind: 'QUIZ',
+  options: ['Игнорировать повторы', 'Ключ идемпотентности и уникальный индекс', 'Увеличить таймаут клиента'],
+  correctIndex: 1,
+  explanation: 'Ключ идемпотентности делает повтор безопасным: второй запрос вернёт результат первого.',
+  publish: true,
+  ...overrides,
+});
+
+export const approachBody = (overrides: Record<string, unknown> = {}) =>
+  taskBody({ title: 'Разбор медленного запроса', prompt: 'Страница отчёта открывается 12 секунд. Опишите, как вы найдёте причину и что проверите в первую очередь.', kind: 'APPROACH', options: [], correctIndex: undefined, explanation: undefined, ...overrides });

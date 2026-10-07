@@ -67,6 +67,9 @@ function Detail({ need }: { need: HiringNeedView }) {
             <LinkButton href={`/employer/needs/${need.id}/coverage`} variant="outline">
               План теста и покрытие
             </LinkButton>
+            <LinkButton href={`/employer/vacancies/new?needId=${need.id}`} variant="outline">
+              Опубликовать как вакансию
+            </LinkButton>
             <LinkButton href={`/employer/needs/${need.id}/edit`} variant="outline">
               Редактировать
             </LinkButton>

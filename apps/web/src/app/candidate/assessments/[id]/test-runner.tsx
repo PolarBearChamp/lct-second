@@ -287,7 +287,7 @@ function Runner({ initial }: { initial: AttemptView }) {
             ))}
           </div>
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button variant="outline" onClick={() => setCurrent(Math.max(0, current - 1))} disabled={current === 0}>
                 ← Предыдущий
               </Button>
@@ -295,7 +295,7 @@ function Runner({ initial }: { initial: AttemptView }) {
                 Следующий →
               </Button>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button variant="ghost" onClick={() => setConfirmAbandon(true)} disabled={finishing || expired}>
                 Прервать
               </Button>
@@ -333,7 +333,7 @@ function Runner({ initial }: { initial: AttemptView }) {
         <p>Если нужно сделать паузу — просто закройте страницу: таймер продолжит идти, вернуться можно до его окончания.</p>
       </ConfirmDialog>
       <p className="text-center text-xs text-muted">
-        <LinkButton href="/candidate/assessments" variant="ghost" size="sm">
+        <LinkButton href="/candidate/assessments" variant="ghost" size="sm" className="!h-auto !whitespace-normal py-2 text-center">
           Вернуться к обзору тестирования (таймер продолжит идти)
         </LinkButton>
       </p>

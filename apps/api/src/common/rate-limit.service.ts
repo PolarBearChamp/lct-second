@@ -60,4 +60,5 @@ export const RATE_LIMITS = {
   resendPerUserLong: { limit: 5, windowMs: 60 * 60_000 },
   verifyPerIp: { limit: 30, windowMs: 15 * 60_000 },
   fspLinkPerUser: { limit: 10, windowMs: 15 * 60_000 },
+  resumePerUser: { limit: 10, windowMs: 15 * 60_000 },
 } satisfies Record<string, RateLimitRule>;

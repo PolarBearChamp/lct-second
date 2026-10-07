@@ -328,6 +328,7 @@ export class InvitationsService {
       revokedAt: g.revokedAt?.toISOString() ?? null,
       active: !g.revokedAt,
       sourceInvitationId: g.sourceInvitationId,
+      sourceApplicationId: g.sourceApplicationId,
     }));
   }
 

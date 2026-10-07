@@ -72,11 +72,17 @@ export class UsersService {
       const activeNeeds = company
         ? await this.prisma.hiringNeed.count({ where: { companyId: company.id, status: 'ACTIVE' } })
         : 0;
+      const newApplications = company ? await this.prisma.application.count({ where: { companyId: company.id, status: 'SENT' } }) : 0;
+      const pendingTaskReviews = company
+        ? await this.prisma.taskAssignment.count({ where: { status: 'SUBMITTED', verdict: null, task: { companyId: company.id, kind: 'APPROACH' } } })
+        : 0;
       base.employer = {
         companyId: company?.id ?? null,
         companyName: company?.name ?? null,
         companyComplete: Boolean(company?.name && company.contactValue),
         activeNeeds,
+        newApplications,
+        pendingTaskReviews,
       };
     }
     return base;

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-10-05T18:44:09.632Z",
-  "durationSeconds": 17.7,
+  "generatedAt": "2026-10-06T23:19:20.654Z",
+  "durationSeconds": 17.4,
   "mode": "full",
   "git": {
-    "commit": "0410d18",
+    "commit": "4972934",
     "dirty": true,
     "note": "в рабочем дереве есть незакоммиченные изменения"
   },
@@ -2186,7 +2186,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.162
+          "msPerInstance": 0.153
         },
         {
           "family": "fe.event-loop",
@@ -2219,7 +2219,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.132
+          "msPerInstance": 0.127
         },
         {
           "family": "fe.event-loop",
@@ -2252,7 +2252,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.176
+          "msPerInstance": 0.139
         },
         {
           "family": "fe.promise-combinators",
@@ -2285,7 +2285,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.143
+          "msPerInstance": 0.133
         },
         {
           "family": "fe.promise-combinators",
@@ -2319,7 +2319,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.144
+          "msPerInstance": 0.127
         },
         {
           "family": "fe.promise-combinators",
@@ -2352,7 +2352,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.11
+          "msPerInstance": 0.084
         },
         {
           "family": "fe.ui-state",
@@ -2385,7 +2385,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.089
+          "msPerInstance": 0.07
         },
         {
           "family": "fe.ui-state",
@@ -2418,7 +2418,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.083
+          "msPerInstance": 0.067
         },
         {
           "family": "fe.ui-state",
@@ -2451,7 +2451,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.166
+          "msPerInstance": 0.135
         },
         {
           "family": "fe.react-effects",
@@ -2484,7 +2484,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.077
+          "msPerInstance": 0.073
         },
         {
           "family": "fe.react-effects",
@@ -2517,7 +2517,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.06
+          "msPerInstance": 0.055
         },
         {
           "family": "fe.react-effects",
@@ -2550,7 +2550,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.086
+          "msPerInstance": 0.077
         },
         {
           "family": "fe.http-client-errors",
@@ -2583,7 +2583,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.165
+          "msPerInstance": 0.151
         },
         {
           "family": "fe.http-client-errors",
@@ -2617,7 +2617,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.123
+          "msPerInstance": 0.113
         },
         {
           "family": "fe.http-client-errors",
@@ -2650,7 +2650,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.094
+          "msPerInstance": 0.075
         },
         {
           "family": "fe.request-races",
@@ -2682,7 +2682,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.157
+          "msPerInstance": 0.15
         },
         {
           "family": "fe.request-races",
@@ -2715,7 +2715,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.276
+          "msPerInstance": 0.292
         },
         {
           "family": "fe.request-races",
@@ -2748,7 +2748,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.151
+          "msPerInstance": 0.163
         },
         {
           "family": "be.http-semantics",
@@ -2781,7 +2781,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.166
+          "msPerInstance": 0.162
         },
         {
           "family": "be.http-semantics",
@@ -2814,7 +2814,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.166
+          "msPerInstance": 0.157
         },
         {
           "family": "be.http-semantics",
@@ -2847,7 +2847,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.166
+          "msPerInstance": 0.155
         },
         {
           "family": "be.idempotency",
@@ -2880,7 +2880,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.145
+          "msPerInstance": 0.123
         },
         {
           "family": "be.idempotency",
@@ -2913,7 +2913,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.131
+          "msPerInstance": 0.119
         },
         {
           "family": "be.idempotency",
@@ -2947,7 +2947,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.291
+          "msPerInstance": 0.295
         },
         {
           "family": "be.sql-query-result",
@@ -2979,7 +2979,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.108
+          "msPerInstance": 0.093
         },
         {
           "family": "be.sql-query-result",
@@ -3011,7 +3011,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.079
+          "msPerInstance": 0.086
         },
         {
           "family": "be.sql-query-result",
@@ -3043,7 +3043,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.089
+          "msPerInstance": 0.095
         },
         {
           "family": "be.data-modeling",
@@ -3076,7 +3076,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.131
+          "msPerInstance": 0.125
         },
         {
           "family": "be.data-modeling",
@@ -3109,7 +3109,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.16
+          "msPerInstance": 0.149
         },
         {
           "family": "be.data-modeling",
@@ -3142,7 +3142,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.165
+          "msPerInstance": 0.166
         },
         {
           "family": "be.tx-isolation",
@@ -3175,7 +3175,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.068
+          "msPerInstance": 0.066
         },
         {
           "family": "be.tx-isolation",
@@ -3208,7 +3208,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.065
+          "msPerInstance": 0.064
         },
         {
           "family": "be.tx-isolation",
@@ -3241,7 +3241,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.065
+          "msPerInstance": 0.085
         },
         {
           "family": "be.reliability-patterns",
@@ -3275,7 +3275,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.114
+          "msPerInstance": 0.097
         },
         {
           "family": "be.reliability-patterns",
@@ -3308,7 +3308,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.057
+          "msPerInstance": 0.053
         },
         {
           "family": "be.reliability-patterns",
@@ -3342,7 +3342,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.119
+          "msPerInstance": 0.114
         },
         {
           "family": "ml.leakage",
@@ -3375,7 +3375,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.127
+          "msPerInstance": 0.134
         },
         {
           "family": "ml.leakage",
@@ -3409,7 +3409,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.166
+          "msPerInstance": 0.143
         },
         {
           "family": "ml.leakage",
@@ -3442,7 +3442,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.142
+          "msPerInstance": 0.153
         },
         {
           "family": "ml.pandas-prep",
@@ -3474,7 +3474,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.102
+          "msPerInstance": 0.069
         },
         {
           "family": "ml.pandas-prep",
@@ -3506,7 +3506,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.079
+          "msPerInstance": 0.074
         },
         {
           "family": "ml.pandas-prep",
@@ -3538,7 +3538,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.088
+          "msPerInstance": 0.093
         },
         {
           "family": "ml.confusion-metrics",
@@ -3571,7 +3571,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.064
+          "msPerInstance": 0.061
         },
         {
           "family": "ml.confusion-metrics",
@@ -3604,7 +3604,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.212
+          "msPerInstance": 0.236
         },
         {
           "family": "ml.confusion-metrics",
@@ -3637,7 +3637,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.127
+          "msPerInstance": 0.121
         },
         {
           "family": "ml.imbalance-metrics",
@@ -3670,7 +3670,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.066
+          "msPerInstance": 0.061
         },
         {
           "family": "ml.imbalance-metrics",
@@ -3704,7 +3704,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.121
+          "msPerInstance": 0.139
         },
         {
           "family": "ml.imbalance-metrics",
@@ -3737,7 +3737,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.055
+          "msPerInstance": 0.058
         },
         {
           "family": "ml.validation-schemes",
@@ -3770,7 +3770,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.058
+          "msPerInstance": 0.059
         },
         {
           "family": "ml.validation-schemes",
@@ -3803,7 +3803,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.085
+          "msPerInstance": 0.08
         },
         {
           "family": "ml.validation-schemes",
@@ -3837,7 +3837,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.096
+          "msPerInstance": 0.108
         },
         {
           "family": "ml.model-ops",
@@ -3870,7 +3870,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.183
+          "msPerInstance": 0.13
         },
         {
           "family": "ml.model-ops",
@@ -3903,7 +3903,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.078
+          "msPerInstance": 0.081
         },
         {
           "family": "ml.model-ops",
@@ -3937,7 +3937,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.132
+          "msPerInstance": 0.135
         },
         {
           "family": "qa.requirement-defects",
@@ -3971,7 +3971,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.154
+          "msPerInstance": 0.152
         },
         {
           "family": "qa.requirement-defects",
@@ -4038,7 +4038,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.181
+          "msPerInstance": 0.145
         },
         {
           "family": "qa.decision-tables",
@@ -4071,7 +4071,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.096
+          "msPerInstance": 0.092
         },
         {
           "family": "qa.decision-tables",
@@ -4104,7 +4104,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.121
+          "msPerInstance": 0.137
         },
         {
           "family": "qa.decision-tables",
@@ -4136,7 +4136,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.233
+          "msPerInstance": 0.207
         },
         {
           "family": "qa.boundary-values",
@@ -4170,7 +4170,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.097
+          "msPerInstance": 0.09
         },
         {
           "family": "qa.boundary-values",
@@ -4237,7 +4237,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.092
+          "msPerInstance": 0.097
         },
         {
           "family": "qa.minimal-suite",
@@ -4270,7 +4270,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.087
+          "msPerInstance": 0.089
         },
         {
           "family": "qa.minimal-suite",
@@ -4303,7 +4303,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.139
+          "msPerInstance": 0.194
         },
         {
           "family": "qa.minimal-suite",
@@ -4336,7 +4336,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.271
+          "msPerInstance": 0.309
         },
         {
           "family": "qa.severity-priority",
@@ -4404,7 +4404,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.195
+          "msPerInstance": 0.2
         },
         {
           "family": "qa.severity-priority",
@@ -4437,7 +4437,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.215
+          "msPerInstance": 0.185
         },
         {
           "family": "qa.test-cases",
@@ -4471,7 +4471,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.111
+          "msPerInstance": 0.11
         },
         {
           "family": "qa.test-cases",
@@ -4505,7 +4505,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.186
+          "msPerInstance": 0.156
         },
         {
           "family": "qa.test-cases",
@@ -4538,7 +4538,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.261
+          "msPerInstance": 0.207
         }
       ],
       "totalInstances": 14400,
@@ -5097,7 +5097,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.47
+        "attemptGenerationMs": 0.48
       },
       {
         "specialization": "FRONTEND",
@@ -5384,7 +5384,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.66
+        "attemptGenerationMs": 0.57
       },
       {
         "specialization": "FRONTEND",
@@ -5671,7 +5671,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.52
+        "attemptGenerationMs": 0.5
       },
       {
         "specialization": "BACKEND",
@@ -5958,7 +5958,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.57
+        "attemptGenerationMs": 0.45
       },
       {
         "specialization": "BACKEND",
@@ -6245,7 +6245,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.48
+        "attemptGenerationMs": 0.46
       },
       {
         "specialization": "BACKEND",
@@ -6532,7 +6532,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.66
+        "attemptGenerationMs": 0.69
       },
       {
         "specialization": "ML_ENGINEER",
@@ -6819,7 +6819,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.41
+        "attemptGenerationMs": 0.38
       },
       {
         "specialization": "ML_ENGINEER",
@@ -7106,7 +7106,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.65
+        "attemptGenerationMs": 0.62
       },
       {
         "specialization": "ML_ENGINEER",
@@ -7393,7 +7393,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.49
+        "attemptGenerationMs": 0.48
       },
       {
         "specialization": "MANUAL_QA",
@@ -7680,7 +7680,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.61
+        "attemptGenerationMs": 0.48
       },
       {
         "specialization": "MANUAL_QA",
@@ -7967,7 +7967,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.81
+        "attemptGenerationMs": 0.7
       },
       {
         "specialization": "MANUAL_QA",
@@ -8254,7 +8254,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.86
+        "attemptGenerationMs": 0.91
       }
     ],
     "constantAnswers": {
@@ -9521,6 +9521,778 @@
       }
     ]
   },
+  "resume": {
+    "now": "2026-10-07T12:00:00.000Z",
+    "synthetic": {
+      "resumes": 360,
+      "perLayout": 60,
+      "layouts": [
+        "A: классический (разделы, метки, текстовые месяцы)",
+        "B: компактная шапка в одну строку, числовые даты",
+        "C: английский, месяцы Jan–Dec",
+        "D: навыки в тексте «О себе», контакты без меток",
+        "E: явная фраза о стаже, навыки со сроками",
+        "F: с шумом (образование с годами, языки, ссылки), даты только годами"
+      ],
+      "scores": [
+        {
+          "field": "ФИО",
+          "metric": "точное совпадение",
+          "value": 1,
+          "n": 360
+        },
+        {
+          "field": "Email",
+          "metric": "точное совпадение",
+          "value": 1,
+          "n": 360
+        },
+        {
+          "field": "Телефон",
+          "metric": "точное совпадение (после нормализации)",
+          "value": 1,
+          "n": 360
+        },
+        {
+          "field": "Мессенджер",
+          "metric": "точное совпадение (в т. ч. отсутствие)",
+          "value": 0.9638888888888889,
+          "n": 360
+        },
+        {
+          "field": "Город",
+          "metric": "точное совпадение (в т. ч. отсутствие)",
+          "value": 1,
+          "n": 360
+        },
+        {
+          "field": "Стаж",
+          "metric": "отклонение ≤ 3 мес.",
+          "value": 0.8916666666666667,
+          "n": 360
+        },
+        {
+          "field": "Стаж",
+          "metric": "отклонение ≤ 6 мес.",
+          "value": 0.9361111111111111,
+          "n": 360
+        },
+        {
+          "field": "Стаж",
+          "metric": "отклонение ≤ 12 мес.",
+          "value": 1,
+          "n": 360
+        },
+        {
+          "field": "Навыки",
+          "metric": "precision",
+          "value": 0.9726027397260274,
+          "n": 2628
+        },
+        {
+          "field": "Навыки",
+          "metric": "recall",
+          "value": 1,
+          "n": 2556
+        },
+        {
+          "field": "Навыки",
+          "metric": "F1",
+          "value": 0.9861111111111112,
+          "n": 2628
+        },
+        {
+          "field": "Специализация",
+          "metric": "точное совпадение",
+          "value": 1,
+          "n": 360
+        },
+        {
+          "field": "Грейд (предположение)",
+          "metric": "точное совпадение",
+          "value": 1,
+          "n": 360
+        },
+        {
+          "field": "Роли",
+          "metric": "recall",
+          "value": 0.9661016949152542,
+          "n": 413
+        }
+      ],
+      "byLayout": [
+        {
+          "layout": "A: классический (разделы, метки, текстовые месяцы)",
+          "scores": [
+            {
+              "field": "ФИО",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Email",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Телефон",
+              "metric": "точное совпадение (после нормализации)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Мессенджер",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 0.9666666666666667,
+              "n": 60
+            },
+            {
+              "field": "Город",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 3 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 6 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 12 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Навыки",
+              "metric": "precision",
+              "value": 1,
+              "n": 429
+            },
+            {
+              "field": "Навыки",
+              "metric": "recall",
+              "value": 1,
+              "n": 429
+            },
+            {
+              "field": "Навыки",
+              "metric": "F1",
+              "value": 1,
+              "n": 429
+            },
+            {
+              "field": "Специализация",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Грейд (предположение)",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Роли",
+              "metric": "recall",
+              "value": 1,
+              "n": 70
+            }
+          ]
+        },
+        {
+          "layout": "B: компактная шапка в одну строку, числовые даты",
+          "scores": [
+            {
+              "field": "ФИО",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Email",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Телефон",
+              "metric": "точное совпадение (после нормализации)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Мессенджер",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 0.9833333333333333,
+              "n": 60
+            },
+            {
+              "field": "Город",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 3 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 6 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 12 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Навыки",
+              "metric": "precision",
+              "value": 1,
+              "n": 418
+            },
+            {
+              "field": "Навыки",
+              "metric": "recall",
+              "value": 1,
+              "n": 418
+            },
+            {
+              "field": "Навыки",
+              "metric": "F1",
+              "value": 1,
+              "n": 418
+            },
+            {
+              "field": "Специализация",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Грейд (предположение)",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Роли",
+              "metric": "recall",
+              "value": 1,
+              "n": 68
+            }
+          ]
+        },
+        {
+          "layout": "C: английский, месяцы Jan–Dec",
+          "scores": [
+            {
+              "field": "ФИО",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Email",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Телефон",
+              "metric": "точное совпадение (после нормализации)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Мессенджер",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 0.9666666666666667,
+              "n": 60
+            },
+            {
+              "field": "Город",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 3 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 6 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 12 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Навыки",
+              "metric": "precision",
+              "value": 1,
+              "n": 433
+            },
+            {
+              "field": "Навыки",
+              "metric": "recall",
+              "value": 1,
+              "n": 433
+            },
+            {
+              "field": "Навыки",
+              "metric": "F1",
+              "value": 1,
+              "n": 433
+            },
+            {
+              "field": "Специализация",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Грейд (предположение)",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Роли",
+              "metric": "recall",
+              "value": 0.8,
+              "n": 70
+            }
+          ]
+        },
+        {
+          "layout": "D: навыки в тексте «О себе», контакты без меток",
+          "scores": [
+            {
+              "field": "ФИО",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Email",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Телефон",
+              "metric": "точное совпадение (после нормализации)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Мессенджер",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 0.95,
+              "n": 60
+            },
+            {
+              "field": "Город",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 3 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 6 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 12 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Навыки",
+              "metric": "precision",
+              "value": 1,
+              "n": 416
+            },
+            {
+              "field": "Навыки",
+              "metric": "recall",
+              "value": 1,
+              "n": 416
+            },
+            {
+              "field": "Навыки",
+              "metric": "F1",
+              "value": 1,
+              "n": 416
+            },
+            {
+              "field": "Специализация",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Грейд (предположение)",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Роли",
+              "metric": "recall",
+              "value": 1,
+              "n": 67
+            }
+          ]
+        },
+        {
+          "layout": "E: явная фраза о стаже, навыки со сроками",
+          "scores": [
+            {
+              "field": "ФИО",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Email",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Телефон",
+              "metric": "точное совпадение (после нормализации)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Мессенджер",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 0.95,
+              "n": 60
+            },
+            {
+              "field": "Город",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 3 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 6 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 12 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Навыки",
+              "metric": "precision",
+              "value": 1,
+              "n": 438
+            },
+            {
+              "field": "Навыки",
+              "metric": "recall",
+              "value": 1,
+              "n": 438
+            },
+            {
+              "field": "Навыки",
+              "metric": "F1",
+              "value": 1,
+              "n": 438
+            },
+            {
+              "field": "Специализация",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Грейд (предположение)",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Роли",
+              "metric": "recall",
+              "value": 1,
+              "n": 69
+            }
+          ]
+        },
+        {
+          "layout": "F: с шумом (образование с годами, языки, ссылки), даты только годами",
+          "scores": [
+            {
+              "field": "ФИО",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Email",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Телефон",
+              "metric": "точное совпадение (после нормализации)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Мессенджер",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 0.9666666666666667,
+              "n": 60
+            },
+            {
+              "field": "Город",
+              "metric": "точное совпадение (в т. ч. отсутствие)",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 3 мес.",
+              "value": 0.35,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 6 мес.",
+              "value": 0.6166666666666667,
+              "n": 60
+            },
+            {
+              "field": "Стаж",
+              "metric": "отклонение ≤ 12 мес.",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Навыки",
+              "metric": "precision",
+              "value": 0.854251012145749,
+              "n": 494
+            },
+            {
+              "field": "Навыки",
+              "metric": "recall",
+              "value": 1,
+              "n": 422
+            },
+            {
+              "field": "Навыки",
+              "metric": "F1",
+              "value": 0.9213973799126637,
+              "n": 494
+            },
+            {
+              "field": "Специализация",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Грейд (предположение)",
+              "metric": "точное совпадение",
+              "value": 1,
+              "n": 60
+            },
+            {
+              "field": "Роли",
+              "metric": "recall",
+              "value": 1,
+              "n": 69
+            }
+          ]
+        }
+      ]
+    },
+    "handwritten": {
+      "cases": 6,
+      "scores": [
+        {
+          "field": "ФИО",
+          "metric": "точное совпадение",
+          "value": 0.8333333333333334,
+          "n": 6
+        },
+        {
+          "field": "Email",
+          "metric": "точное совпадение",
+          "value": 1,
+          "n": 6
+        },
+        {
+          "field": "Телефон",
+          "metric": "точное совпадение (после нормализации)",
+          "value": 1,
+          "n": 5
+        },
+        {
+          "field": "Мессенджер",
+          "metric": "точное совпадение (в т. ч. отсутствие)",
+          "value": 1,
+          "n": 2
+        },
+        {
+          "field": "Город",
+          "metric": "точное совпадение (в т. ч. отсутствие)",
+          "value": 1,
+          "n": 5
+        },
+        {
+          "field": "Стаж",
+          "metric": "отклонение ≤ 3 мес.",
+          "value": 1,
+          "n": 6
+        },
+        {
+          "field": "Стаж",
+          "metric": "отклонение ≤ 6 мес.",
+          "value": 1,
+          "n": 6
+        },
+        {
+          "field": "Стаж",
+          "metric": "отклонение ≤ 12 мес.",
+          "value": 1,
+          "n": 6
+        },
+        {
+          "field": "Навыки",
+          "metric": "precision",
+          "value": 1,
+          "n": 35
+        },
+        {
+          "field": "Навыки",
+          "metric": "recall",
+          "value": 1,
+          "n": 35
+        },
+        {
+          "field": "Навыки",
+          "metric": "F1",
+          "value": 1,
+          "n": 35
+        },
+        {
+          "field": "Специализация",
+          "metric": "точное совпадение",
+          "value": 1,
+          "n": 5
+        },
+        {
+          "field": "Грейд (предположение)",
+          "metric": "точное совпадение",
+          "value": 1,
+          "n": 2
+        },
+        {
+          "field": "Роли",
+          "metric": "recall",
+          "value": null,
+          "n": 0
+        }
+      ],
+      "misses": [
+        {
+          "caseId": "hand-4-contacts-at-bottom",
+          "field": "ФИО",
+          "expected": "Дмитрий Новиков",
+          "actual": "—"
+        }
+      ]
+    },
+    "gates": [
+      {
+        "name": "Резюме (синтетика): email распознаётся не хуже 98 %",
+        "ok": true,
+        "detail": "100.0 %"
+      },
+      {
+        "name": "Резюме (синтетика): телефон не хуже 95 %",
+        "ok": true,
+        "detail": "100.0 %"
+      },
+      {
+        "name": "Резюме (синтетика): ФИО не хуже 85 %",
+        "ok": true,
+        "detail": "100.0 %"
+      },
+      {
+        "name": "Резюме (синтетика): навыки F1 не хуже 0.85",
+        "ok": true,
+        "detail": "F1 0.986"
+      },
+      {
+        "name": "Резюме (синтетика): стаж в пределах ±12 мес. не хуже 85 %",
+        "ok": true,
+        "detail": "100.0 %"
+      },
+      {
+        "name": "Резюме: на пустом, мусорном и бессмысленном тексте разбор не падает и ничего не придумывает",
+        "ok": true,
+        "detail": "5 проб"
+      }
+    ],
+    "limitations": [
+      "Синтетический генератор написан теми же людьми, что и парсер, и воспроизводит шесть известных вёрсток: высокие показатели означают согласованность с ними, а не качество на реальных резюме.",
+      "Ручной набор мал (6 резюме) и написан после парсера. По итогам его первого прогона в парсер внесены общие правки (английские названия городов, «Фамилия Имя, должность», «по н.в.» и «с 2018 года по настоящее время»), поэтому показатели набора после правок оптимистичны и не являются оценкой на невиданных данных. Оставшиеся расхождения не «подгонялись» и приведены списком.",
+      "Проверен только текстовый разбор. Извлечение текста из PDF проверено интеграционными тестами на PDF, созданных pdfkit (однопоточный текст). PDF из Word, Google Docs, LaTeX, многоколоночные и сканы (OCR нет) не проверялись.",
+      "Грейд и специализация — предположения по заголовку и стажу, а не оценка квалификации; подтверждённой категорией они не становятся."
+    ]
+  },
   "findings": [
     {
       "id": "F1",
@@ -9557,6 +10329,15 @@
       "cause": "Практически все отличия между кандидатами в tuning-потребностях закрываются жёсткими условиями; доля «пограничных» пар мала.",
       "action": "Разметка и пул не менялись после просмотра результатов. Ограничение зафиксировано в отчёте: набор не позволяет настраивать веса; анализ чувствительности по выборке final приведён отдельно как post-hoc.",
       "status": "ограничение зафиксировано"
+    },
+    {
+      "id": "F5",
+      "area": "Распознавание резюме · парсер",
+      "foundBy": "первый прогон на независимом ручном наборе и на синтетической выборке",
+      "found": "Не распознавались: английские названия городов (Kazan), строка «Фамилия Имя, должность» как ФИО, период «01.2020 – по н.в.» и «с 2018 года по настоящее время» (на синтетической выборке доля стажа в пределах ±12 мес. была 73 % из-за последнего места работы); в разметке синтетики мессенджер и роль «тимлид» ожидались там, где генератор их не писал.",
+      "cause": "Правила разбора не учитывали эти написания; разметка генератора не была привязана к тому, что реально записано в тексте.",
+      "action": "Парсер: добавлены английские названия городов, разбор имени до запятой/тире, «по» перед «н.в./настоящее время» и «года» после года начала. Генератор: разметка строится по реально выведенному тексту. Первоначальные показатели и правки зафиксированы здесь; ручной набор после правок уже не «невиданный».",
+      "status": "исправлено; вне набора остаётся ФИО в строке «Контакты: …» (не распознаётся, показано в отчёте)"
     }
   ],
   "limitations": [

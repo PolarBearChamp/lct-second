@@ -15,10 +15,13 @@ import { HiringNeedsModule } from './modules/hiring-needs/hiring-needs.module';
 import { InvitationsModule } from './modules/invitations/invitations.module';
 import { MatchingModule } from './modules/matching/matching.module';
 import { ProfilePdfModule } from './modules/profile-pdf/profile-pdf.module';
+import { ResumeModule } from './modules/resume/resume.module';
 import { HealthModule } from './modules/health/health.module';
 import { MailModule } from './modules/mail/mail.module';
 import { ProfileViewModule } from './modules/profile-view/profile-view.module';
 import { UsersModule } from './modules/users/users.module';
+import { TasksModule } from './modules/tasks/tasks.module';
+import { VacanciesModule } from './modules/vacancies/vacancies.module';
 
 @Module({
   imports: [
@@ -37,8 +40,11 @@ import { UsersModule } from './modules/users/users.module';
     HiringNeedsModule,
     MatchingModule,
     InvitationsModule,
+    VacanciesModule,
+    TasksModule,
     FspModule,
     ProfilePdfModule,
+    ResumeModule,
   ],
   providers: [
     // Порядок важен: сначала CSRF для изменяющих запросов, затем сессия/роль.

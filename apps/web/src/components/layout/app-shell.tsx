@@ -14,7 +14,7 @@ export interface NavItem {
   href: string;
   label: string;
   /** Совпадение по префиксу пути. */
-  match?: string;
+  match?: string | string[];
   badge?: (me: MeResponse) => number | null;
 }
 
@@ -25,7 +25,7 @@ function Nav({ items }: { items: NavItem[] }) {
     <nav aria-label="Разделы кабинета" className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
       <ul className="flex gap-1 lg:flex-col">
         {items.map((item) => {
-          const active = item.match ? pathname.startsWith(item.match) : pathname === item.href;
+          const active = item.match ? [item.match].flat().some((prefix) => pathname.startsWith(prefix)) : pathname === item.href;
           const count = item.badge?.(me) ?? null;
           return (
             <li key={item.href}>
@@ -56,10 +56,14 @@ function Header({ roleLabel }: { roleLabel: string }) {
   const me = useMe();
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6">
         <Logo href={me.user.role === 'CANDIDATE' ? '/candidate' : '/employer'} />
-        <div className="flex min-w-0 items-center gap-3">
-          {me.user.isDemo ? <Badge tone="warning">Демоаккаунт</Badge> : null}
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          {me.user.isDemo ? (
+            <Badge tone="warning" className="max-sm:hidden">
+              Демоаккаунт
+            </Badge>
+          ) : null}
           <Badge tone="brand">{roleLabel}</Badge>
           <span className="hidden max-w-[220px] truncate text-sm text-muted md:inline" title={me.user.email}>
             {me.user.email}
@@ -76,6 +80,9 @@ const CANDIDATE_NAV: NavItem[] = [
   { href: '/candidate/profile', label: 'Профиль', match: '/candidate/profile' },
   { href: '/candidate/survey', label: 'Опрос и специализация', match: '/candidate/survey' },
   { href: '/candidate/assessments', label: 'Тестирование', match: '/candidate/assessments' },
+  { href: '/candidate/vacancies', label: 'Вакансии', match: '/candidate/vacancies' },
+  { href: '/candidate/applications', label: 'Мои отклики', match: '/candidate/applications' },
+  { href: '/candidate/tasks', label: 'Короткие задания', match: '/candidate/tasks' },
   {
     href: '/candidate/invitations',
     label: 'Приглашения',
@@ -91,6 +98,18 @@ const EMPLOYER_NAV: NavItem[] = [
   { href: '/employer/needs', label: 'Потребности и подборки', match: '/employer/needs' },
   { href: '/employer/candidates', label: 'Банк кандидатов', match: '/employer/candidates' },
   { href: '/employer/bookmarks', label: 'Закладки', match: '/employer/bookmarks' },
+  {
+    href: '/employer/vacancies',
+    label: 'Вакансии и отклики',
+    match: ['/employer/vacancies', '/employer/applications'],
+    badge: (me) => me.employer?.newApplications ?? null,
+  },
+  {
+    href: '/employer/tasks',
+    label: 'Короткие задания',
+    match: '/employer/tasks',
+    badge: (me) => me.employer?.pendingTaskReviews ?? null,
+  },
   { href: '/employer/invitations', label: 'Приглашения', match: '/employer/invitations' },
 ];
 

@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { ResumeImport } from '@/components/candidate/resume-import';
 import { SkillPicker, type PickedSkill } from '@/components/candidate/skill-picker';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -174,6 +175,7 @@ function ProfileForm({ data }: { data: OwnProfileResponse }) {
           </LinkButton>
         }
       />
+      <ResumeImport data={data} />
       <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
         <form className="space-y-6" onSubmit={handleSubmit((values) => save.mutate(values))} noValidate>
           <Card>

@@ -63,6 +63,8 @@ export class EmployerMeStateDto {
   companyName!: string | null;
   companyComplete!: boolean;
   activeNeeds!: number;
+  newApplications!: number;
+  pendingTaskReviews!: number;
 }
 
 export class MeResponseDto {

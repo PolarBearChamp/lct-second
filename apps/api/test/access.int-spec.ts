@@ -76,8 +76,8 @@ describe('контроль доступа: проверка всех маршр�
   it('перечень маршрутов полон: публичные из списка существуют, защищённые описаны и помечены security', () => {
     const keys = new Set(operations.map(key));
     for (const publicKey of PUBLIC_OPERATIONS) expect(keys).toContain(publicKey);
-    expect(operations.length).toBeGreaterThanOrEqual(55);
-    expect(protectedOps.length).toBeGreaterThanOrEqual(45);
+    expect(operations.length).toBeGreaterThanOrEqual(89);
+    expect(protectedOps.length).toBeGreaterThanOrEqual(65);
     expect(operations.filter((op) => !op.summary).map(key)).toEqual([]);
     // Каждый непубличный маршрут объявлен защищённым в OpenAPI — иначе документация вводит в заблуждение.
     expect(protectedOps.filter((op) => !op.secured).map(key)).toEqual([]);
@@ -114,7 +114,7 @@ describe('контроль доступа: проверка всех маршр�
       const res = await call(forbiddenFor, op);
       if (res.status !== 403 || res.body.code !== 'FORBIDDEN_ROLE') failures.push(`${key(op)} → ${res.status} ${JSON.stringify(res.body)}`);
     }
-    expect(checked).toBeGreaterThanOrEqual(40);
+    expect(checked).toBeGreaterThanOrEqual(55);
     expect(failures).toEqual([]);
   });
 
@@ -138,7 +138,7 @@ describe('контроль доступа: проверка всех маршр�
   it('все изменяющие маршруты (включая публичные) отклоняют запрос без CSRF-токена и с чужим Origin — до обращения к данным', async () => {
     const server = ctx.app.getHttpServer();
     const mutating = operations.filter((op) => op.method !== 'get');
-    expect(mutating.length).toBeGreaterThanOrEqual(25);
+    expect(mutating.length).toBeGreaterThanOrEqual(35);
     const failures: string[] = [];
     for (const op of mutating) {
       const noToken = await request(server)[op.method](`/api/v1${op.path}`).set('Origin', ORIGIN).send({});
@@ -178,7 +178,7 @@ describe('контроль доступа: проверка всех маршр�
       const missing = await owner.get(op.path);
       if (missing.status !== 404) failures.push(`${key(op)} несуществующий id → ${missing.status} ${JSON.stringify(missing.body)}`);
     }
-    expect(idOps.length).toBeGreaterThanOrEqual(8);
+    expect(idOps.length).toBeGreaterThanOrEqual(12);
     expect(failures).toEqual([]);
   });
 

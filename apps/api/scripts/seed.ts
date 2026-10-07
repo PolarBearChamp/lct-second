@@ -36,14 +36,25 @@ import { HiringNeedsService } from '../src/modules/hiring-needs/hiring-needs.ser
 import type { CreateNeedDto } from '../src/modules/hiring-needs/dto/need.dto';
 import { InvitationsService } from '../src/modules/invitations/invitations.service';
 import { MatchingService } from '../src/modules/matching/matching.service';
+import type { CreateVacancyDto } from '../src/modules/vacancies/dto/vacancy.dto';
+import { ApplicationsService } from '../src/modules/vacancies/applications.service';
+import { CandidateTasksService } from '../src/modules/tasks/candidate-tasks.service';
+import { TasksService } from '../src/modules/tasks/tasks.service';
+import type { CreateTaskDto } from '../src/modules/tasks/dto/task.dto';
+import { dueAtFor } from '../src/domain/tasks/rules';
+import { VacanciesService } from '../src/modules/vacancies/vacancies.service';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { readFileSync } from 'node:fs';
 import {
+  APPLICATIONS,
+  TASK_RESPONSES,
+  TASKS,
   BOOKMARKS,
   COMPANIES,
   INVITATIONS,
   NEEDS,
   SELECTION_NEEDS,
+  VACANCIES,
   extraCandidates,
   mainCandidates,
   type AttemptPlan,
@@ -76,6 +87,10 @@ async function main(): Promise<void> {
   const needsService = app.get(HiringNeedsService);
   const matching = app.get(MatchingService);
   const invitations = app.get(InvitationsService);
+  const vacanciesService = app.get(VacanciesService);
+  const applicationsService = app.get(ApplicationsService);
+  const tasksService = app.get(TasksService);
+  const candidateTasks = app.get(CandidateTasksService);
 
   // Управляемые часы: операции выполняются «в прошлом», чтобы история и сроки выглядели реалистично.
   const realNow = new Date();
@@ -219,6 +234,157 @@ async function main(): Promise<void> {
     setNow(realNow);
   }
 
+  // ───────────── Вакансии и отклики ─────────────
+  const vacancyIds = new Map<string, string>();
+  let vacancyCount = 0;
+  for (const def of VACANCIES) {
+    const need = NEEDS.find((n) => n.key === def.need)!;
+    const owner = companies.get(need.company)!;
+    const company = await prisma.company.findUniqueOrThrow({ where: { id: owner.companyId } });
+    const existing = await prisma.vacancy.findFirst({ where: { companyId: company.id, title: need.title } });
+    if (existing) {
+      vacancyIds.set(def.key, existing.id);
+      continue;
+    }
+    setNow(daysBefore(def.publishedDaysAgo || 1));
+    const created = await vacanciesService.create(
+      company,
+      owner.userId,
+      {
+        ...need,
+        description: def.description,
+        needId: needIds.get(def.need),
+        workFormat: def.workFormat ?? need.workFormat,
+        city: def.workFormat ? (def.city ?? null) : (need.city ?? null),
+        salaryType: 'GROSS',
+        publish: def.state !== 'DRAFT',
+      } as unknown as CreateVacancyDto,
+      REQUEST_ID,
+    );
+    vacancyIds.set(def.key, created.id);
+    vacancyCount += 1;
+    setNow(realNow);
+  }
+  let applicationCount = 0;
+  for (const def of APPLICATIONS) {
+    const vacancyDef = VACANCIES.find((v) => v.key === def.vacancy)!;
+    const need = NEEDS.find((n) => n.key === vacancyDef.need)!;
+    const owner = companies.get(need.company)!;
+    const company = await prisma.company.findUniqueOrThrow({ where: { id: owner.companyId } });
+    const candidate = candidates.get(def.candidate);
+    if (!candidate) throw new Error(`Seed: кандидат ${def.candidate} не найден для отклика`);
+    const vacancyId = vacancyIds.get(def.vacancy)!;
+    if (await prisma.application.findFirst({ where: { vacancyId, candidateId: candidate.candidateId } })) continue;
+    const sentAt = daysBefore(def.daysAgo);
+    setNow(sentAt);
+    const application = await applicationsService.apply(candidate.candidateId, candidate.userId, vacancyId, { confirmDisclosure: true, coverNote: def.coverNote }, REQUEST_ID);
+    applicationCount += 1;
+    const after = (hours: number) => setNow(new Date(sentAt.getTime() + hours * HOUR_MS));
+    switch (def.outcome) {
+      case 'VIEWED':
+        after(3);
+        await applicationsService.markViewed(company, owner.userId, application.id, REQUEST_ID);
+        break;
+      case 'SHORTLISTED':
+        after(3);
+        await applicationsService.markViewed(company, owner.userId, application.id, REQUEST_ID);
+        after(20);
+        await applicationsService.shortlist(company, owner.userId, application.id, REQUEST_ID);
+        break;
+      case 'REJECTED':
+        after(3);
+        await applicationsService.markViewed(company, owner.userId, application.id, REQUEST_ID);
+        after(30);
+        await applicationsService.reject(company, owner.userId, application.id, REQUEST_ID);
+        break;
+      case 'WITHDRAWN':
+        after(10);
+        await applicationsService.withdraw(candidate.candidateId, candidate.userId, application.id, true, REQUEST_ID);
+        break;
+      case 'SENT':
+        break;
+    }
+    setNow(realNow);
+  }
+  // Закрытая вакансия: набор завершён, поданные отклики остаются в работе.
+  for (const def of VACANCIES.filter((v) => v.state === 'CLOSED')) {
+    const need = NEEDS.find((n) => n.key === def.need)!;
+    const owner = companies.get(need.company)!;
+    const company = await prisma.company.findUniqueOrThrow({ where: { id: owner.companyId } });
+    const vacancyId = vacancyIds.get(def.key)!;
+    const current = await prisma.vacancy.findUniqueOrThrow({ where: { id: vacancyId } });
+    if (current.status === 'CLOSED') continue;
+    setNow(daysBefore(Math.max(1, def.publishedDaysAgo - 8)));
+    await vacanciesService.close(company, owner.userId, vacancyId, REQUEST_ID);
+    setNow(realNow);
+  }
+
+  // ───────────── Короткие задания ─────────────
+  const taskIds = new Map<string, string>();
+  let taskCount = 0;
+  for (const def of TASKS) {
+    const owner = companies.get(def.company)!;
+    const company = await prisma.company.findUniqueOrThrow({ where: { id: owner.companyId } });
+    const existing = await prisma.shortTask.findFirst({ where: { companyId: company.id, title: def.title } });
+    if (existing) {
+      taskIds.set(def.key, existing.id);
+      continue;
+    }
+    setNow(daysBefore(def.publishedDaysAgo || 1));
+    const created = await tasksService.create(
+      company,
+      owner.userId,
+      {
+        title: def.title,
+        prompt: def.prompt,
+        specialization: def.specialization,
+        allowedGrades: def.allowedGrades,
+        kind: def.kind,
+        options: def.options,
+        correctIndex: def.correctIndex,
+        explanation: def.explanation,
+        publish: def.state !== 'DRAFT',
+      } as unknown as CreateTaskDto,
+      REQUEST_ID,
+    );
+    taskIds.set(def.key, created.id);
+    taskCount += 1;
+    setNow(realNow);
+  }
+  let taskResponseCount = 0;
+  for (const def of TASK_RESPONSES) {
+    const taskDef = TASKS.find((t) => t.key === def.task)!;
+    const owner = companies.get(taskDef.company)!;
+    const company = await prisma.company.findUniqueOrThrow({ where: { id: owner.companyId } });
+    const candidate = candidates.get(def.candidate);
+    if (!candidate) throw new Error(`Seed: кандидат ${def.candidate} не найден для ответа на задание`);
+    const taskId = taskIds.get(def.task)!;
+    if (await prisma.taskAssignment.findFirst({ where: { taskId, candidateId: candidate.candidateId } })) continue;
+    // Предложение создаётся напрямую (чтобы привязать кандидата к конкретному заданию), а ответ и оценка — теми же сервисами, что и в работе.
+    const offeredAt = daysBefore(def.daysAgo + 1);
+    const assignment = await prisma.taskAssignment.create({ data: { taskId, candidateId: candidate.candidateId, status: 'OFFERED', offeredAt, dueAt: dueAtFor(offeredAt, null) } });
+    const answeredAt = daysBefore(def.daysAgo);
+    setNow(answeredAt);
+    await candidateTasks.submit(candidate.candidateId, candidate.userId, assignment.id, def.answer, REQUEST_ID);
+    if (def.review) {
+      setNow(new Date(answeredAt.getTime() + 3 * HOUR_MS));
+      await tasksService.review(company, owner.userId, assignment.id, def.review, REQUEST_ID);
+    }
+    taskResponseCount += 1;
+    setNow(realNow);
+  }
+  // Завершённое задание: закрыто, ответы остаются.
+  for (const def of TASKS.filter((t) => t.state === 'CLOSED')) {
+    const owner = companies.get(def.company)!;
+    const company = await prisma.company.findUniqueOrThrow({ where: { id: owner.companyId } });
+    const taskId = taskIds.get(def.key)!;
+    const current = await prisma.shortTask.findUniqueOrThrow({ where: { id: taskId } });
+    if (current.status === 'CLOSED') continue;
+    setNow(daysBefore(Math.max(1, def.publishedDaysAgo - 15)));
+    await tasksService.close(company, owner.userId, taskId, REQUEST_ID);
+    setNow(realNow);
+  }
+
   // ───────────── Подборки и закладки ─────────────
   let selections = 0;
   for (const needKey of SELECTION_NEEDS) {
@@ -254,12 +420,16 @@ async function main(): Promise<void> {
     companies: await prisma.company.count({ where: { owner: { isDemo: true } } }),
     needs: await prisma.hiringNeed.count(),
     invitations: await prisma.invitation.count(),
+    vacancies: await prisma.vacancy.count(),
+    applications: await prisma.application.count(),
+    shortTasks: await prisma.shortTask.count(),
+    taskAssignments: await prisma.taskAssignment.count(),
     grants: await prisma.contactAccessGrant.count(),
     selections: await prisma.selectionRun.count(),
     bookmarks: await prisma.candidateBookmark.count(),
     fspLinks: await prisma.fspLink.count(),
   };
-  console.log(`\nSeed завершён (создано кандидатов: ${createdCandidates}, приглашений: ${invitationCount}, подборок: ${selections}). Итого в БД:`);
+  console.log(`\nSeed завершён (создано кандидатов: ${createdCandidates}, приглашений: ${invitationCount}, вакансий: ${vacancyCount}, откликов: ${applicationCount}, заданий: ${taskCount}, ответов на задания: ${taskResponseCount}, подборок: ${selections}). Итого в БД:`);
   console.table(totals);
   console.log(`Пароль демо-аккаунтов: ${process.env.SEED_DEMO_PASSWORD ? '(из SEED_DEMO_PASSWORD)' : DEFAULT_DEMO_PASSWORD}`);
   await app.close();
@@ -514,6 +684,10 @@ async function resetDemoData(prisma: PrismaService): Promise<void> {
   const candidateIds = profiles.map((p) => p.id);
   const companyIds = companies.map((c) => c.id);
   await prisma.$transaction([
+    prisma.taskAssignment.deleteMany({ where: { OR: [{ task: { companyId: { in: companyIds } } }, { candidateId: { in: candidateIds } }] } }),
+    prisma.shortTask.deleteMany({ where: { companyId: { in: companyIds } } }),
+    prisma.application.deleteMany({ where: { OR: [{ companyId: { in: companyIds } }, { candidateId: { in: candidateIds } }] } }),
+    prisma.vacancy.deleteMany({ where: { companyId: { in: companyIds } } }),
     prisma.invitation.deleteMany({ where: { OR: [{ companyId: { in: companyIds } }, { candidateId: { in: candidateIds } }] } }),
     prisma.contactAccessGrant.deleteMany({ where: { OR: [{ companyId: { in: companyIds } }, { candidateId: { in: candidateIds } }] } }),
     prisma.selectionRun.deleteMany({ where: { companyId: { in: companyIds } } }),

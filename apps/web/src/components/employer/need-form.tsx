@@ -23,15 +23,26 @@ import { ChoiceGroup, Field, Input, Select, Textarea } from '@/components/ui/fie
 import { ApiError } from '@/lib/api/client';
 import { useSkills } from '@/lib/queries';
 
+/** Поля, общие для потребности и вакансии: форма заполняется любой из них. */
+export type RequirementsInitial = Pick<
+  HiringNeedView,
+  'title' | 'description' | 'specialization' | 'allowedGrades' | 'requiredSkills' | 'preferredSkills' | 'workFormat' | 'city' | 'salaryFrom' | 'salaryTo'
+> & { status?: string };
+
 interface Props {
-  initial?: HiringNeedView;
+  initial?: RequirementsInitial;
+  /** need — внутренняя потребность (по умолчанию); vacancy — публикуемая вакансия, видимая кандидатам. */
+  variant?: 'need' | 'vacancy';
+  /** Не показывать выбор статуса (у вакансии статус меняется отдельными действиями). */
+  hideStatus?: boolean;
   submitLabel: string;
   loading: boolean;
   serverError: unknown;
   onSubmit: (input: HiringNeedInput) => void;
 }
 
-export function NeedForm({ initial, submitLabel, loading, serverError, onSubmit }: Props) {
+export function NeedForm({ initial, variant = 'need', hideStatus, submitLabel, loading, serverError, onSubmit }: Props) {
+  const isVacancy = variant === 'vacancy';
   const skills = useSkills();
   const [title, setTitle] = useState(initial?.title ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
@@ -45,7 +56,7 @@ export function NeedForm({ initial, submitLabel, loading, serverError, onSubmit 
   const [city, setCity] = useState(initial?.city ?? '');
   const [salaryFrom, setSalaryFrom] = useState(initial?.salaryFrom?.toString() ?? '');
   const [salaryTo, setSalaryTo] = useState(initial?.salaryTo?.toString() ?? '');
-  const [status, setStatus] = useState<'DRAFT' | 'ACTIVE'>(initial?.status === 'DRAFT' ? 'DRAFT' : 'ACTIVE');
+  const [status, setStatus] = useState<'DRAFT' | 'ACTIVE'>(initial?.status === 'DRAFT' ? 'DRAFT' : isVacancy && !initial ? 'DRAFT' : 'ACTIVE');
   const [query, setQuery] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -100,12 +111,15 @@ export function NeedForm({ initial, submitLabel, loading, serverError, onSubmit 
     >
       {serverError instanceof ApiError ? <Alert tone="danger" title={serverError.message} /> : null}
       <Card>
-        <CardHeader title="Описание" description="Внутреннее описание потребности — кандидаты его не видят." />
+        <CardHeader
+          title="Описание"
+          description={isVacancy ? 'Эти сведения увидят кандидаты в общем списке вакансий — до отклика.' : 'Внутреннее описание потребности — кандидаты его не видят.'}
+        />
         <div className="grid gap-4">
           <Field label="Название" required error={errors.title ?? apiFieldErrors.title?.[0]}>
             {(props) => <Input {...props} value={title} onChange={(e) => setTitle(e.target.value)} />}
           </Field>
-          <Field label="Команда и задачи" required error={errors.description ?? apiFieldErrors.description?.[0]}>
+          <Field label={isVacancy ? 'Описание вакансии: задачи, команда, условия' : 'Команда и задачи'} required error={errors.description ?? apiFieldErrors.description?.[0]}>
             {(props) => <Textarea rows={4} {...props} value={description} onChange={(e) => setDescription(e.target.value)} />}
           </Field>
         </div>
@@ -139,7 +153,11 @@ export function NeedForm({ initial, submitLabel, loading, serverError, onSubmit 
       <Card>
         <CardHeader
           title="Обязательные навыки"
-          description="Только навыки, которые проверяются заданиями теста этой специализации. Кандидат без подтверждения любого из них в подборку не попадёт — ни ФСП, ни высокий балл этого не компенсируют."
+          description={
+            isVacancy
+              ? 'Только навыки, которые проверяются заданиями теста. Откликнуться можно и без них, но работодатель увидит, что обязательный навык не подтверждён, а оценка соответствия не будет рассчитана.'
+              : 'Только навыки, которые проверяются заданиями теста этой специализации. Кандидат без подтверждения любого из них в подборку не попадёт — ни ФСП, ни высокий балл этого не компенсируют.'
+          }
         />
         <ChoiceGroup
           legend="Должны быть подтверждены тестом"
@@ -159,7 +177,11 @@ export function NeedForm({ initial, submitLabel, loading, serverError, onSubmit 
       <Card>
         <CardHeader
           title="Желательные навыки"
-          description="Влияют на порядок в подборке (70% формулы). Для каждого навыка выберите, достаточно ли самоописания кандидата."
+          description={
+            isVacancy
+              ? 'Влияют на оценку соответствия откликов (70% формулы). Для каждого навыка выберите, достаточно ли самоописания кандидата.'
+              : 'Влияют на порядок в подборке (70% формулы). Для каждого навыка выберите, достаточно ли самоописания кандидата.'
+          }
         />
         {preferred.length ? (
           <ul className="mb-4 space-y-2">
@@ -223,7 +245,7 @@ export function NeedForm({ initial, submitLabel, loading, serverError, onSubmit 
               {(props) => <Input inputMode="numeric" {...props} value={salaryTo} onChange={(e) => setSalaryTo(e.target.value.replace(/\D/g, ''))} />}
             </Field>
           </div>
-          {initial?.status !== 'ARCHIVED' ? (
+          {initial?.status !== 'ARCHIVED' && !hideStatus ? (
             <ChoiceGroup
               legend="Статус"
               name="status"
@@ -231,7 +253,7 @@ export function NeedForm({ initial, submitLabel, loading, serverError, onSubmit 
               value={[status]}
               onChange={(next) => setStatus(next[0] as 'DRAFT' | 'ACTIVE')}
               options={[
-                { value: 'ACTIVE', label: 'Активна' },
+                { value: 'ACTIVE', label: isVacancy ? 'Опубликовать сразу' : 'Активна' },
                 { value: 'DRAFT', label: 'Черновик' },
               ]}
             />

@@ -1,0 +1,128 @@
+[
+  {
+    "id": "hand-1-hh-ru",
+    "description": "Русский резюме в стиле job-сайта: контакты в шапке, явная фраза о стаже, навыки в тексте",
+    "text": "Лебедев Артём Викторович\nМужчина, 29 лет, родился 14 марта 1997\n+7 (916) 222-33-44 — предпочитаемый способ связи\na.lebedev@mailbox.example\nПроживает: Москва\n\nЖелаемая должность\nPython-разработчик\n\nОпыт работы 4 года 7 месяцев\nОктябрь 2022 — настоящее время\nООО «Сервис доставки»\nBackend-разработчик. Разрабатывал REST API на Python и Django, хранение в PostgreSQL, кэширование в Redis, развёртывание в Docker.\nИюнь 2021 — сентябрь 2022\nСтудия «Код»\nРазработчик. Поддержка внутренних сервисов, работа с Git.",
+    "expected": {
+      "fullName": "Лебедев Артём Викторович",
+      "email": "a.lebedev@mailbox.example",
+      "phone": "+7 916 222-33-44",
+      "city": "Москва",
+      "experienceMonths": 55,
+      "specialization": "BACKEND",
+      "skills": [
+        "python",
+        "django",
+        "postgresql",
+        "redis",
+        "docker",
+        "git",
+        "rest-api"
+      ]
+    }
+  },
+  {
+    "id": "hand-2-english-qa",
+    "description": "Английское резюме QA, месяцы словами, город по-английски",
+    "text": "Anna Orlova\nSenior QA Engineer\nEmail: anna.orlova@example.org\nPhone: +7 903 777-88-99\nLocation: Kazan\n\nExperience\nMar 2016 – Jan 2019  QA Engineer, Retail Systems\nFeb 2019 – Present  Senior QA Engineer, Fintech Lab\nWrote test cases, test design, filed bug reports in Jira, API checks in Postman, test runs in TestRail, Chrome DevTools.\n\nSkills\nJira, SQL, Postman, TestRail",
+    "expected": {
+      "fullName": "Anna Orlova",
+      "email": "anna.orlova@example.org",
+      "phone": "+7 903 777-88-99",
+      "city": "Казань",
+      "experienceMonths": 128,
+      "specialization": "MANUAL_QA",
+      "grade": "SENIOR",
+      "skills": [
+        "jira",
+        "sql",
+        "api-testing",
+        "test-management",
+        "test-design",
+        "bug-reporting",
+        "web-testing"
+      ]
+    }
+  },
+  {
+    "id": "hand-3-one-liner",
+    "description": "Минимальное резюме в три строки, имя и должность через запятую",
+    "text": "Козлов Иван, ML-инженер\nivan.kozlov@example.org, +79031234567, Telegram @kozlov_ml\nPython, pandas, scikit-learn, PyTorch, SQL. Опыт: 2 года.",
+    "expected": {
+      "fullName": "Козлов Иван",
+      "email": "ivan.kozlov@example.org",
+      "phone": "+7 903 123-45-67",
+      "messenger": "@kozlov_ml",
+      "experienceMonths": 24,
+      "specialization": "ML_ENGINEER",
+      "skills": [
+        "python",
+        "pandas",
+        "scikit-learn",
+        "pytorch",
+        "sql"
+      ]
+    }
+  },
+  {
+    "id": "hand-4-contacts-at-bottom",
+    "description": "Контакты и ФИО в конце документа, период работы словами «с … года по настоящее время»",
+    "text": "Fullstack-разработчик, React + Node.js\nОпыт: с 2018 года по настоящее время\nДелаю интерфейсы на React и TypeScript и серверную часть на Node.js, база — PostgreSQL, окружение — Docker.\nКонтакты: Дмитрий Новиков, dnovikov@example.com, +7 925 000-11-22, г. Новосибирск",
+    "expected": {
+      "fullName": "Дмитрий Новиков",
+      "email": "dnovikov@example.com",
+      "phone": "+7 925 000-11-22",
+      "city": "Новосибирск",
+      "experienceMonths": 105,
+      "skills": [
+        "react",
+        "typescript",
+        "nodejs",
+        "postgresql",
+        "docker"
+      ]
+    }
+  },
+  {
+    "id": "hand-5-junior-caps",
+    "description": "Имя заглавными, стажёр, учёба с датами (не должна считаться стажем), навыки в строке с меткой",
+    "text": "ВОРОБЬЁВА ЕЛЕНА\nJunior Frontend-разработчик\nEmail: elena.vorobyova@example.org\nТел: 8 (913) 111-22-33\nГород: Томск\nОпыт работы\nСтажёр, ООО «Веб-студия», июль 2025 – настоящее время\nВерстка на HTML/CSS и JavaScript, знакомство с React.\nОбразование\nНИ ТГУ, 2021 – 2025, бакалавр\nНавыки: HTML/CSS, JavaScript, React, Git, Figma",
+    "expected": {
+      "fullName": "Воробьёва Елена",
+      "email": "elena.vorobyova@example.org",
+      "phone": "+7 913 111-22-33",
+      "city": "Томск",
+      "experienceMonths": 16,
+      "specialization": "FRONTEND",
+      "grade": "JUNIOR",
+      "skills": [
+        "html-css",
+        "javascript",
+        "react",
+        "git"
+      ]
+    }
+  },
+  {
+    "id": "hand-6-no-sections",
+    "description": "Без разделов: периоды «с мая 2020 по август 2023», мессенджер ссылкой t.me",
+    "text": "Резюме\nСидорова Анна Петровна\nData Scientist\nМосква, готова к удалённой работе\nanna.sidorova@example.net\nTelegram: t.me/anna_ds\nс мая 2020 по август 2023 — Data Scientist, банк\nс сентября 2023 по настоящее время — Senior Data Scientist, ритейл\nPython, SQL, PyTorch, pandas, XGBoost, MLflow, Airflow.",
+    "expected": {
+      "fullName": "Сидорова Анна Петровна",
+      "email": "anna.sidorova@example.net",
+      "messenger": "@anna_ds",
+      "city": "Москва",
+      "experienceMonths": 78,
+      "specialization": "ML_ENGINEER",
+      "skills": [
+        "python",
+        "sql",
+        "pytorch",
+        "pandas",
+        "gradient-boosting",
+        "mlflow",
+        "airflow"
+      ]
+    }
+  }
+]

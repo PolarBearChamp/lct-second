@@ -77,6 +77,44 @@ enum InvitationStatus {
   EXPIRED
 }
 
+enum VacancyStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+enum ApplicationStatus {
+  SENT
+  VIEWED
+  SHORTLISTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ShortTaskKind {
+  QUIZ
+  APPROACH
+}
+
+enum ShortTaskStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+}
+
+enum TaskAssignmentStatus {
+  OFFERED
+  SUBMITTED
+  SKIPPED
+  EXPIRED
+}
+
+enum TaskVerdict {
+  STRONG
+  ACCEPTABLE
+  WEAK
+}
+
 enum FspLinkState {
   LINKED_WITH_HISTORY
   LINKED_WITHOUT_HISTORY
@@ -158,6 +196,8 @@ model Specialization {
   qualifications CandidateQualification[]
   attempts       AssessmentAttempt[]
   needs          HiringNeed[]
+  vacancies      Vacancy[]
+  shortTasks     ShortTask[]
 }
 
 model CompetencyGroup {
@@ -223,6 +263,8 @@ model CandidateProfile {
   attempts             AssessmentAttempt[]
   invitations          Invitation[]
   contactGrants        ContactAccessGrant[]
+  applications         Application[]
+  taskAssignments      TaskAssignment[]
   fspLink              FspLink?
   fspAchievements      FspAchievement[]
   bookmarks            CandidateBookmark[]
@@ -387,6 +429,9 @@ model Company {
   bookmarks     CandidateBookmark[]
   invitations   Invitation[]
   contactGrants ContactAccessGrant[]
+  vacancies     Vacancy[]
+  applications  Application[]
+  shortTasks    ShortTask[]
 }
 
 model HiringNeed {
@@ -413,6 +458,7 @@ model HiringNeed {
   specialization Specialization @relation(fields: [specializationCode], references: [code])
   selectionRuns  SelectionRun[]
   invitations    Invitation[]
+  vacancies      Vacancy[]
 
   @@index([companyId, status])
 }
@@ -522,20 +568,99 @@ model InvitationEvent {
 }
 
 model ContactAccessGrant {
-  id                 String           @id @default(uuid()) @db.Uuid
-  candidateId        String           @db.Uuid
-  companyId          String           @db.Uuid
+  id                  String           @id @default(uuid()) @db.Uuid
+  candidateId         String           @db.Uuid
+  companyId           String           @db.Uuid
   /// Каналы связи, которые кандидат согласился раскрыть этой компании.
-  channels           ContactChannel[]
-  grantedAt          DateTime         @db.Timestamptz(3)
-  revokedAt          DateTime?        @db.Timestamptz(3)
-  sourceInvitationId String           @db.Uuid
+  channels            ContactChannel[]
+  grantedAt           DateTime         @db.Timestamptz(3)
+  revokedAt           DateTime?        @db.Timestamptz(3)
+  /// Приглашение, принятием которого выдан доступ (ровно один из двух источников — см. CHECK в миграции).
+  sourceInvitationId  String?          @db.Uuid
+  /// Самостоятельный отклик кандидата, которым выдан доступ.
+  sourceApplicationId String?          @db.Uuid
 
   candidate CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   company   Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@unique([candidateId, companyId])
   @@index([companyId])
+}
+
+// ───────────────────────────── Вакансии и отклики ─────────────────────────────
+
+/// Публикуемая вакансия компании. Требования — те же, что у потребности (структурированные), поэтому отклик оценивается тем же правилом подбора.
+/// Зарплатная вилка обязательна. Правки создают новую версию; уже поданные отклики хранят снимок вакансии.
+model Vacancy {
+  id                 String        @id @default(uuid()) @db.Uuid
+  companyId          String        @db.Uuid
+  /// Потребность, из которой создана вакансия (необязательно; связь информационная).
+  needId             String?       @db.Uuid
+  title              String
+  description        String
+  specializationCode String
+  allowedGrades      Grade[]
+  requiredSkills     String[]
+  preferredSkills    Json
+  workFormat         WorkFormat
+  city               String?
+  salaryFrom         Int
+  salaryTo           Int
+  status             VacancyStatus @default(DRAFT)
+  version            Int           @default(1)
+  publishedAt        DateTime?     @db.Timestamptz(3)
+  closedAt           DateTime?     @db.Timestamptz(3)
+  createdAt          DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime      @updatedAt @db.Timestamptz(3)
+
+  company        Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  need           HiringNeed?    @relation(fields: [needId], references: [id], onDelete: SetNull)
+  specialization Specialization @relation(fields: [specializationCode], references: [code])
+  applications   Application[]
+
+  @@index([companyId, status])
+  @@index([status, specializationCode, publishedAt])
+}
+
+/// Самостоятельный отклик кандидата на вакансию. Отклик — явное согласие раскрыть выбранные контакты этой компании (ContactAccessGrant).
+model Application {
+  id              String            @id @default(uuid()) @db.Uuid
+  vacancyId       String            @db.Uuid
+  candidateId     String            @db.Uuid
+  companyId       String            @db.Uuid
+  status          ApplicationStatus @default(SENT)
+  /// Сопроводительное сообщение кандидата (необязательно; видно компании, получившей отклик).
+  coverNote       String?
+  /// Снимок вакансии и компании на момент отклика: правки и закрытие вакансии историю не меняют.
+  vacancySnapshot Json
+  vacancyVersion  Int
+  createdAt       DateTime          @db.Timestamptz(3)
+  viewedAt        DateTime?         @db.Timestamptz(3)
+  decidedAt       DateTime?         @db.Timestamptz(3)
+  withdrawnAt     DateTime?         @db.Timestamptz(3)
+
+  vacancy   Vacancy            @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+  candidate CandidateProfile   @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  company   Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  events    ApplicationEvent[]
+
+  @@index([candidateId, status])
+  @@index([vacancyId, status, createdAt])
+  @@index([companyId, status])
+}
+
+model ApplicationEvent {
+  id            String             @id @default(uuid()) @db.Uuid
+  applicationId String             @db.Uuid
+  actorUserId   String?            @db.Uuid
+  fromStatus    ApplicationStatus?
+  toStatus      ApplicationStatus
+  occurredAt    DateTime           @db.Timestamptz(3)
+  metadata      Json?
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId, occurredAt])
 }
 
 // ───────────────────────────── ФСП (демонстрационная интеграция) ─────────────────────────────
@@ -606,4 +731,59 @@ model AuditEvent {
 
   @@index([actorUserId, occurredAt])
   @@index([objectType, objectId])
+}
+
+/// Короткое задание работодателя (регулярная практика кандидатов). Опубликованное задание не редактируется: ответы оцениваются по одному условию.
+model ShortTask {
+  id                 String          @id @default(uuid()) @db.Uuid
+  companyId          String          @db.Uuid
+  title              String
+  prompt             String
+  specializationCode String
+  /// Пусто — задание подходит любому подтверждённому грейду специализации.
+  allowedGrades      Grade[]
+  kind               ShortTaskKind
+  /// Только QUIZ: варианты ответа (2–6) и индекс верного. Верный ответ не отдаётся кандидату до отправки ответа.
+  options            String[]
+  correctIndex       Int?
+  explanation        String?
+  status             ShortTaskStatus @default(DRAFT)
+  publishedAt        DateTime?       @db.Timestamptz(3)
+  closedAt           DateTime?       @db.Timestamptz(3)
+  /// Срок приёма ответов (необязательно); после него предложения по заданию истекают.
+  deadlineAt         DateTime?       @db.Timestamptz(3)
+  createdAt          DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime        @updatedAt @db.Timestamptz(3)
+
+  company        Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  specialization Specialization   @relation(fields: [specializationCode], references: [code])
+  assignments    TaskAssignment[]
+
+  @@index([companyId, status])
+  @@index([status, specializationCode, publishedAt])
+}
+
+/// Предложение задания конкретному кандидату и его ответ. Не чаще одного задания в неделю; не более одного неотвеченного за раз.
+model TaskAssignment {
+  id            String               @id @default(uuid()) @db.Uuid
+  taskId        String               @db.Uuid
+  candidateId   String               @db.Uuid
+  status        TaskAssignmentStatus @default(OFFERED)
+  offeredAt     DateTime             @db.Timestamptz(3)
+  dueAt         DateTime             @db.Timestamptz(3)
+  answerText    String?
+  selectedIndex Int?
+  isCorrect     Boolean?
+  submittedAt   DateTime?            @db.Timestamptz(3)
+  skippedAt     DateTime?            @db.Timestamptz(3)
+  verdict       TaskVerdict?
+  reviewComment String?
+  reviewedAt    DateTime?            @db.Timestamptz(3)
+
+  task      ShortTask        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  candidate CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, candidateId])
+  @@index([candidateId, offeredAt])
+  @@index([taskId, status, submittedAt])
 }

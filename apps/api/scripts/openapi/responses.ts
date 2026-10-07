@@ -54,6 +54,7 @@ export const RESPONSES: Record<string, ResponseSpec> = {
   'PUT /candidate/survey': ok(obj({ survey: obj({ version: str, answers: { type: 'object', additionalProperties: true }, completedAt: str }), recommendation: ref('SurveyRecommendation') })),
   'PUT /candidate/consents': ok(ref('OwnProfileResponse')),
   'GET /candidate/qualifications': ok(ref('QualificationsResponse')),
+  'POST /candidate/profile/resume': ok(ref('ResumeAnalysisResponse'), 'Предложения для профиля по PDF-резюме (файл не сохраняется, ничего не применено)'),
   'GET /candidate/profile/pdf': pdf('PDF собственного профиля (вложение, Cache-Control: private, no-store)'),
 
   'GET /candidate/assessments/eligibility': ok(ref('EligibilityResponse')),
@@ -101,6 +102,39 @@ export const RESPONSES: Record<string, ResponseSpec> = {
   'GET /employer/invitations': ok(paginated(ref('EmployerInvitationItem'))),
   'GET /employer/invitations/{id}': ok(ref('EmployerInvitationDetail')),
   'POST /employer/invitations/{id}/withdraw': ok(ref('EmployerInvitationDetail')),
+
+  'POST /employer/vacancies': created(ref('EmployerVacancyView'), 'Вакансия создана (черновик или опубликована)'),
+  'GET /employer/vacancies': ok(arrayOf(ref('EmployerVacancyView'))),
+  'GET /employer/vacancies/{id}': ok(ref('EmployerVacancyView')),
+  'PATCH /employer/vacancies/{id}': ok(ref('EmployerVacancyView')),
+  'POST /employer/vacancies/{id}/publish': ok(ref('EmployerVacancyView')),
+  'POST /employer/vacancies/{id}/close': ok(ref('EmployerVacancyView')),
+  'GET /employer/vacancies/{id}/applications': ok(ref('EmployerApplicationList')),
+  'GET /employer/applications/{id}': ok(ref('EmployerApplicationDetail')),
+  'POST /employer/applications/{id}/view': ok(ref('EmployerApplicationDetail')),
+  'POST /employer/applications/{id}/shortlist': ok(ref('EmployerApplicationDetail')),
+  'POST /employer/applications/{id}/reject': ok(ref('EmployerApplicationDetail')),
+
+  'GET /candidate/vacancies': ok(paginated(ref('CandidateVacancyItem'))),
+  'GET /candidate/vacancies/{id}': ok(ref('CandidateVacancyDetail')),
+  'POST /candidate/vacancies/{id}/applications': created(ref('CandidateApplicationDetail'), 'Отклик отправлен, выбранные контакты раскрыты этой компании'),
+  'GET /candidate/applications': ok(paginated(ref('ApplicationBase'))),
+  'GET /candidate/applications/{id}': ok(ref('CandidateApplicationDetail')),
+  'POST /candidate/applications/{id}/withdraw': ok(ref('CandidateApplicationDetail')),
+
+  'POST /employer/tasks': created(ref('EmployerTaskView'), 'Задание создано (черновик или активно)'),
+  'GET /employer/tasks': ok(arrayOf(ref('EmployerTaskView'))),
+  'GET /employer/tasks/{id}': ok(ref('EmployerTaskView')),
+  'PATCH /employer/tasks/{id}': ok(ref('EmployerTaskView')),
+  'POST /employer/tasks/{id}/publish': ok(ref('EmployerTaskView')),
+  'POST /employer/tasks/{id}/close': ok(ref('EmployerTaskView')),
+  'GET /employer/tasks/{id}/submissions': ok(ref('TaskSubmissionsResponse')),
+  'POST /employer/task-submissions/{id}/review': ok(ref('TaskSubmissionItem')),
+
+  'GET /candidate/tasks': ok(ref('CandidateTasksResponse')),
+  'GET /candidate/tasks/{id}': ok(ref('CandidateTaskView')),
+  'POST /candidate/tasks/{id}/submit': ok(ref('CandidateTaskView')),
+  'POST /candidate/tasks/{id}/skip': ok(ref('CandidateTaskView')),
 };
 
 // ───────────────────────────── Схемы из контрактов ─────────────────────────────

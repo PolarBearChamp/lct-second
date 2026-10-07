@@ -24,6 +24,24 @@ export type AttemptStatus = (typeof ATTEMPT_STATUSES)[number];
 export const INVITATION_STATUSES = ['SENT', 'VIEWED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN', 'EXPIRED'] as const;
 export type InvitationStatus = (typeof INVITATION_STATUSES)[number];
 
+export const VACANCY_STATUSES = ['DRAFT', 'PUBLISHED', 'CLOSED'] as const;
+export type VacancyStatus = (typeof VACANCY_STATUSES)[number];
+
+export const APPLICATION_STATUSES = ['SENT', 'VIEWED', 'SHORTLISTED', 'REJECTED', 'WITHDRAWN'] as const;
+export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
+
+export const SHORT_TASK_KINDS = ['QUIZ', 'APPROACH'] as const;
+export type ShortTaskKind = (typeof SHORT_TASK_KINDS)[number];
+
+export const SHORT_TASK_STATUSES = ['DRAFT', 'ACTIVE', 'CLOSED'] as const;
+export type ShortTaskStatus = (typeof SHORT_TASK_STATUSES)[number];
+
+export const TASK_ASSIGNMENT_STATUSES = ['OFFERED', 'SUBMITTED', 'SKIPPED', 'EXPIRED'] as const;
+export type TaskAssignmentStatus = (typeof TASK_ASSIGNMENT_STATUSES)[number];
+
+export const TASK_VERDICTS = ['STRONG', 'ACCEPTABLE', 'WEAK'] as const;
+export type TaskVerdict = (typeof TASK_VERDICTS)[number];
+
 export const HIRING_NEED_STATUSES = ['DRAFT', 'ACTIVE', 'ARCHIVED'] as const;
 export type HiringNeedStatus = (typeof HIRING_NEED_STATUSES)[number];
 

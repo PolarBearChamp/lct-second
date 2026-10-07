@@ -4,7 +4,8 @@ import Ajv, { type ValidateFunction } from 'ajv';
 import { toJsonSchemaDraft7 } from '../scripts/openapi/responses';
 import { createTestApp, resetDatabase, type TestContext } from './helpers/app';
 import { Client } from './helpers/client';
-import { createCandidate, createEmployer, defaultNeed, fillProfile, invitationBody, publish, startAttempt, submitAttempt, uniqueEmail } from './helpers/factories';
+import { makeResumePdf } from './helpers/resume-pdf';
+import { approachBody, createCandidate, createEmployer, defaultNeed, fillProfile, invitationBody, publish, startAttempt, submitAttempt, taskBody, uniqueEmail, vacancyBody } from './helpers/factories';
 
 /**
  * Контрактный тест: реальные ответы API проверяются по схемам из docs/openapi.json (тот же документ строится здесь заново).
@@ -85,6 +86,8 @@ describe('OpenAPI: ответы API соответствуют описанию'
     await fillProfile(client);
     checked('GET /candidate/profile', await client.get('/candidate/profile'), 200);
     checked('PATCH /candidate/profile', await client.patch('/candidate/profile', { city: 'Казань' }), 200);
+    const resumePdf = await makeResumePdf(['Иванов Пётр Сергеевич', 'Backend-разработчик', 'Email: petr.ivanov@resume-test.example', 'Навыки: Node.js, PostgreSQL']);
+    checked('POST /candidate/profile/resume', await client.post('/candidate/profile/resume', resumePdf, { 'Content-Type': 'application/pdf' }), 200);
     checked('GET /candidate/assessments/eligibility', await client.get('/candidate/assessments/eligibility?specialization=BACKEND'), 200);
     const started = checked('POST /candidate/assessments', await startAttempt(client, 'BACKEND', 'MIDDLE'), 201);
     const attemptId = started.body.id as string;
@@ -173,6 +176,88 @@ describe('OpenAPI: ответы API соответствуют описанию'
     checked('POST /candidate/invitations/{id}/decline', await cc.post(`/candidate/invitations/${second.body.id}/decline`, {}), 200);
     const third = await other.client.post('/employer/invitations', invitationBody(candidate.candidateId));
     checked('POST /employer/invitations/{id}/withdraw', await other.client.post(`/employer/invitations/${third.body.id}/withdraw`), 200);
+  }, 120_000);
+
+  it('вакансии и отклики: работодатель публикует вакансию и работает с откликами, кандидат откликается и отзывает отклик', async () => {
+    const candidate = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
+    const second = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'JUNIOR' });
+    const employer = await createEmployer(ctx);
+    const ec = employer.client;
+    const cc = candidate.client;
+
+    const need = await ec.post('/employer/needs', defaultNeed());
+    const vacancy = checked('POST /employer/vacancies', await ec.post('/employer/vacancies', vacancyBody({ needId: need.body.id, publish: false })), 201);
+    const vacancyId = vacancy.body.id as string;
+    checked('GET /employer/vacancies', await ec.get('/employer/vacancies'), 200);
+    checked('GET /employer/vacancies/{id}', await ec.get(`/employer/vacancies/${vacancyId}`), 200);
+    checked('PATCH /employer/vacancies/{id}', await ec.patch(`/employer/vacancies/${vacancyId}`, { title: 'Backend (обновлено)' }), 200);
+    checked('POST /employer/vacancies/{id}/publish', await ec.post(`/employer/vacancies/${vacancyId}/publish`), 200);
+
+    checked('GET /candidate/vacancies', await cc.get('/candidate/vacancies'), 200);
+    checked('GET /candidate/vacancies/{id}', await cc.get(`/candidate/vacancies/${vacancyId}`), 200);
+    const application = checked('POST /candidate/vacancies/{id}/applications', await cc.post(`/candidate/vacancies/${vacancyId}/applications`, { confirmDisclosure: true, coverNote: 'Готов обсудить условия.' }), 201);
+    const applicationId = application.body.id as string;
+    checked('GET /candidate/applications', await cc.get('/candidate/applications'), 200);
+    checked('GET /candidate/applications/{id}', await cc.get(`/candidate/applications/${applicationId}`), 200);
+
+    checked('GET /employer/vacancies/{id}/applications', await ec.get(`/employer/vacancies/${vacancyId}/applications`), 200);
+    checked('GET /employer/applications/{id}', await ec.get(`/employer/applications/${applicationId}`), 200);
+    checked('POST /employer/applications/{id}/view', await ec.post(`/employer/applications/${applicationId}/view`), 200);
+    checked('POST /employer/applications/{id}/shortlist', await ec.post(`/employer/applications/${applicationId}/shortlist`), 200);
+
+    // Отказ и отзыв — на втором отклике; граничные ответы с описанным телом ошибки.
+    const other = await second.client.post(`/candidate/vacancies/${vacancyId}/applications`, { confirmDisclosure: true });
+    expect(other.status).toBe(201);
+    checked('POST /employer/applications/{id}/reject', await ec.post(`/employer/applications/${other.body.id}/reject`), 200);
+    const third = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
+    const withdrawable = await third.client.post(`/candidate/vacancies/${vacancyId}/applications`, { confirmDisclosure: true });
+    checked('POST /candidate/applications/{id}/withdraw', await third.client.post(`/candidate/applications/${withdrawable.body.id}/withdraw`, { revokeContactAccess: true }), 200);
+    checked('POST /employer/vacancies/{id}/close', await ec.post(`/employer/vacancies/${vacancyId}/close`), 200);
+
+    const duplicate = await cc.post(`/candidate/vacancies/${vacancyId}/applications`, { confirmDisclosure: true });
+    expect(duplicate.status).toBe(409);
+    conforms('POST /candidate/vacancies/{id}/applications', duplicate);
+  }, 120_000);
+
+  it('короткие задания: кабинет работодателя и кандидата', async () => {
+    const employer = await createEmployer(ctx);
+    const ec = employer.client;
+    const draft = checked('POST /employer/tasks', await ec.post('/employer/tasks', taskBody({ publish: false })), 201);
+    checked('GET /employer/tasks', await ec.get('/employer/tasks'), 200);
+    checked('GET /employer/tasks/{id}', await ec.get(`/employer/tasks/${draft.body.id}`), 200);
+    checked('PATCH /employer/tasks/{id}', await ec.patch(`/employer/tasks/${draft.body.id}`, { title: 'Идемпотентность запросов (правка)' }), 200);
+    checked('POST /employer/tasks/{id}/publish', await ec.post(`/employer/tasks/${draft.body.id}/publish`), 200);
+    const approach = await ec.post('/employer/tasks', approachBody());
+    expect(approach.status).toBe(201);
+
+    const person = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
+    const second = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
+    const cc = person.client;
+    const overview = checked('GET /candidate/tasks', await cc.get('/candidate/tasks'), 200);
+    const offer = overview.body.current as { id: string; task: { kind: string } };
+    const otherOverview = await second.client.get('/candidate/tasks');
+    const otherOffer = otherOverview.body.current as { id: string; task: { kind: string } };
+    expect([offer.task.kind, otherOffer.task.kind].sort()).toEqual(['APPROACH', 'QUIZ']);
+    const quizTaker = offer.task.kind === 'QUIZ' ? cc : second.client;
+    const quizOffer = offer.task.kind === 'QUIZ' ? offer : otherOffer;
+    const approachTaker = offer.task.kind === 'QUIZ' ? second.client : cc;
+    const approachOffer = offer.task.kind === 'QUIZ' ? otherOffer : offer;
+
+    checked('GET /candidate/tasks/{id}', await quizTaker.get(`/candidate/tasks/${quizOffer.id}`), 200);
+    checked('POST /candidate/tasks/{id}/submit', await quizTaker.post(`/candidate/tasks/${quizOffer.id}/submit`, { selectedIndex: 1 }), 200);
+    const repeated = await quizTaker.post(`/candidate/tasks/${quizOffer.id}/submit`, { selectedIndex: 1 });
+    expect(repeated.status).toBe(409);
+    conforms('POST /candidate/tasks/{id}/submit', repeated);
+    await approachTaker.post(`/candidate/tasks/${approachOffer.id}/submit`, { answerText: 'Сначала посмотрю план выполнения запроса и наличие нужных индексов.' });
+
+    const submissions = checked('GET /employer/tasks/{id}/submissions', await ec.get(`/employer/tasks/${approach.body.id}/submissions`), 200);
+    checked('POST /employer/task-submissions/{id}/review', await ec.post(`/employer/task-submissions/${submissions.body.items[0].id}/review`, { verdict: 'STRONG', comment: 'Хорошо' }), 200);
+    checked('GET /employer/tasks/{id}/submissions', await ec.get(`/employer/tasks/${draft.body.id}/submissions`), 200);
+
+    const skipTarget = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
+    const skipOffer = (await skipTarget.client.get('/candidate/tasks')).body.current as { id: string };
+    checked('POST /candidate/tasks/{id}/skip', await skipTarget.client.post(`/candidate/tasks/${skipOffer.id}/skip`), 200);
+    checked('POST /employer/tasks/{id}/close', await ec.post(`/employer/tasks/${draft.body.id}/close`), 200);
   }, 120_000);
 
   it('ошибки имеют единый формат ApiErrorBody', async () => {

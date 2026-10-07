@@ -139,6 +139,37 @@ export function CandidateDashboard() {
         </Card>
 
         <Card>
+          <CardHeader
+            title="Вакансии и отклики"
+            actions={
+              <LinkButton href="/candidate/vacancies" variant="outline" size="sm">
+                Вакансии
+              </LinkButton>
+            }
+          />
+          <p className="text-muted">
+            Не дожидайтесь приглашений: в общем списке вакансий зарплата видна до отклика. Отклик раскрывает выбранные контакты только этой компании.
+          </p>
+          <LinkButton href="/candidate/applications" variant="outline" size="sm" className="mt-3">
+            Мои отклики
+          </LinkButton>
+        </Card>
+
+        <Card>
+          <CardHeader
+            title="Короткие задания"
+            actions={
+              <LinkButton href="/candidate/tasks" variant="outline" size="sm">
+                Открыть
+              </LinkButton>
+            }
+          />
+          <p className="text-muted">
+            Раз в неделю работодатель может предложить задание на 5–10 минут по вашей специализации. Это регулярная практика: грейд и подбор она не меняет.
+          </p>
+        </Card>
+
+        <Card>
           <CardHeader title="Приглашения" />
           {candidate.newInvitations > 0 ? (
             <Alert

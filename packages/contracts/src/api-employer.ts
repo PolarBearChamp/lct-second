@@ -85,7 +85,10 @@ export interface ContactAccessItem {
   grantedAt: string;
   revokedAt: string | null;
   active: boolean;
-  sourceInvitationId: string;
+  /** Принятое приглашение, которым выдан доступ (null — доступ выдан самостоятельным откликом). */
+  sourceInvitationId: string | null;
+  /** Отклик на вакансию, которым выдан доступ (null — доступ выдан принятием приглашения). */
+  sourceApplicationId: string | null;
 }
 
 // ───────────────────────────── ФСП ─────────────────────────────
