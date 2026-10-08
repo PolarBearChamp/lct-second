@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ExplanationPanel } from '@/components/employer/explanation-panel';
+import { CompanyVerifiedBadge } from '@/components/employer/company-verification';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button, LinkButton } from '@/components/ui/button';
@@ -131,7 +132,15 @@ export function CandidateVacancyView({ id }: { id: string }) {
             <CardHeader as="h3" title="Компания" />
             <DefinitionList
               items={[
-                { term: 'Название', value: v.company.name },
+                {
+                  term: 'Название',
+                  value: (
+                    <span className="flex flex-wrap items-center gap-2">
+                      {v.company.name}
+                      <CompanyVerifiedBadge verified={v.company.verified} />
+                    </span>
+                  ),
+                },
                 { term: 'Отрасль', value: v.company.industryTitle ?? '—' },
                 {
                   term: 'Сайт',

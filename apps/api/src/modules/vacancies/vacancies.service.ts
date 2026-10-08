@@ -245,7 +245,7 @@ export class VacanciesService {
       ...this.baseCandidateView(vacancy, vacancy.company),
       description: vacancy.description,
       preferredSkills: vacancyRequirements(vacancy).preferredSkills,
-      company: { ...companySnapshotOf(vacancy.company), verified: false as const },
+      company: { ...companySnapshotOf(vacancy.company), verified: vacancy.company.verificationStatus === 'VERIFIED' },
       status: vacancy.status,
       myApplication: application ? { id: application.id, status: application.status } : null,
       fit,
@@ -373,6 +373,7 @@ export class VacanciesService {
       title: vacancy.title,
       companyName: company.name,
       companyIndustry: companySnapshotOf(company).industryTitle,
+      companyVerified: company.verificationStatus === 'VERIFIED',
       ...requirements,
       publishedAt: vacancy.publishedAt?.toISOString() ?? null,
     };

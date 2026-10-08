@@ -1,5 +1,5 @@
 import { ConfigValidationError, parseEnv } from './env';
-import { getAssessmentPolicy, getInvitationPolicy, getMatchingFormula } from './policies';
+import { formatCooldown, getAssessmentPolicy, getInvitationPolicy, getMatchingFormula } from './policies';
 
 const valid = {
   NODE_ENV: 'development',
@@ -15,7 +15,7 @@ describe('конфигурация окружения', () => {
     const env = parseEnv(valid);
     expect(env.PORT).toBe(3001);
     expect(env.SESSION_COOKIE_SECURE).toBe(false);
-    expect(env.ASSESSMENT_POLICY_VERSION).toBe('assessment-policy-v1');
+    expect(env.ASSESSMENT_POLICY_VERSION).toBe('assessment-policy-v2');
   });
 
   it('в production cookie по умолчанию Secure, локально по HTTP можно выключить явно', () => {
@@ -58,6 +58,14 @@ describe('версионируемые политики', () => {
       reassessmentDays: 90,
       skillEvidence: { minCases: 2, minScore: 70 },
     });
+    // v2 отличается только сроком повтора того же уровня: 30 дней вместо 24 часов.
+    const { version: _v1, retryCooldownHours: v1Retry, ...v1Rest } = getAssessmentPolicy('assessment-policy-v1');
+    const { version: _v2, retryCooldownHours: v2Retry, ...v2Rest } = getAssessmentPolicy('assessment-policy-v2');
+    expect(v2Rest).toEqual(v1Rest);
+    expect([v1Retry, v2Retry]).toEqual([24, 720]);
+    expect(formatCooldown(720)).toBe('30 дней');
+    expect(formatCooldown(24)).toBe('1 день');
+    expect(formatCooldown(5)).toBe('5 ч');
     expect(getMatchingFormula('matching-formula-v1').needWeights).toEqual({ preferredFit: 70, assessmentQuality: 25, fspEvidence: 5 });
     expect(getInvitationPolicy('invitation-policy-v1').ttlDays).toBe(14);
   });

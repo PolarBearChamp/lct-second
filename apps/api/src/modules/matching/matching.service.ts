@@ -5,12 +5,15 @@ import { PolicyService } from '../../common/policy.service';
 import { getSkill, GRADE_TITLES, isKnownSkill, type GradeCode } from '../../domain/catalog/catalog';
 import { fspEvidence } from '../../domain/matching/fsp-relevance';
 import {
+  isUnconfirmedForSpec,
   mandatoryViolations,
+  unconfirmedViolations,
   MATCHING_ALGORITHM_VERSION,
   paginate,
   rankBank,
   rankForNeed,
   REJECTION_TEXTS,
+  UNCONFIRMED_REJECTION_TEXTS,
   type BankFilters,
   type MatchCandidate,
   type MatchExplanation,
@@ -30,9 +33,14 @@ export interface CandidateSummary {
   alias: string;
   displayName: string;
   specialization: string;
-  grade: GradeCode;
-  gradeTitle: string;
-  overallScore: number;
+  /** Подтверждённый тестом грейд; null — не подтверждён. */
+  grade: GradeCode | null;
+  gradeTitle: string | null;
+  gradeConfirmed: boolean;
+  /** Заявленный кандидатом грейд (самоописание). */
+  declaredGrade: GradeCode | null;
+  declaredGradeTitle: string | null;
+  overallScore: number | null;
   groupScores: Array<{ group: string; title: string; score: number }>;
   verifiedSkills: Array<{ code: string; title: string }>;
   selfReportedSkillsCount: number;
@@ -44,6 +52,8 @@ export interface CandidateSummary {
   bookmarked: boolean;
   activeInvitation: { id: string; status: string } | null;
   hasContactAccess: boolean;
+  /** 16–17 лет: особые условия трудоустройства. */
+  minor: boolean;
 }
 
 @Injectable()
@@ -78,19 +88,24 @@ export class MatchingService {
     const result = new Map<string, CandidateSummary>();
     for (const c of candidates) {
       const q = c.qualification;
-      if (!q) continue;
-      const fsp = fspEvidence(c.fspAchievements, q.specialization, formula);
+      const specialization = q?.specialization ?? c.specialization;
+      if (!specialization) continue;
+      const verified = q?.verifiedSkills ?? [];
+      const fsp = fspEvidence(c.fspAchievements, specialization, formula);
       result.set(c.candidateId, {
         candidateId: c.candidateId,
         alias: c.alias,
         displayName: `Кандидат ${c.alias}`,
-        specialization: q.specialization,
-        grade: q.grade,
-        gradeTitle: GRADE_TITLES[q.grade],
-        overallScore: q.overallScore,
-        groupScores: q.groupScores,
-        verifiedSkills: q.verifiedSkills.map((code) => ({ code, title: getSkill(code)?.title ?? code })),
-        selfReportedSkillsCount: c.selfReportedSkills.filter((s) => !q.verifiedSkills.includes(s)).length,
+        specialization,
+        grade: q?.grade ?? null,
+        gradeTitle: q ? GRADE_TITLES[q.grade] : null,
+        gradeConfirmed: Boolean(q),
+        declaredGrade: c.declaredGrade,
+        declaredGradeTitle: c.declaredGrade ? GRADE_TITLES[c.declaredGrade] : null,
+        overallScore: q?.overallScore ?? null,
+        groupScores: q?.groupScores ?? [],
+        verifiedSkills: verified.map((code) => ({ code, title: getSkill(code)?.title ?? code })),
+        selfReportedSkillsCount: c.selfReportedSkills.filter((s) => !verified.includes(s)).length,
         city: c.city,
         workFormats: c.workFormats,
         salary: c.salary,
@@ -99,6 +114,7 @@ export class MatchingService {
         bookmarked: bookmarked.has(c.candidateId),
         activeInvitation: invitationOf.get(c.candidateId) ?? null,
         hasContactAccess: granted.has(c.candidateId),
+        minor: c.minor,
       });
     }
     return result;
@@ -118,9 +134,10 @@ export class MatchingService {
     const summaries = await this.summaries(company, pageItems.items.map((r) => byId.get(r.candidateId)!));
     return {
       ...pageItems,
-      items: pageItems.items.map((r) => ({ ...summaries.get(r.candidateId)!, bankScore: r.bankScore, category: `${r.specialization}:${r.grade}` })),
+      items: pageItems.items.map((r) => ({ ...summaries.get(r.candidateId)!, bankScore: r.bankScore, category: `${r.specialization}:${r.grade ?? 'UNCONFIRMED'}` })),
       formulaVersion: this.policies.matching.version,
-      sorting: 'Категория (специализация → грейд Senior→Junior), внутри категории: 95·балл теста + 5·бонус ФСП',
+      sorting:
+        'Категория (специализация → подтверждённый грейд Senior→Junior), внутри категории: 95·балл теста + 5·бонус ФСП. Кандидаты без подтверждённого грейда — после подтверждённых своей специализации, без балла (по бонусу ФСП)',
       durationMs: Number(process.hrtime.bigint() - started) / 1e6,
     };
   }
@@ -137,22 +154,38 @@ export class MatchingService {
         select: { id: true, status: true, title: true, createdAt: true, expiresAt: true },
       }),
     ]);
-    let match: { needId: string; needTitle: string; passes: boolean; violations: string[]; score: number | null; explanation: MatchExplanation | null } | null = null;
+    let match: { needId: string; needTitle: string; gradeConfirmed: boolean; passes: boolean; violations: string[]; score: number | null; explanation: MatchExplanation | null } | null = null;
     if (needId) {
       const need = await this.needs.getOwn(company, needId);
       const [candidate] = await this.repository.load({ ids: [candidateId], prefilter: false });
       if (candidate) {
         const spec = needSpecOf(need);
+        if (isUnconfirmedForSpec(candidate, spec.specialization)) {
+          // Без подтверждённого грейда: условия проверяются по заявленным данным, балл не считается, кандидат — после подтверждённых.
+          const soft = unconfirmedViolations(candidate, spec);
+          const tier = rankForNeed([candidate], spec, this.policies.matching).unconfirmed[0];
+          match = {
+            needId: need.id,
+            needTitle: need.title,
+            gradeConfirmed: false,
+            passes: soft.length === 0,
+            violations: soft.map((v: RejectionReason) => UNCONFIRMED_REJECTION_TEXTS[v] ?? REJECTION_TEXTS[v]),
+            score: null,
+            explanation: tier?.explanation ?? null,
+          };
+        } else {
         const violations = mandatoryViolations(candidate, spec);
         const ranked = rankForNeed([candidate], spec, this.policies.matching);
         match = {
           needId: need.id,
           needTitle: need.title,
+          gradeConfirmed: true,
           passes: violations.length === 0,
           violations: violations.map((v: RejectionReason) => REJECTION_TEXTS[v]),
           score: ranked.ranked[0]?.score ?? null,
           explanation: ranked.ranked[0]?.explanation ?? null,
         };
+        }
       }
     }
     if (view.mode === 'EMPLOYER_GRANTED') {
@@ -201,21 +234,35 @@ export class MatchingService {
           createdAt: now,
           totalConsidered: result.considered,
           totalMatched: result.ranked.length,
+          totalUnconfirmed: result.unconfirmed.length,
           rejectionSummary: { reasons: result.rejections, requiredSkills: result.rejectedBySkill } as unknown as Prisma.InputJsonValue,
           durationMs,
         },
       });
-      if (result.ranked.length) {
+      if (result.ranked.length || result.unconfirmed.length) {
         // В снимок попадают только безопасные компоненты и объяснения — без контактов и персональных данных.
+        // Кандидаты без подтверждённого грейда — после всех подтверждённых, без балла.
         await tx.selectionResult.createMany({
-          data: result.ranked.map((r) => ({
-            runId: created.id,
-            candidateId: r.candidateId,
-            rank: r.rank,
-            score: r.score,
-            components: r.explanation.components as unknown as Prisma.InputJsonValue,
-            explanation: r.explanation as unknown as Prisma.InputJsonValue,
-          })),
+          data: [
+            ...result.ranked.map((r) => ({
+              runId: created.id,
+              candidateId: r.candidateId,
+              rank: r.rank,
+              score: r.score,
+              gradeConfirmed: true,
+              components: r.explanation.components as unknown as Prisma.InputJsonValue,
+              explanation: r.explanation as unknown as Prisma.InputJsonValue,
+            })),
+            ...result.unconfirmed.map((r) => ({
+              runId: created.id,
+              candidateId: r.candidateId,
+              rank: r.rank,
+              score: null,
+              gradeConfirmed: false,
+              components: r.explanation.components as unknown as Prisma.InputJsonValue,
+              explanation: r.explanation as unknown as Prisma.InputJsonValue,
+            })),
+          ],
         });
       }
       await this.audit.recordTx(tx, {
@@ -224,7 +271,7 @@ export class MatchingService {
         objectType: 'SelectionRun',
         objectId: created.id,
         requestId,
-        metadata: { needId: need.id, needVersion: need.version, matched: result.ranked.length, formula: formula.version },
+        metadata: { needId: need.id, needVersion: need.version, matched: result.ranked.length, unconfirmed: result.unconfirmed.length, formula: formula.version },
       });
       return created;
     });
@@ -247,6 +294,7 @@ export class MatchingService {
       parentRunId: run.parentRunId,
       totalConsidered: run.totalConsidered,
       totalMatched: run.totalMatched,
+      totalUnconfirmed: run.totalUnconfirmed,
     }));
   }
 
@@ -282,6 +330,7 @@ export class MatchingService {
       createdAt: run.createdAt.toISOString(),
       totalConsidered: run.totalConsidered,
       totalMatched: run.totalMatched,
+      totalUnconfirmed: run.totalUnconfirmed,
       durationMs: run.durationMs,
       emptyReasons:
         run.totalMatched === 0
@@ -297,7 +346,7 @@ export class MatchingService {
       items: results.map((r) => {
         const summary = summaries.get(r.candidateId);
         if (!summary) return { rank: r.rank, unavailable: true as const };
-        return { rank: r.rank, unavailable: false as const, score: r.score, candidate: summary, explanation: r.explanation as unknown as MatchExplanation };
+        return { rank: r.rank, unavailable: false as const, gradeConfirmed: r.gradeConfirmed, score: r.score, candidate: summary, explanation: r.explanation as unknown as MatchExplanation };
       }),
     };
   }

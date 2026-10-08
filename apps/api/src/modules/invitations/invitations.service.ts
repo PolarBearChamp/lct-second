@@ -46,6 +46,11 @@ export class InvitationsService {
     if (!candidate || (!candidate.discoverable && !(grant && !grant.revokedAt))) {
       throw notFound('CANDIDATE_NOT_FOUND', 'Кандидат не найден или недоступен');
     }
+    if (candidate.minor && dto.minorConditionsAcknowledged !== true) {
+      throw unprocessable('MINOR_CONDITIONS_REQUIRED', 'Кандидату 16–17 лет: подтвердите, что знаете об особых условиях труда работников до 18 лет', {
+        fields: { minorConditionsAcknowledged: ['Подтвердите особые условия труда для работника до 18 лет'] },
+      });
+    }
     if (dto.needId) {
       const need = await this.prisma.hiringNeed.findFirst({ where: { id: dto.needId, companyId: company.id } });
       if (!need) throw notFound('NEED_NOT_FOUND', 'Потребность не найдена');
@@ -79,6 +84,7 @@ export class InvitationsService {
             createdAt: now,
             expiresAt: addDays(now, this.policies.invitation.ttlDays),
             createdByUserId: userId,
+            minorConditionsAcknowledged: Boolean(candidate.minor && dto.minorConditionsAcknowledged),
             clientRequestId: idempotencyKey ?? null,
             policyVersion: this.policies.invitation.version,
           },
@@ -207,7 +213,7 @@ export class InvitationsService {
     await this.expireStale({ candidateId, ids: [invitationId] });
     const inv = await this.prisma.invitation.findFirst({
       where: { id: invitationId, candidateId },
-      include: { events: { orderBy: { occurredAt: 'asc' } } },
+      include: { events: { orderBy: { occurredAt: 'asc' } }, company: { select: { verificationStatus: true } } },
     });
     if (!inv) throw notFound('INVITATION_NOT_FOUND', 'Приглашение не найдено');
     const profile = await this.prisma.candidateProfile.findUniqueOrThrow({ where: { id: candidateId } });
@@ -220,7 +226,8 @@ export class InvitationsService {
       employerContactType: inv.employerContactType,
       employerContact: inv.employerContact,
       company: inv.companySnapshot as unknown as CompanySnapshot,
-      companyVerified: false,
+      // Метка доверия — текущее состояние компании (снимок данных компании хранится отдельно).
+      companyVerified: inv.company.verificationStatus === 'VERIFIED',
       events: [...inv.events].sort(compareInvitationEvents).map((e) => ({ fromStatus: e.fromStatus, toStatus: e.toStatus, occurredAt: e.occurredAt.toISOString() })),
       /** Что будет раскрыто компании при принятии (текущие выбранные и заполненные каналы). */
       disclosure: {
@@ -361,6 +368,7 @@ export class InvitationsService {
       expiresAt: inv.expiresAt.toISOString(),
       viewedAt: inv.viewedAt?.toISOString() ?? null,
       respondedAt: inv.respondedAt?.toISOString() ?? null,
+      minorConditionsAcknowledged: inv.minorConditionsAcknowledged,
     };
   }
 

@@ -32,7 +32,7 @@ const ASSIGNMENT_TEXT: Record<TaskAssignmentStatus, string> = {
 
 const HISTORY_LIMIT = 20;
 
-const assignmentInclude = { task: { include: { company: { select: { name: true } } } } } satisfies Prisma.TaskAssignmentInclude;
+const assignmentInclude = { task: { include: { company: { select: { name: true, verificationStatus: true } } } } } satisfies Prisma.TaskAssignmentInclude;
 type AssignmentRow = Prisma.TaskAssignmentGetPayload<{ include: typeof assignmentInclude }>;
 
 type OfferBlocker = 'NOT_DISCOVERABLE' | 'PAUSED' | 'NO_CONFIRMED_QUALIFICATION';
@@ -42,6 +42,9 @@ type OfferBlocker = 'NOT_DISCOVERABLE' | 'PAUSED' | 'NO_CONFIRMED_QUALIFICATION'
  * и только если нет неотвеченного; «не больше одного неотвеченного» дополнительно гарантирует частичный уникальный индекс.
  * Задания подбираются по подтверждённой тестом квалификации и показываются только кандидатам, видимым работодателям:
  * ответ увидит автор задания. Выполнение не меняет подтверждённый грейд и не входит в формулу подбора.
+ *
+ * Адресные задания (source = DIRECT) отправляет работодатель конкретному кандидату; они не зависят от недельного периода и
+ * квалификации (так работодатель может проверить и кандидата без подтверждённого грейда) и показываются отдельным списком.
  */
 @Injectable()
 export class CandidateTasksService {
@@ -62,19 +65,25 @@ export class CandidateTasksService {
       if (offered) current = await this.currentOf(candidateId);
     }
 
-    const [history, last, practice] = await Promise.all([
+    const [direct, history, last, practice] = await Promise.all([
+      this.prisma.taskAssignment.findMany({
+        where: { candidateId, status: 'OFFERED', source: 'DIRECT' },
+        orderBy: [{ offeredAt: 'desc' }, { id: 'asc' }],
+        include: assignmentInclude,
+      }),
       this.prisma.taskAssignment.findMany({
         where: { candidateId, status: { not: 'OFFERED' } },
         orderBy: [{ offeredAt: 'desc' }, { id: 'asc' }],
         take: HISTORY_LIMIT,
         include: assignmentInclude,
       }),
-      this.prisma.taskAssignment.findFirst({ where: { candidateId }, orderBy: { offeredAt: 'desc' }, select: { offeredAt: true } }),
+      this.prisma.taskAssignment.findFirst({ where: { candidateId, source: 'ROTATION' }, orderBy: { offeredAt: 'desc' }, select: { offeredAt: true } }),
       this.practiceOf(candidateId, now),
     ]);
     const next = nextOfferAfter(last?.offeredAt ?? null);
     return {
       current: current ? this.view(current, now) : null,
+      direct: direct.map((row) => this.view(row, now)),
       history: history.map((row) => this.view(row, now)),
       intervalDays: TASK_OFFER_INTERVAL_DAYS,
       nextOfferAt: !current && !blocker && next && next > now ? next.toISOString() : null,
@@ -101,9 +110,10 @@ export class CandidateTasksService {
     if (row.status === 'EXPIRED') throw conflict('TASK_EXPIRED', 'Срок ответа на это задание истёк');
     if (row.status === 'SKIPPED') throw conflict('TASK_NOT_OPEN', 'Это задание вы пропустили');
 
-    // Ответ увидит автор задания, поэтому публикация профиля должна быть включена.
-    const blocker = await this.blockerOf(candidateId, userId);
-    if (blocker) throw conflict('PUBLICATION_REQUIRED', 'Ответ увидит автор задания: сначала верните профиль в поиск', { blocker: blocker.code });
+    // Ответ увидит автор задания, поэтому автор должен видеть кандидата: профиль в поиске или (для адресного) доступ к контактам.
+    if (!(await this.visibleToAuthor(candidateId, userId, row.task.companyId, row.source === 'DIRECT'))) {
+      throw conflict('PUBLICATION_REQUIRED', 'Ответ увидит автор задания: сначала верните профиль в поиск');
+    }
 
     const { task } = row;
     let selectedIndex: number | null = null;
@@ -170,7 +180,17 @@ export class CandidateTasksService {
   }
 
   private currentOf(candidateId: string) {
-    return this.prisma.taskAssignment.findFirst({ where: { candidateId, status: 'OFFERED' }, include: assignmentInclude });
+    return this.prisma.taskAssignment.findFirst({ where: { candidateId, status: 'OFFERED', source: 'ROTATION' }, include: assignmentInclude });
+  }
+
+  private async visibleToAuthor(candidateId: string, userId: string, companyId: string, allowGrant: boolean): Promise<boolean> {
+    const profile = await this.prisma.candidateProfile.findUnique({ where: { id: candidateId }, include: candidateFactsInclude });
+    if (!profile) return false;
+    const consent = await hasActivePublicationConsent(this.prisma, userId);
+    if (evaluateDiscoverability(toDiscoverabilityFacts(profile, consent)).discoverable) return true;
+    if (!allowGrant) return false;
+    const grant = await this.prisma.contactAccessGrant.findUnique({ where: { candidateId_companyId: { candidateId, companyId } } });
+    return Boolean(grant && !grant.revokedAt);
   }
 
   private async blockerOf(candidateId: string, userId: string): Promise<{ code: OfferBlocker; message: string } | null> {
@@ -178,15 +198,21 @@ export class CandidateTasksService {
     if (!profile) throw notFound('PROFILE_NOT_FOUND', 'Профиль кандидата не найден');
     const consent = await hasActivePublicationConsent(this.prisma, userId);
     const { discoverable, issues } = evaluateDiscoverability(toDiscoverabilityFacts(profile, consent));
-    if (discoverable) return null;
+    if (discoverable) {
+      // Регулярные задания подбираются по подтверждённой квалификации; адресные от работодателя приходят и без неё.
+      if (profile.qualifications.length === 0) {
+        return { code: 'NO_CONFIRMED_QUALIFICATION', message: 'Регулярные задания подбираются по подтверждённому тестом грейду: пройдите тест по своей специализации.' };
+      }
+      return null;
+    }
     const codes = issues.map((issue) => issue.code);
-    const code: OfferBlocker = codes.includes('PAUSED') ? 'PAUSED' : codes.includes('NO_CONFIRMED_QUALIFICATION') ? 'NO_CONFIRMED_QUALIFICATION' : 'NOT_DISCOVERABLE';
+    const code: OfferBlocker = codes.includes('PAUSED') ? 'PAUSED' : 'NOT_DISCOVERABLE';
     return { code, message: `Задания предлагаются кандидатам, которых видят работодатели. ${issues.map((issue) => issue.message).join('; ')}.` };
   }
 
   /** Предлагает одно подходящее задание, если прошла неделя с прошлого предложения. Возвращает true, если предложение создано. */
   private async offerIfDue(candidateId: string, userId: string, now: Date): Promise<boolean> {
-    const last = await this.prisma.taskAssignment.findFirst({ where: { candidateId }, orderBy: { offeredAt: 'desc' }, select: { offeredAt: true } });
+    const last = await this.prisma.taskAssignment.findFirst({ where: { candidateId, source: 'ROTATION' }, orderBy: { offeredAt: 'desc' }, select: { offeredAt: true } });
     if (!canOfferNow(last?.offeredAt ?? null, now)) return false;
 
     const qualifications = await this.prisma.candidateQualification.findMany({ where: { candidateId }, select: { specializationCode: true, confirmedGrade: true } });
@@ -236,6 +262,8 @@ export class CandidateTasksService {
       id: row.id,
       status: row.status,
       statusTitle: ASSIGNMENT_TEXT[row.status],
+      source: row.source,
+      note: row.note,
       offeredAt: row.offeredAt.toISOString(),
       dueAt: row.dueAt.toISOString(),
       submittedAt: row.submittedAt?.toISOString() ?? null,
@@ -249,6 +277,7 @@ export class CandidateTasksService {
         specialization: task.specializationCode,
         specializationTitle: getSpecialization(task.specializationCode)?.title ?? task.specializationCode,
         companyName: task.company.name,
+        companyVerified: task.company.verificationStatus === 'VERIFIED',
         closed: task.status === 'CLOSED',
       },
       result: submitted

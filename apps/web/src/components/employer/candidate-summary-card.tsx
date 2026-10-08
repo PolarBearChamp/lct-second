@@ -17,7 +17,8 @@ export function CandidateSummaryCard({
   candidate: CandidateSummary;
   href: string;
   rank?: number;
-  score?: number;
+  /** null — балл подбора не считается (грейд не подтверждён тестом). */
+  score?: number | null;
   children?: ReactNode;
 }) {
   return (
@@ -34,8 +35,18 @@ export function CandidateSummaryCard({
               {candidate.displayName}
             </Link>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-sm">
-              <Badge tone="success">Грейд по тесту: {candidate.gradeTitle}</Badge>
-              <span className="text-muted">балл теста {candidate.overallScore}</span>
+              {candidate.gradeConfirmed ? (
+                <>
+                  <Badge tone="success">Грейд по тесту: {candidate.gradeTitle}</Badge>
+                  <span className="text-muted">балл теста {candidate.overallScore}</span>
+                </>
+              ) : (
+                <>
+                  <Badge tone="warning">Грейд не подтверждён тестом</Badge>
+                  <span className="text-muted">заявлен: {candidate.declaredGradeTitle ?? "не указан"}</span>
+                </>
+              )}
+              {candidate.minor ? <Badge tone="warning" title="Особые условия труда работников до 18 лет (ТК РФ, гл. 42)">16–17 лет</Badge> : null}
               {candidate.fsp.relevantEvents ? <Badge tone="brand">ФСП: {candidate.fsp.relevantEvents} мероприятие(й)</Badge> : null}
               {candidate.activeInvitation ? <InvitationStatusBadge status={candidate.activeInvitation.status} /> : null}
               {candidate.hasContactAccess ? <Badge tone="success">контакты доступны</Badge> : null}
@@ -43,11 +54,13 @@ export function CandidateSummaryCard({
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {score !== undefined ? (
+          {score !== undefined && score !== null ? (
             <div className="text-right">
               <div className="font-brand text-2xl font-bold text-brand-700">{score.toFixed(1)}</div>
               <div className="text-xs text-muted">соответствие</div>
             </div>
+          ) : score === null ? (
+            <div className="max-w-[9rem] text-right text-xs text-muted">балл не считается: нет результата теста</div>
           ) : null}
           <BookmarkButton candidateId={candidate.candidateId} initial={candidate.bookmarked} />
         </div>

@@ -6,7 +6,7 @@ import { CurrentAuth, RequestId, Roles } from '../auth/decorators';
 import { CandidateProfilesService } from '../candidate-profiles/candidate-profiles.service';
 import { CompaniesService } from '../companies/companies.service';
 import { CandidateTasksService } from './candidate-tasks.service';
-import { CreateTaskDto, ReviewSubmissionDto, SubmitTaskDto, TaskListQueryDto, TaskSubmissionsQueryDto, UpdateTaskDto } from './dto/task.dto';
+import { AssignTaskDto, CreateTaskDto, ReviewSubmissionDto, SubmitTaskDto, TaskListQueryDto, TaskSubmissionsQueryDto, UpdateTaskDto } from './dto/task.dto';
 import { TasksService } from './tasks.service';
 
 @ApiTags('employer-tasks')
@@ -65,6 +65,18 @@ export class EmployerTasksController {
     return this.tasks.close(await this.companies.requireCompany(auth.userId), auth.userId, id, requestId);
   }
 
+  @Post('tasks/:id/assign')
+  @ApiOperation({
+    summary: 'Отправить задание конкретному кандидату',
+    description:
+      'Адресная отправка активного задания кандидату, которого видит компания (в поиске или по доступу к контактам); подтверждённый грейд не нужен. Не зависит от недельного периода регулярных заданий. Не более одного неотвеченного адресного задания от компании одному кандидату.',
+  })
+  @ApiResponse({ status: 404, description: 'TASK_NOT_FOUND | CANDIDATE_NOT_FOUND' })
+  @ApiResponse({ status: 409, description: 'TASK_NOT_ACTIVE | DIRECT_TASK_PENDING | TASK_ALREADY_ASSIGNED' })
+  async assign(@CurrentAuth() auth: AuthContext, @Param('id', UuidPipe) id: string, @Body() dto: AssignTaskDto, @RequestId() requestId: string) {
+    return this.tasks.assign(await this.companies.requireCompany(auth.userId), auth.userId, id, dto, requestId);
+  }
+
   @Get('tasks/:id/submissions')
   @ApiOperation({
     summary: 'Ответы кандидатов на задание',
@@ -97,7 +109,7 @@ export class CandidateTasksController {
   @ApiOperation({
     summary: 'Короткие задания: текущее, история и регулярность',
     description:
-      'Новое задание предлагается при открытии раздела, не чаще раза в 7 дней и только если нет неотвеченного. Задания подбираются по подтверждённой тестом квалификации и показываются кандидатам, которых видят работодатели. Выполнение не меняет подтверждённый грейд и не влияет на подбор.',
+      'Регулярное задание предлагается при открытии раздела, не чаще раза в 7 дней и только если нет неотвеченного; подбирается по подтверждённой тестом квалификации и показывается кандидатам, которых видят работодатели. Адресные задания от работодателей (direct) приходят независимо от этого. Выполнение не меняет подтверждённый грейд и не влияет на подбор.',
   })
   async overview(@CurrentAuth() auth: AuthContext) {
     return this.tasks.overview(await this.profiles.candidateIdOf(auth.userId), auth.userId);

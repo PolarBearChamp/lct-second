@@ -137,6 +137,7 @@ export function CandidateVacancies() {
                           </div>
                           <div className="mt-1 text-muted">
                             {vacancy.companyName}
+                            {vacancy.companyVerified ? ' · ✓ компания проверена' : ''}
                             {vacancy.companyIndustry ? ` · ${vacancy.companyIndustry}` : ''} · {WORK_FORMAT_LABELS[vacancy.workFormat]}
                             {vacancy.city ? `, ${vacancy.city}` : ''}
                           </div>

@@ -10,6 +10,7 @@ import {
   IsISO8601,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   MaxLength,
   Min,
@@ -112,6 +113,18 @@ export class ReviewSubmissionDto {
   @IsString()
   @MaxLength(500)
   comment?: string | null;
+}
+
+export class AssignTaskDto {
+  @ApiProperty({ description: 'Кандидат, которому отправляется задание' })
+  @IsUUID()
+  candidateId!: string;
+
+  @ApiPropertyOptional({ maxLength: 500, description: 'Сообщение кандидату (видно ему вместе с заданием)' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  note?: string;
 }
 
 export class SubmitTaskDto {

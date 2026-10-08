@@ -4,7 +4,7 @@ import type { AuthContext } from '../../common/request-context';
 import { CurrentAuth, RequestId, Roles } from '../auth/decorators';
 import { ProfileViewService } from '../profile-view/profile-view.service';
 import { CandidateProfilesService } from './candidate-profiles.service';
-import { SurveyAnswersDto, UpdateConsentsDto, UpdateProfileDto } from './dto/profile.dto';
+import { SurveyAnswersDto, GuardianConsentDto, UpdateConsentsDto, UpdateProfileDto } from './dto/profile.dto';
 
 @ApiTags('candidate')
 @ApiCookieAuth()
@@ -46,6 +46,18 @@ export class CandidateProfilesController {
   @ApiOperation({ summary: 'Явное изменение согласия на публикацию профиля (с историей)' })
   updateConsents(@CurrentAuth() auth: AuthContext, @Body() dto: UpdateConsentsDto, @RequestId() requestId: string) {
     return this.profiles.updateConsents(auth.userId, dto, requestId);
+  }
+
+  @Put('consents/guardian')
+  @ApiOperation({
+    summary: 'Согласие законного представителя (кандидаты 16–17 лет)',
+    description:
+      'Нужно для публикации профиля кандидата 16–17 лет. В MVP — заявление кандидата с ФИО представителя; подтверждение самим представителем вне MVP. Отзыв скрывает профиль из поиска.',
+  })
+  @ApiResponse({ status: 409, description: 'GUARDIAN_CONSENT_NOT_APPLICABLE — кандидату не 16–17 лет или не указана дата рождения' })
+  @ApiResponse({ status: 422, description: 'VALIDATION_FAILED' })
+  updateGuardianConsent(@CurrentAuth() auth: AuthContext, @Body() dto: GuardianConsentDto, @RequestId() requestId: string) {
+    return this.profiles.updateGuardianConsent(auth.userId, dto, requestId);
   }
 
   @Get('qualifications')

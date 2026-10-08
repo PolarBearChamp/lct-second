@@ -74,6 +74,8 @@ export interface CandidateVacancyItem extends VacancyRequirements {
   title: string;
   companyName: string;
   companyIndustry: string | null;
+  /** Компания прошла добровольную проверку (метка доверия). */
+  companyVerified: boolean;
   publishedAt: string | null;
   myApplication: { id: string; status: ApplicationStatus } | null;
   fit: VacancyFitSummary | null;
@@ -86,9 +88,11 @@ export interface CandidateVacancyDetail extends VacancyRequirements {
   description: string;
   companyName: string;
   companyIndustry: string | null;
+  /** Компания прошла добровольную проверку (метка доверия). */
+  companyVerified: boolean;
   publishedAt: string | null;
   status: VacancyStatus;
-  company: { name: string; industry: string | null; industryTitle: string | null; website: string | null; description: string | null; contactType: string | null; contactValue: string | null; verified: false };
+  company: { name: string; industry: string | null; industryTitle: string | null; website: string | null; description: string | null; contactType: string | null; contactValue: string | null; verified: boolean };
   myApplication: { id: string; status: ApplicationStatus } | null;
   fit: VacancyFit | null;
   canApply: boolean;

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-10-06T23:19:20.654Z",
-  "durationSeconds": 17.4,
+  "generatedAt": "2026-10-08T23:04:32.294Z",
+  "durationSeconds": 17.1,
   "mode": "full",
   "git": {
-    "commit": "4972934",
+    "commit": "c591c7e",
     "dirty": true,
     "note": "в рабочем дереве есть незакоммиченные изменения"
   },
@@ -15,7 +15,7 @@
   },
   "versions": {
     "банк заданий": "bank-bbfda64da1",
-    "политика оценки": "assessment-policy-v1",
+    "политика оценки": "assessment-policy-v2",
     "формула подбора": "matching-formula-v1",
     "алгоритм подбора": "rank-v1",
     "справочник ФСП": "fsp-relevance-v1",
@@ -2127,7 +2127,7 @@
   "testing": {
     "bankVersion": "bank-bbfda64da1",
     "policy": {
-      "version": "assessment-policy-v1",
+      "version": "assessment-policy-v2",
       "durationMinutes": 30,
       "itemsPerGroup": 2,
       "minScoredParts": 12,
@@ -2139,7 +2139,7 @@
         "minCases": 2,
         "minScore": 70
       },
-      "retryCooldownHours": 24,
+      "retryCooldownHours": 720,
       "reassessmentDays": 90,
       "maxFingerprintRetries": 40
     },
@@ -2186,7 +2186,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.153
+          "msPerInstance": 0.14
         },
         {
           "family": "fe.event-loop",
@@ -2219,7 +2219,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.127
+          "msPerInstance": 0.126
         },
         {
           "family": "fe.event-loop",
@@ -2252,7 +2252,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.139
+          "msPerInstance": 0.144
         },
         {
           "family": "fe.promise-combinators",
@@ -2319,7 +2319,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.127
+          "msPerInstance": 0.124
         },
         {
           "family": "fe.promise-combinators",
@@ -2352,7 +2352,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.084
+          "msPerInstance": 0.092
         },
         {
           "family": "fe.ui-state",
@@ -2385,7 +2385,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.07
+          "msPerInstance": 0.078
         },
         {
           "family": "fe.ui-state",
@@ -2418,7 +2418,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.067
+          "msPerInstance": 0.074
         },
         {
           "family": "fe.ui-state",
@@ -2451,7 +2451,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.135
+          "msPerInstance": 0.158
         },
         {
           "family": "fe.react-effects",
@@ -2484,7 +2484,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.073
+          "msPerInstance": 0.079
         },
         {
           "family": "fe.react-effects",
@@ -2517,7 +2517,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.055
+          "msPerInstance": 0.059
         },
         {
           "family": "fe.react-effects",
@@ -2550,7 +2550,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.077
+          "msPerInstance": 0.081
         },
         {
           "family": "fe.http-client-errors",
@@ -2583,7 +2583,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.151
+          "msPerInstance": 0.143
         },
         {
           "family": "fe.http-client-errors",
@@ -2617,7 +2617,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.113
+          "msPerInstance": 0.13
         },
         {
           "family": "fe.http-client-errors",
@@ -2650,7 +2650,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.075
+          "msPerInstance": 0.074
         },
         {
           "family": "fe.request-races",
@@ -2682,7 +2682,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.15
+          "msPerInstance": 0.163
         },
         {
           "family": "fe.request-races",
@@ -2715,7 +2715,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.292
+          "msPerInstance": 0.273
         },
         {
           "family": "fe.request-races",
@@ -2748,7 +2748,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.163
+          "msPerInstance": 0.166
         },
         {
           "family": "be.http-semantics",
@@ -2781,7 +2781,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.162
+          "msPerInstance": 0.15
         },
         {
           "family": "be.http-semantics",
@@ -2814,7 +2814,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.157
+          "msPerInstance": 0.178
         },
         {
           "family": "be.http-semantics",
@@ -2847,7 +2847,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.155
+          "msPerInstance": 0.153
         },
         {
           "family": "be.idempotency",
@@ -2880,7 +2880,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.123
+          "msPerInstance": 0.138
         },
         {
           "family": "be.idempotency",
@@ -2913,7 +2913,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.119
+          "msPerInstance": 0.122
         },
         {
           "family": "be.idempotency",
@@ -2947,7 +2947,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.295
+          "msPerInstance": 0.263
         },
         {
           "family": "be.sql-query-result",
@@ -2979,7 +2979,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.093
+          "msPerInstance": 0.083
         },
         {
           "family": "be.sql-query-result",
@@ -3011,7 +3011,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.086
+          "msPerInstance": 0.083
         },
         {
           "family": "be.sql-query-result",
@@ -3043,7 +3043,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.095
+          "msPerInstance": 0.084
         },
         {
           "family": "be.data-modeling",
@@ -3109,7 +3109,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.149
+          "msPerInstance": 0.162
         },
         {
           "family": "be.data-modeling",
@@ -3142,7 +3142,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.166
+          "msPerInstance": 0.17
         },
         {
           "family": "be.tx-isolation",
@@ -3175,7 +3175,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.066
+          "msPerInstance": 0.078
         },
         {
           "family": "be.tx-isolation",
@@ -3208,7 +3208,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.064
+          "msPerInstance": 0.077
         },
         {
           "family": "be.tx-isolation",
@@ -3241,7 +3241,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.085
+          "msPerInstance": 0.086
         },
         {
           "family": "be.reliability-patterns",
@@ -3275,7 +3275,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.097
+          "msPerInstance": 0.099
         },
         {
           "family": "be.reliability-patterns",
@@ -3308,7 +3308,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.053
+          "msPerInstance": 0.07
         },
         {
           "family": "be.reliability-patterns",
@@ -3342,7 +3342,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.114
+          "msPerInstance": 0.13
         },
         {
           "family": "ml.leakage",
@@ -3375,7 +3375,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.134
+          "msPerInstance": 0.121
         },
         {
           "family": "ml.leakage",
@@ -3409,7 +3409,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.143
+          "msPerInstance": 0.166
         },
         {
           "family": "ml.leakage",
@@ -3442,7 +3442,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.153
+          "msPerInstance": 0.164
         },
         {
           "family": "ml.pandas-prep",
@@ -3474,7 +3474,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.069
+          "msPerInstance": 0.109
         },
         {
           "family": "ml.pandas-prep",
@@ -3506,7 +3506,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.074
+          "msPerInstance": 0.083
         },
         {
           "family": "ml.pandas-prep",
@@ -3538,7 +3538,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.093
+          "msPerInstance": 0.098
         },
         {
           "family": "ml.confusion-metrics",
@@ -3571,7 +3571,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.061
+          "msPerInstance": 0.064
         },
         {
           "family": "ml.confusion-metrics",
@@ -3604,7 +3604,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.236
+          "msPerInstance": 0.204
         },
         {
           "family": "ml.confusion-metrics",
@@ -3637,7 +3637,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.121
+          "msPerInstance": 0.139
         },
         {
           "family": "ml.imbalance-metrics",
@@ -3670,7 +3670,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.061
+          "msPerInstance": 0.056
         },
         {
           "family": "ml.imbalance-metrics",
@@ -3704,7 +3704,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.139
+          "msPerInstance": 0.101
         },
         {
           "family": "ml.imbalance-metrics",
@@ -3737,7 +3737,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.058
+          "msPerInstance": 0.074
         },
         {
           "family": "ml.validation-schemes",
@@ -3770,7 +3770,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.059
+          "msPerInstance": 0.071
         },
         {
           "family": "ml.validation-schemes",
@@ -3803,7 +3803,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.08
+          "msPerInstance": 0.077
         },
         {
           "family": "ml.validation-schemes",
@@ -3837,7 +3837,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.108
+          "msPerInstance": 0.096
         },
         {
           "family": "ml.model-ops",
@@ -3870,7 +3870,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.13
+          "msPerInstance": 0.164
         },
         {
           "family": "ml.model-ops",
@@ -3903,7 +3903,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.081
+          "msPerInstance": 0.094
         },
         {
           "family": "ml.model-ops",
@@ -3937,7 +3937,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.135
+          "msPerInstance": 0.116
         },
         {
           "family": "qa.requirement-defects",
@@ -3971,7 +3971,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.152
+          "msPerInstance": 0.163
         },
         {
           "family": "qa.requirement-defects",
@@ -4005,7 +4005,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.147
+          "msPerInstance": 0.121
         },
         {
           "family": "qa.requirement-defects",
@@ -4038,7 +4038,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.145
+          "msPerInstance": 0.187
         },
         {
           "family": "qa.decision-tables",
@@ -4071,7 +4071,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.092
+          "msPerInstance": 0.121
         },
         {
           "family": "qa.decision-tables",
@@ -4104,7 +4104,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.137
+          "msPerInstance": 0.132
         },
         {
           "family": "qa.decision-tables",
@@ -4136,7 +4136,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.207
+          "msPerInstance": 0.205
         },
         {
           "family": "qa.boundary-values",
@@ -4170,7 +4170,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.09
+          "msPerInstance": 0.1
         },
         {
           "family": "qa.boundary-values",
@@ -4204,7 +4204,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.127
+          "msPerInstance": 0.12
         },
         {
           "family": "qa.boundary-values",
@@ -4237,7 +4237,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.097
+          "msPerInstance": 0.083
         },
         {
           "family": "qa.minimal-suite",
@@ -4270,7 +4270,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.089
+          "msPerInstance": 0.096
         },
         {
           "family": "qa.minimal-suite",
@@ -4303,7 +4303,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.194
+          "msPerInstance": 0.15
         },
         {
           "family": "qa.minimal-suite",
@@ -4336,7 +4336,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.309
+          "msPerInstance": 0.29
         },
         {
           "family": "qa.severity-priority",
@@ -4370,7 +4370,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.163
+          "msPerInstance": 0.125
         },
         {
           "family": "qa.severity-priority",
@@ -4404,7 +4404,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.2
+          "msPerInstance": 0.177
         },
         {
           "family": "qa.severity-priority",
@@ -4437,7 +4437,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.185
+          "msPerInstance": 0.168
         },
         {
           "family": "qa.test-cases",
@@ -4471,7 +4471,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.11
+          "msPerInstance": 0.109
         },
         {
           "family": "qa.test-cases",
@@ -4505,7 +4505,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.156
+          "msPerInstance": 0.175
         },
         {
           "family": "qa.test-cases",
@@ -4538,7 +4538,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.207
+          "msPerInstance": 0.193
         }
       ],
       "totalInstances": 14400,
@@ -5097,7 +5097,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.48
+        "attemptGenerationMs": 0.43
       },
       {
         "specialization": "FRONTEND",
@@ -5384,7 +5384,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.57
+        "attemptGenerationMs": 0.45
       },
       {
         "specialization": "FRONTEND",
@@ -5671,7 +5671,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.5
+        "attemptGenerationMs": 0.42
       },
       {
         "specialization": "BACKEND",
@@ -5958,7 +5958,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.45
+        "attemptGenerationMs": 0.54
       },
       {
         "specialization": "BACKEND",
@@ -6245,7 +6245,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.46
+        "attemptGenerationMs": 0.43
       },
       {
         "specialization": "BACKEND",
@@ -6532,7 +6532,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.69
+        "attemptGenerationMs": 0.6
       },
       {
         "specialization": "ML_ENGINEER",
@@ -6819,7 +6819,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.38
+        "attemptGenerationMs": 0.36
       },
       {
         "specialization": "ML_ENGINEER",
@@ -7106,7 +7106,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.62
+        "attemptGenerationMs": 0.54
       },
       {
         "specialization": "ML_ENGINEER",
@@ -7393,7 +7393,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.48
+        "attemptGenerationMs": 0.53
       },
       {
         "specialization": "MANUAL_QA",
@@ -7680,7 +7680,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.48
+        "attemptGenerationMs": 0.54
       },
       {
         "specialization": "MANUAL_QA",
@@ -8254,7 +8254,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.91
+        "attemptGenerationMs": 0.84
       }
     ],
     "constantAnswers": {

@@ -68,6 +68,7 @@ export class ApiSession {
       timezone: 'Europe/Moscow',
       workFormats: ['REMOTE'],
       experienceMonths: 36,
+      birthDate: '1996-03-10',
       skills: [{ code: 'postgresql', months: 24 }, { code: 'sql', months: 30 }, { code: 'kafka', months: 6 }],
       contactEmail: 'e2e.candidate@e2e.example',
       phone: '+7 900 000-00-00',

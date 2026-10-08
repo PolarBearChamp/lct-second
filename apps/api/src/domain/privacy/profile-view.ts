@@ -10,6 +10,7 @@ import {
 } from '../catalog/catalog';
 import { getSpecialization } from '../catalog/catalog';
 import { isRelevantAchievement, achievementOutcome } from '../matching/fsp-relevance';
+import { isMinor } from '../candidate/age';
 
 /**
  * Единый сервис представления профиля кандидата.
@@ -42,6 +43,7 @@ export interface ProfileSource {
   activeSpecializationCode: string | null;
   declaredGrade: string | null;
   experienceMonths: number | null;
+  birthDate: Date | null;
   teamRoles: string[];
   experienceDescription: string | null;
   softSkills: string[];
@@ -141,6 +143,8 @@ export interface CandidateProfileView {
   qualification: QualificationView | null;
   declaredGrade: { code: string; title: string } | null;
   experienceMonths: number | null;
+  /** 16–17 лет (во всех режимах: работодателю нужно для законного предложения). Дата рождения не раскрывается. */
+  minor: boolean;
   city: string | null;
   workFormats: string[];
   salaryExpectation: { from: number | null; to: number | null; currency: 'RUB'; period: 'MONTH'; gross: true } | null;
@@ -270,6 +274,7 @@ export function buildProfileView(
       ? { code: profile.declaredGrade, title: GRADE_TITLES[profile.declaredGrade as GradeCode] ?? profile.declaredGrade }
       : null,
     experienceMonths: profile.experienceMonths,
+    minor: isMinor(profile.birthDate, new Date()),
     city: profile.city,
     workFormats: profile.workFormats,
     salaryExpectation:

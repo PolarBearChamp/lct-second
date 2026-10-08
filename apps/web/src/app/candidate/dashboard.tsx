@@ -76,7 +76,19 @@ export function CandidateDashboard() {
 
         <Card>
           <CardHeader title="Видимость для работодателей" />
-          {candidate.discoverable ? (
+          {candidate.discoverable && !candidate.confirmedGrade ? (
+            <Alert
+              tone="warning"
+              title="Профиль виден, но грейд не подтверждён"
+              actions={
+                <LinkButton href="/candidate/assessments" size="sm">
+                  Пройти тест
+                </LinkButton>
+              }
+            >
+              Пока грейд не подтверждён тестом, работодатели видят вас после всех подтверждённых кандидатов, с пометкой «грейд не подтверждён» и без балла подбора. Пройдите тест — категория появится в поиске.
+            </Alert>
+          ) : candidate.discoverable ? (
             <Alert tone="success" title="Профиль виден работодателям">
               Компании видят обезличенную карточку. Контакты раскрываются только той компании, чьё приглашение вы примете.
             </Alert>

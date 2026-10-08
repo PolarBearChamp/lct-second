@@ -139,7 +139,8 @@ export function TaskDetail({ id }: { id: string }) {
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="font-bold">Кандидат {item.candidateAlias}</span>
-                            {item.confirmedGradeTitle ? <Badge tone="info">грейд по тесту: {item.confirmedGradeTitle}</Badge> : null}
+                            {item.confirmedGradeTitle ? <Badge tone="info">грейд по тесту: {item.confirmedGradeTitle}</Badge> : <Badge tone="warning">грейд не подтверждён</Badge>}
+                            {item.source === 'DIRECT' ? <Badge>отправлено лично</Badge> : null}
                             {t.kind === 'QUIZ' ? (
                               <Badge tone={item.isCorrect ? 'success' : 'warning'}>{item.isCorrect ? 'верно' : 'неверно'}</Badge>
                             ) : item.verdict ? (

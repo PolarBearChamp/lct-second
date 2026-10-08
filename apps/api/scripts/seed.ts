@@ -38,6 +38,7 @@ import { InvitationsService } from '../src/modules/invitations/invitations.servi
 import { MatchingService } from '../src/modules/matching/matching.service';
 import type { CreateVacancyDto } from '../src/modules/vacancies/dto/vacancy.dto';
 import { ApplicationsService } from '../src/modules/vacancies/applications.service';
+import { CompaniesService } from '../src/modules/companies/companies.service';
 import { CandidateTasksService } from '../src/modules/tasks/candidate-tasks.service';
 import { TasksService } from '../src/modules/tasks/tasks.service';
 import type { CreateTaskDto } from '../src/modules/tasks/dto/task.dto';
@@ -89,6 +90,7 @@ async function main(): Promise<void> {
   const invitations = app.get(InvitationsService);
   const vacanciesService = app.get(VacanciesService);
   const applicationsService = app.get(ApplicationsService);
+  const companiesService = app.get(CompaniesService);
   const tasksService = app.get(TasksService);
   const candidateTasks = app.get(CandidateTasksService);
 
@@ -100,6 +102,13 @@ async function main(): Promise<void> {
     current = date;
   };
   const daysBefore = (days: number, hours = 0) => new Date(realNow.getTime() - days * DAY_MS - hours * HOUR_MS);
+  /** Дата рождения: явный возраст из определения или детерминированно 21–40 лет по хешу ключа. */
+  const birthDateFor = (def: { key: string; ageYears?: number }) => {
+    const years = def.ageYears ?? 21 + (hashInt(`birth|${def.key}`) % 20);
+    // День рождения в этом году прошёл 15–314 дней назад — возраст ровно years.
+    const offsetDays = 15 + (hashInt(`birth-day|${def.key}`) % 300);
+    return new Date(Date.UTC(realNow.getUTCFullYear() - years, realNow.getUTCMonth(), realNow.getUTCDate()) - offsetDays * DAY_MS);
+  };
 
   if (args.has('--reset')) await resetDemoData(prisma);
 
@@ -148,6 +157,8 @@ async function main(): Promise<void> {
       update: { name: def.name, description: def.description, industry: def.industry, website: def.website, contactPersonName: def.contactPersonName, contactChannelType: def.contactChannelType, contactValue: def.contactValue },
     });
     companies.set(def.key, { userId: user.id, companyId: company.id });
+    // Добровольная проверка компании (метка доверия) — тем же сервисом, что и в кабинете.
+    if (def.inn && company.verificationStatus !== 'VERIFIED') await companiesService.verify(user.id, { inn: def.inn }, REQUEST_ID);
   }
 
   const needIds = new Map<string, string>();
@@ -495,6 +506,9 @@ async function main(): Promise<void> {
       if (def.publication !== 'NO_CONSENT') {
         await tx.consentRecord.create({ data: { id: uuidFrom(`consent|pub|${def.key}`), userId, type: 'PROFILE_PUBLICATION', policyVersion: CONSENT_POLICY_VERSIONS.PROFILE_PUBLICATION, acceptedAt: daysBefore(Math.max(1, oldest - 2)) } });
       }
+      if (def.guardianName) {
+        await tx.consentRecord.create({ data: { id: uuidFrom(`consent|guardian|${def.key}`), userId, type: 'GUARDIAN_CONSENT', policyVersion: CONSENT_POLICY_VERSIONS.GUARDIAN_CONSENT, acceptedAt: daysBefore(Math.max(1, oldest - 2)) } });
+      }
       await tx.candidateProfile.create({
         data: {
           id: candidateId,
@@ -514,6 +528,9 @@ async function main(): Promise<void> {
           activeSpecializationCode: spec,
           declaredGrade: def.declaredGrade,
           experienceMonths: full ? experienceMonths : null,
+          // Дата рождения — от хеша ключа, а не от генератора случайных чисел: остальные данные seed не сдвигаются.
+          birthDate: full ? birthDateFor(def) : null,
+          guardianName: def.guardianName ?? null,
           teamRoles: full && spec ? (spec === 'MANUAL_QA' ? ['TESTER'] : spec === 'ML_ENGINEER' ? ['DATA_SCIENTIST'] : ['DEVELOPER']).concat(confirmedGrade === 'SENIOR' ? ['MENTOR'] : []) : [],
           experienceDescription: full && spec ? rng.pick(DESCRIPTIONS[spec]) : null,
           softSkills: full ? rng.sample(SOFT_SKILL_CODES, rng.int(2, 4)) : [],

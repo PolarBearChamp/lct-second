@@ -61,6 +61,7 @@ export function CandidateCard({ view, extra }: { view: CandidateProfileView; ext
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {q ? <Badge tone="success">Грейд по тесту: {q.gradeTitle}</Badge> : <Badge tone="warning">Грейд не подтверждён</Badge>}
+          {view.minor ? <Badge tone="warning" title="Особые условия труда работников до 18 лет (ТК РФ, гл. 42)">16–17 лет</Badge> : null}
           {view.mode === 'EMPLOYER_REDACTED' ? <Badge>Обезличенная карточка</Badge> : null}
           {view.mode === 'EMPLOYER_GRANTED' ? <Badge tone="brand">Доступ к контактам выдан</Badge> : null}
         </div>

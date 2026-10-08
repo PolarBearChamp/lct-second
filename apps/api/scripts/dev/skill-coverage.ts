@@ -6,7 +6,7 @@ import { getFamily } from '../../src/domain/assessment/bank/registry';
 import { instantiate } from '../../src/domain/assessment/instantiate';
 import { createRng } from '../../src/domain/assessment/rng';
 
-const policy = getAssessmentPolicy('assessment-policy-v1');
+const policy = getAssessmentPolicy('assessment-policy-v2');
 for (const spec of SPECIALIZATION_CODES) {
   for (const grade of GRADE_CODES) {
     const min = new Map<string, number>();

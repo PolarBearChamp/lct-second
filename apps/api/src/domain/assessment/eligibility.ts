@@ -1,4 +1,4 @@
-import type { AssessmentPolicy } from '../../config/policies';
+import { formatCooldown, type AssessmentPolicy } from '../../config/policies';
 import { GRADE_ORDER, GRADE_TITLES, type GradeCode } from '../catalog/catalog';
 
 export type AttemptStatusCode = 'IN_PROGRESS' | 'PASSED' | 'FAILED' | 'EXPIRED' | 'ABANDONED';
@@ -95,7 +95,7 @@ export function checkEligibility(input: EligibilityInput): EligibilityResult {
         allowed: false,
         reason: 'RETRY_COOLDOWN',
         availableAt,
-        message: `Повторная попытка на уровень ${GRADE_TITLES[grade]} возможна через ${policy.retryCooldownHours} ч после завершения предыдущей неуспешной попытки.`,
+        message: `Повторная попытка на уровень ${GRADE_TITLES[grade]} возможна через ${formatCooldown(policy.retryCooldownHours)} после завершения предыдущей неуспешной попытки.`,
         warnings,
       };
     }

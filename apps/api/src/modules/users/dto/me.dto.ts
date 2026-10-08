@@ -27,6 +27,8 @@ export class DiscoverabilityIssueDto {
       'NOT_DISCOVERABLE',
       'PAUSED',
       'NO_CONFIRMED_QUALIFICATION',
+      'UNDERAGE',
+      'GUARDIAN_CONSENT_REQUIRED',
     ],
   })
   code!: string;
@@ -54,6 +56,7 @@ export class CandidateMeStateDto {
   @ApiProperty({ type: [DiscoverabilityIssueDto] })
   discoverabilityIssues!: DiscoverabilityIssueDto[];
   newInvitations!: number;
+  pendingDirectTasks!: number;
 }
 
 export class EmployerMeStateDto {

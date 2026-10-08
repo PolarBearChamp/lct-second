@@ -6,11 +6,11 @@
 
 | Параметр | Значение |
 | --- | --- |
-| Время запуска (UTC) | 2026-10-06T23:19:20.654Z |
-| Длительность | 17.4 с (режим: полный) |
-| Коммит | `4972934` (в рабочем дереве есть незакоммиченные изменения) |
+| Время запуска (UTC) | 2026-10-08T23:04:32.294Z |
+| Длительность | 17.1 с (режим: полный) |
+| Коммит | `c591c7e` (в рабочем дереве есть незакоммиченные изменения) |
 | Окружение | Node v24.19.0; Windows_NT 10.0.22631 (x64); AMD Ryzen 7 3700X 8-Core Processor × 16; ОЗУ 31.9 ГБ |
-| Версии правил | банк заданий: `bank-bbfda64da1`; политика оценки: `assessment-policy-v1`; формула подбора: `matching-formula-v1`; алгоритм подбора: `rank-v1`; справочник ФСП: `fsp-relevance-v1`; blueprint: `blueprint-v1`; справочники: `catalog-v1` |
+| Версии правил | банк заданий: `bank-bbfda64da1`; политика оценки: `assessment-policy-v2`; формула подбора: `matching-formula-v1`; алгоритм подбора: `rank-v1`; справочник ФСП: `fsp-relevance-v1`; blueprint: `blueprint-v1`; справочники: `catalog-v1` |
 | Фиксированные seed | генерация `gen-<i>`, воспроизводимость `repro-<i>`, симуляции `sim-<спец>-<грейд>-<i>`, бутстреп `bootstrap|<метрика>`; все генераторы детерминированы |
 
 ## Сводка проверок
@@ -171,7 +171,7 @@
 | Параметр | Значение |
 | --- | --- |
 | Версия банка | `bank-bbfda64da1`; семейств 24, пар «семейство × грейд» 72 |
-| Политика оценки | assessment-policy-v1: 30 мин, 2 мини-кейса на группу, проходной общий балл 75, минимум по группе 50, «уверенно» 90/75, навык подтверждается при ≥ 2 кейсах и ≥ 70 |
+| Политика оценки | assessment-policy-v2: 30 мин, 2 мини-кейса на группу, проходной общий балл 75, минимум по группе 50, «уверенно» 90/75, навык подтверждается при ≥ 2 кейсах и ≥ 70 |
 | Корректность генерации | 200 seed (`gen-0…`) на каждую пару — 14400 экземпляров |
 | Воспроизводимость | 40 seed на пару, 20 попыток на пару «специализация × грейд» |
 | Симуляции | 300 попыток на пару «специализация × грейд» (12 пар), seed `sim-<спец>-<грейд>-<номер>` |
@@ -184,78 +184,78 @@
 
 | Семейство | Грейд | Различающихся отпечатков | P(совпадения отпечатков) | Частей в кейсе | Сложность min / p50 / max (CV) | Форматы частей | мс / экземпляр |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `fe.event-loop` | Junior | 108 / 200 | 0.0126 | 2 | 6 / 7 / 7 (0.074) | ordering 200, numeric 200 | 0.153 |
-| `fe.event-loop` | Middle | 200 / 200 | 0.005 | 2 | 8 / 10 / 12 (0.121) | ordering 200, numeric 200 | 0.127 |
-| `fe.event-loop` | Senior | 199 / 200 | 0.00505 | 2 | 11 / 12 / 13 (0.059) | ordering 200, numeric 200 | 0.139 |
+| `fe.event-loop` | Junior | 108 / 200 | 0.0126 | 2 | 6 / 7 / 7 (0.074) | ordering 200, numeric 200 | 0.14 |
+| `fe.event-loop` | Middle | 200 / 200 | 0.005 | 2 | 8 / 10 / 12 (0.121) | ordering 200, numeric 200 | 0.126 |
+| `fe.event-loop` | Senior | 199 / 200 | 0.00505 | 2 | 11 / 12 / 13 (0.059) | ordering 200, numeric 200 | 0.144 |
 | `fe.promise-combinators` | Junior | 200 / 200 | 0.005 | 3 | 3 / 4 / 4 (0.143) | single choice 400, numeric 200 | 0.133 |
-| `fe.promise-combinators` | Middle | 200 / 200 | 0.005 | 3 | 4 / 5 / 5 (0.106) | multi select 64, numeric 200, single choice 336 | 0.127 |
-| `fe.promise-combinators` | Senior | 200 / 200 | 0.005 | 3 | 3 / 5 / 7 (0.275) | numeric 400, single choice 200 | 0.084 |
-| `fe.ui-state` | Junior | 181 / 200 | 0.0063 | 2 | 4 / 5 / 6 (0.157) | single choice 200, numeric 200 | 0.07 |
-| `fe.ui-state` | Middle | 195 / 200 | 0.00525 | 2 | 6 / 9 / 11 (0.178) | single choice 200, numeric 200 | 0.067 |
-| `fe.ui-state` | Senior | 200 / 200 | 0.005 | 2 | 7 / 10 / 11 (0.163) | single choice 200, multi select 200 | 0.135 |
-| `fe.react-effects` | Junior | 200 / 200 | 0.005 | 2 | 4 / 5 / 6 (0.168) | numeric 200, single choice 200 | 0.073 |
-| `fe.react-effects` | Middle | 170 / 200 | 0.00685 | 2 | 3 / 5 / 8 (0.309) | numeric 200, single choice 200 | 0.055 |
-| `fe.react-effects` | Senior | 200 / 200 | 0.005 | 2 | 6 / 8 / 8 (0.143) | single choice 200, numeric 200 | 0.077 |
-| `fe.http-client-errors` | Junior | 189 / 200 | 0.00555 | 2 | 4 / 4 / 4 (0) | matching 200, single choice 200 | 0.151 |
-| `fe.http-client-errors` | Middle | 200 / 200 | 0.005 | 3 | 5 / 5 / 5 (0) | multi select 200, numeric 200, single choice 200 | 0.113 |
-| `fe.http-client-errors` | Senior | 191 / 200 | 0.0055 | 3 | 6 / 8 / 10 (0.204) | numeric 400, single choice 200 | 0.075 |
-| `fe.request-races` | Junior | 193 / 200 | 0.00535 | 3 | 4 / 6 / 6 (0.196) | single choice 600 | 0.15 |
-| `fe.request-races` | Middle | 200 / 200 | 0.005 | 4 | 11 / 12 / 14 (0.079) | numeric 200, single choice 600 | 0.292 |
-| `fe.request-races` | Senior | 200 / 200 | 0.005 | 3 | 6 / 8 / 8 (0.143) | single choice 400, numeric 200 | 0.163 |
-| `be.http-semantics` | Junior | 200 / 200 | 0.005 | 2 | 5 / 5 / 5 (0) | matching 200, single choice 200 | 0.162 |
-| `be.http-semantics` | Middle | 200 / 200 | 0.005 | 2 | 6 / 6 / 6 (0) | matching 200, multi select 200 | 0.157 |
-| `be.http-semantics` | Senior | 200 / 200 | 0.005 | 2 | 5 / 5 / 5 (0) | matching 200, single choice 200 | 0.155 |
-| `be.idempotency` | Junior | 200 / 200 | 0.005 | 2 | 4 / 4 / 5 (0.112) | numeric 200, single choice 200 | 0.123 |
-| `be.idempotency` | Middle | 200 / 200 | 0.005 | 2 | 6 / 6 / 6 (0) | numeric 200, single choice 200 | 0.119 |
-| `be.idempotency` | Senior | 200 / 200 | 0.005 | 3 | 9 / 9 / 9 (0) | numeric 200, single choice 200, multi select 200 | 0.295 |
-| `be.sql-query-result` | Junior | 200 / 200 | 0.005 | 2 | 9 / 11 / 13 (0.11) | numeric 400 | 0.093 |
-| `be.sql-query-result` | Middle | 200 / 200 | 0.005 | 2 | 12 / 16 / 19 (0.093) | numeric 400 | 0.086 |
-| `be.sql-query-result` | Senior | 200 / 200 | 0.005 | 2 | 12 / 18 / 22 (0.117) | numeric 400 | 0.095 |
+| `fe.promise-combinators` | Middle | 200 / 200 | 0.005 | 3 | 4 / 5 / 5 (0.106) | multi select 64, numeric 200, single choice 336 | 0.124 |
+| `fe.promise-combinators` | Senior | 200 / 200 | 0.005 | 3 | 3 / 5 / 7 (0.275) | numeric 400, single choice 200 | 0.092 |
+| `fe.ui-state` | Junior | 181 / 200 | 0.0063 | 2 | 4 / 5 / 6 (0.157) | single choice 200, numeric 200 | 0.078 |
+| `fe.ui-state` | Middle | 195 / 200 | 0.00525 | 2 | 6 / 9 / 11 (0.178) | single choice 200, numeric 200 | 0.074 |
+| `fe.ui-state` | Senior | 200 / 200 | 0.005 | 2 | 7 / 10 / 11 (0.163) | single choice 200, multi select 200 | 0.158 |
+| `fe.react-effects` | Junior | 200 / 200 | 0.005 | 2 | 4 / 5 / 6 (0.168) | numeric 200, single choice 200 | 0.079 |
+| `fe.react-effects` | Middle | 170 / 200 | 0.00685 | 2 | 3 / 5 / 8 (0.309) | numeric 200, single choice 200 | 0.059 |
+| `fe.react-effects` | Senior | 200 / 200 | 0.005 | 2 | 6 / 8 / 8 (0.143) | single choice 200, numeric 200 | 0.081 |
+| `fe.http-client-errors` | Junior | 189 / 200 | 0.00555 | 2 | 4 / 4 / 4 (0) | matching 200, single choice 200 | 0.143 |
+| `fe.http-client-errors` | Middle | 200 / 200 | 0.005 | 3 | 5 / 5 / 5 (0) | multi select 200, numeric 200, single choice 200 | 0.13 |
+| `fe.http-client-errors` | Senior | 191 / 200 | 0.0055 | 3 | 6 / 8 / 10 (0.204) | numeric 400, single choice 200 | 0.074 |
+| `fe.request-races` | Junior | 193 / 200 | 0.00535 | 3 | 4 / 6 / 6 (0.196) | single choice 600 | 0.163 |
+| `fe.request-races` | Middle | 200 / 200 | 0.005 | 4 | 11 / 12 / 14 (0.079) | numeric 200, single choice 600 | 0.273 |
+| `fe.request-races` | Senior | 200 / 200 | 0.005 | 3 | 6 / 8 / 8 (0.143) | single choice 400, numeric 200 | 0.166 |
+| `be.http-semantics` | Junior | 200 / 200 | 0.005 | 2 | 5 / 5 / 5 (0) | matching 200, single choice 200 | 0.15 |
+| `be.http-semantics` | Middle | 200 / 200 | 0.005 | 2 | 6 / 6 / 6 (0) | matching 200, multi select 200 | 0.178 |
+| `be.http-semantics` | Senior | 200 / 200 | 0.005 | 2 | 5 / 5 / 5 (0) | matching 200, single choice 200 | 0.153 |
+| `be.idempotency` | Junior | 200 / 200 | 0.005 | 2 | 4 / 4 / 5 (0.112) | numeric 200, single choice 200 | 0.138 |
+| `be.idempotency` | Middle | 200 / 200 | 0.005 | 2 | 6 / 6 / 6 (0) | numeric 200, single choice 200 | 0.122 |
+| `be.idempotency` | Senior | 200 / 200 | 0.005 | 3 | 9 / 9 / 9 (0) | numeric 200, single choice 200, multi select 200 | 0.263 |
+| `be.sql-query-result` | Junior | 200 / 200 | 0.005 | 2 | 9 / 11 / 13 (0.11) | numeric 400 | 0.083 |
+| `be.sql-query-result` | Middle | 200 / 200 | 0.005 | 2 | 12 / 16 / 19 (0.093) | numeric 400 | 0.083 |
+| `be.sql-query-result` | Senior | 200 / 200 | 0.005 | 2 | 12 / 18 / 22 (0.117) | numeric 400 | 0.084 |
 | `be.data-modeling` | Junior | 199 / 200 | 0.00505 | 2 | 4 / 4 / 4 (0) | matching 200, single choice 200 | 0.125 |
-| `be.data-modeling` | Middle | 200 / 200 | 0.005 | 2 | 5 / 5 / 5 (0) | matching 200, single choice 200 | 0.149 |
-| `be.data-modeling` | Senior | 200 / 200 | 0.005 | 2 | 9 / 9 / 9 (0) | matching 200, multi select 200 | 0.166 |
-| `be.tx-isolation` | Junior | 200 / 200 | 0.005 | 2 | 3 / 4 / 4 (0.126) | numeric 200, single choice 200 | 0.066 |
-| `be.tx-isolation` | Middle | 199 / 200 | 0.00505 | 2 | 5 / 5 / 6 (0.089) | single choice 200, numeric 200 | 0.064 |
-| `be.tx-isolation` | Senior | 199 / 200 | 0.00505 | 2 | 6 / 7 / 7 (0.077) | single choice 200, numeric 200 | 0.085 |
-| `be.reliability-patterns` | Junior | 200 / 200 | 0.005 | 3 | 4 / 5 / 7 (0.216) | numeric 200, multi select 200, single choice 200 | 0.097 |
-| `be.reliability-patterns` | Middle | 179 / 200 | 0.0061 | 2 | 4 / 5 / 6 (0.163) | numeric 200, single choice 200 | 0.053 |
-| `be.reliability-patterns` | Senior | 180 / 200 | 0.00605 | 3 | 6 / 6 / 6 (0) | numeric 200, multi select 200, ordering 200 | 0.114 |
-| `ml.leakage` | Junior | 130 / 200 | 0.01 | 3 | 5 / 5 / 5 (0) | multi select 200, single choice 400 | 0.134 |
-| `ml.leakage` | Middle | 194 / 200 | 0.0053 | 4 | 6 / 6 / 6 (0) | multi select 200, ordering 200, single choice 400 | 0.143 |
-| `ml.leakage` | Senior | 200 / 200 | 0.005 | 3 | 10 / 10 / 10 (0) | multi select 400, single choice 200 | 0.153 |
-| `ml.pandas-prep` | Junior | 200 / 200 | 0.005 | 2 | 7 / 10 / 14 (0.169) | numeric 400 | 0.069 |
-| `ml.pandas-prep` | Middle | 200 / 200 | 0.005 | 2 | 7 / 11 / 16 (0.149) | numeric 400 | 0.074 |
-| `ml.pandas-prep` | Senior | 200 / 200 | 0.005 | 2 | 7 / 11 / 15 (0.143) | numeric 400 | 0.093 |
-| `ml.confusion-metrics` | Junior | 200 / 200 | 0.005 | 3 | 4 / 4 / 4 (0) | numeric 400, single choice 200 | 0.061 |
-| `ml.confusion-metrics` | Middle | 200 / 200 | 0.005 | 4 | 9 / 9 / 9 (0) | numeric 600, single choice 200 | 0.236 |
-| `ml.confusion-metrics` | Senior | 200 / 200 | 0.005 | 4 | 10 / 10 / 10 (0) | numeric 400, single choice 400 | 0.121 |
-| `ml.imbalance-metrics` | Junior | 198 / 200 | 0.0051 | 3 | 3 / 3 / 3 (0) | numeric 400, single choice 200 | 0.061 |
-| `ml.imbalance-metrics` | Middle | 200 / 200 | 0.005 | 3 | 7 / 7 / 8 (0.067) | numeric 200, multi select 200, single choice 200 | 0.139 |
-| `ml.imbalance-metrics` | Senior | 111 / 200 | 0.01115 | 3 | 4 / 4 / 4 (0) | numeric 400, single choice 200 | 0.058 |
-| `ml.validation-schemes` | Junior | 193 / 200 | 0.00535 | 3 | 6 / 7 / 12 (0.314) | numeric 400, single choice 200 | 0.059 |
-| `ml.validation-schemes` | Middle | 194 / 200 | 0.0053 | 4 | 4 / 5 / 6 (0.165) | numeric 400, single choice 400 | 0.08 |
-| `ml.validation-schemes` | Senior | 189 / 200 | 0.00555 | 3 | 9 / 10 / 11 (0.1) | numeric 200, single choice 200, multi select 200 | 0.108 |
-| `ml.model-ops` | Junior | 200 / 200 | 0.005 | 3 | 3 / 3 / 3 (0) | matching 200, single choice 400 | 0.13 |
-| `ml.model-ops` | Middle | 200 / 200 | 0.005 | 3 | 3 / 3 / 3 (0) | numeric 200, single choice 400 | 0.081 |
-| `ml.model-ops` | Senior | 200 / 200 | 0.005 | 3 | 8 / 8 / 8 (0) | numeric 200, single choice 200, matching 200 | 0.135 |
-| `qa.requirement-defects` | Junior | 199 / 200 | 0.00505 | 3 | 8 / 8 / 8 (0) | matching 200, numeric 200, single choice 200 | 0.152 |
-| `qa.requirement-defects` | Middle | 200 / 200 | 0.005 | 3 | 12 / 12 / 12 (0) | single choice 200, multi select 200, numeric 200 | 0.147 |
-| `qa.requirement-defects` | Senior | 200 / 200 | 0.005 | 3 | 11 / 12 / 14 (0.082) | numeric 400, multi select 200 | 0.145 |
-| `qa.decision-tables` | Junior | 200 / 200 | 0.005 | 3 | 9 / 9 / 9 (0) | numeric 400, single choice 200 | 0.092 |
-| `qa.decision-tables` | Middle | 200 / 200 | 0.005 | 3 | 12 / 12 / 12 (0) | numeric 200, single choice 400 | 0.137 |
-| `qa.decision-tables` | Senior | 200 / 200 | 0.005 | 3 | 12 / 12 / 12 (0) | numeric 600 | 0.207 |
-| `qa.boundary-values` | Junior | 200 / 200 | 0.005 | 3 | 5 / 5 / 5 (0) | multi select 200, numeric 200, single choice 200 | 0.09 |
-| `qa.boundary-values` | Middle | 200 / 200 | 0.005 | 3 | 8 / 8 / 11 (0.159) | numeric 200, multi select 200, single choice 200 | 0.127 |
-| `qa.boundary-values` | Senior | 200 / 200 | 0.005 | 3 | 5 / 7 / 9 (0.202) | single choice 400, numeric 200 | 0.097 |
-| `qa.minimal-suite` | Junior | 200 / 200 | 0.005 | 3 | 6 / 6 / 8 (0.145) | numeric 400, single choice 200 | 0.089 |
-| `qa.minimal-suite` | Middle | 200 / 200 | 0.005 | 4 | 10 / 11 / 12 (0.075) | numeric 600, single choice 200 | 0.194 |
-| `qa.minimal-suite` | Senior | 200 / 200 | 0.005 | 4 | 6 / 6 / 6 (0) | numeric 600, ordering 200 | 0.309 |
-| `qa.severity-priority` | Junior | 176 / 200 | 0.00645 | 3 | 6 / 6 / 6 (0) | matching 200, numeric 200, single choice 200 | 0.163 |
-| `qa.severity-priority` | Middle | 200 / 200 | 0.005 | 3 | 8 / 8 / 8 (0) | matching 200, ordering 200, single choice 200 | 0.2 |
-| `qa.severity-priority` | Senior | 200 / 200 | 0.005 | 3 | 14 / 14 / 14 (0) | numeric 400, single choice 200 | 0.185 |
-| `qa.test-cases` | Junior | 189 / 200 | 0.00555 | 3 | 2 / 4 / 6 (0.377) | single choice 200, numeric 200, ordering 200 | 0.11 |
-| `qa.test-cases` | Middle | 200 / 200 | 0.005 | 4 | 8 / 10 / 10 (0.108) | matching 200, numeric 400, single choice 200 | 0.156 |
-| `qa.test-cases` | Senior | 200 / 200 | 0.005 | 3 | 20 / 20 / 20 (0) | single choice 400, numeric 200 | 0.207 |
+| `be.data-modeling` | Middle | 200 / 200 | 0.005 | 2 | 5 / 5 / 5 (0) | matching 200, single choice 200 | 0.162 |
+| `be.data-modeling` | Senior | 200 / 200 | 0.005 | 2 | 9 / 9 / 9 (0) | matching 200, multi select 200 | 0.17 |
+| `be.tx-isolation` | Junior | 200 / 200 | 0.005 | 2 | 3 / 4 / 4 (0.126) | numeric 200, single choice 200 | 0.078 |
+| `be.tx-isolation` | Middle | 199 / 200 | 0.00505 | 2 | 5 / 5 / 6 (0.089) | single choice 200, numeric 200 | 0.077 |
+| `be.tx-isolation` | Senior | 199 / 200 | 0.00505 | 2 | 6 / 7 / 7 (0.077) | single choice 200, numeric 200 | 0.086 |
+| `be.reliability-patterns` | Junior | 200 / 200 | 0.005 | 3 | 4 / 5 / 7 (0.216) | numeric 200, multi select 200, single choice 200 | 0.099 |
+| `be.reliability-patterns` | Middle | 179 / 200 | 0.0061 | 2 | 4 / 5 / 6 (0.163) | numeric 200, single choice 200 | 0.07 |
+| `be.reliability-patterns` | Senior | 180 / 200 | 0.00605 | 3 | 6 / 6 / 6 (0) | numeric 200, multi select 200, ordering 200 | 0.13 |
+| `ml.leakage` | Junior | 130 / 200 | 0.01 | 3 | 5 / 5 / 5 (0) | multi select 200, single choice 400 | 0.121 |
+| `ml.leakage` | Middle | 194 / 200 | 0.0053 | 4 | 6 / 6 / 6 (0) | multi select 200, ordering 200, single choice 400 | 0.166 |
+| `ml.leakage` | Senior | 200 / 200 | 0.005 | 3 | 10 / 10 / 10 (0) | multi select 400, single choice 200 | 0.164 |
+| `ml.pandas-prep` | Junior | 200 / 200 | 0.005 | 2 | 7 / 10 / 14 (0.169) | numeric 400 | 0.109 |
+| `ml.pandas-prep` | Middle | 200 / 200 | 0.005 | 2 | 7 / 11 / 16 (0.149) | numeric 400 | 0.083 |
+| `ml.pandas-prep` | Senior | 200 / 200 | 0.005 | 2 | 7 / 11 / 15 (0.143) | numeric 400 | 0.098 |
+| `ml.confusion-metrics` | Junior | 200 / 200 | 0.005 | 3 | 4 / 4 / 4 (0) | numeric 400, single choice 200 | 0.064 |
+| `ml.confusion-metrics` | Middle | 200 / 200 | 0.005 | 4 | 9 / 9 / 9 (0) | numeric 600, single choice 200 | 0.204 |
+| `ml.confusion-metrics` | Senior | 200 / 200 | 0.005 | 4 | 10 / 10 / 10 (0) | numeric 400, single choice 400 | 0.139 |
+| `ml.imbalance-metrics` | Junior | 198 / 200 | 0.0051 | 3 | 3 / 3 / 3 (0) | numeric 400, single choice 200 | 0.056 |
+| `ml.imbalance-metrics` | Middle | 200 / 200 | 0.005 | 3 | 7 / 7 / 8 (0.067) | numeric 200, multi select 200, single choice 200 | 0.101 |
+| `ml.imbalance-metrics` | Senior | 111 / 200 | 0.01115 | 3 | 4 / 4 / 4 (0) | numeric 400, single choice 200 | 0.074 |
+| `ml.validation-schemes` | Junior | 193 / 200 | 0.00535 | 3 | 6 / 7 / 12 (0.314) | numeric 400, single choice 200 | 0.071 |
+| `ml.validation-schemes` | Middle | 194 / 200 | 0.0053 | 4 | 4 / 5 / 6 (0.165) | numeric 400, single choice 400 | 0.077 |
+| `ml.validation-schemes` | Senior | 189 / 200 | 0.00555 | 3 | 9 / 10 / 11 (0.1) | numeric 200, single choice 200, multi select 200 | 0.096 |
+| `ml.model-ops` | Junior | 200 / 200 | 0.005 | 3 | 3 / 3 / 3 (0) | matching 200, single choice 400 | 0.164 |
+| `ml.model-ops` | Middle | 200 / 200 | 0.005 | 3 | 3 / 3 / 3 (0) | numeric 200, single choice 400 | 0.094 |
+| `ml.model-ops` | Senior | 200 / 200 | 0.005 | 3 | 8 / 8 / 8 (0) | numeric 200, single choice 200, matching 200 | 0.116 |
+| `qa.requirement-defects` | Junior | 199 / 200 | 0.00505 | 3 | 8 / 8 / 8 (0) | matching 200, numeric 200, single choice 200 | 0.163 |
+| `qa.requirement-defects` | Middle | 200 / 200 | 0.005 | 3 | 12 / 12 / 12 (0) | single choice 200, multi select 200, numeric 200 | 0.121 |
+| `qa.requirement-defects` | Senior | 200 / 200 | 0.005 | 3 | 11 / 12 / 14 (0.082) | numeric 400, multi select 200 | 0.187 |
+| `qa.decision-tables` | Junior | 200 / 200 | 0.005 | 3 | 9 / 9 / 9 (0) | numeric 400, single choice 200 | 0.121 |
+| `qa.decision-tables` | Middle | 200 / 200 | 0.005 | 3 | 12 / 12 / 12 (0) | numeric 200, single choice 400 | 0.132 |
+| `qa.decision-tables` | Senior | 200 / 200 | 0.005 | 3 | 12 / 12 / 12 (0) | numeric 600 | 0.205 |
+| `qa.boundary-values` | Junior | 200 / 200 | 0.005 | 3 | 5 / 5 / 5 (0) | multi select 200, numeric 200, single choice 200 | 0.1 |
+| `qa.boundary-values` | Middle | 200 / 200 | 0.005 | 3 | 8 / 8 / 11 (0.159) | numeric 200, multi select 200, single choice 200 | 0.12 |
+| `qa.boundary-values` | Senior | 200 / 200 | 0.005 | 3 | 5 / 7 / 9 (0.202) | single choice 400, numeric 200 | 0.083 |
+| `qa.minimal-suite` | Junior | 200 / 200 | 0.005 | 3 | 6 / 6 / 8 (0.145) | numeric 400, single choice 200 | 0.096 |
+| `qa.minimal-suite` | Middle | 200 / 200 | 0.005 | 4 | 10 / 11 / 12 (0.075) | numeric 600, single choice 200 | 0.15 |
+| `qa.minimal-suite` | Senior | 200 / 200 | 0.005 | 4 | 6 / 6 / 6 (0) | numeric 600, ordering 200 | 0.29 |
+| `qa.severity-priority` | Junior | 176 / 200 | 0.00645 | 3 | 6 / 6 / 6 (0) | matching 200, numeric 200, single choice 200 | 0.125 |
+| `qa.severity-priority` | Middle | 200 / 200 | 0.005 | 3 | 8 / 8 / 8 (0) | matching 200, ordering 200, single choice 200 | 0.177 |
+| `qa.severity-priority` | Senior | 200 / 200 | 0.005 | 3 | 14 / 14 / 14 (0) | numeric 400, single choice 200 | 0.168 |
+| `qa.test-cases` | Junior | 189 / 200 | 0.00555 | 3 | 2 / 4 / 6 (0.377) | single choice 200, numeric 200, ordering 200 | 0.109 |
+| `qa.test-cases` | Middle | 200 / 200 | 0.005 | 4 | 8 / 10 / 10 (0.108) | matching 200, numeric 400, single choice 200 | 0.175 |
+| `qa.test-cases` | Senior | 200 / 200 | 0.005 | 3 | 20 / 20 / 20 (0) | single choice 400, numeric 200 | 0.193 |
 
 «P(совпадения отпечатков)» — вероятность, что два независимых экземпляра пары совпадут (Σ pᵢ² по эмпирическому распределению); «Сложность» — структурная оценка экземпляра (число шагов, ловушек и т. п.), CV — коэффициент вариации.
 
@@ -391,7 +391,7 @@
 | ML-инженер | 55 | 14 | 25.5 % |
 | Инженер по ручному тестированию (Manual QA) | 57 | 5 | 8.8 % |
 
-Время генерации одной попытки (6 экземпляров): 0.4–0.9 мс на этой машине.
+Время генерации одной попытки (6 экземпляров): 0.4–0.8 мс на этой машине.
 
 ## 3. Распознавание PDF-резюме
 

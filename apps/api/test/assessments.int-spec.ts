@@ -2,6 +2,10 @@ import { createTestApp, type TestContext } from './helpers/app';
 import { Client } from './helpers/client';
 import { createCandidate, fillProfile, startAttempt, submitAttempt, uniqueEmail } from './helpers/factories';
 import { answerShape } from './helpers/answers';
+import { getAssessmentPolicy } from '../src/config/policies';
+
+/** Повтор того же уровня после неуспеха по действующей политике (v2 — 30 дней). */
+const RETRY_HOURS = getAssessmentPolicy('assessment-policy-v2').retryCooldownHours;
 
 /** Первый кейс с числовой частью (не у каждого семейства она есть). */
 function numericPart(items: Array<{ id: string; task: { parts: Array<{ id: string; format: string }> } }>) {
@@ -121,7 +125,7 @@ describe('тестирование: жизненный цикл попытки, 
       expect(items.every((i) => i.fingerprint.length === 32 && i.seed.length >= 16)).toBe(true);
       const attempt = await ctx.prisma.assessmentAttempt.findUniqueOrThrow({ where: { id: started.body.id } });
       expect(attempt.bankVersion).toMatch(/^bank-/);
-      expect(attempt.policyVersion).toBe('assessment-policy-v1');
+      expect(attempt.policyVersion).toBe('assessment-policy-v2');
       expect(attempt.policySnapshot).toMatchObject({ passOverall: 75 });
     });
 
@@ -129,7 +133,8 @@ describe('тестирование: жизненный цикл попытки, 
       const client = await freshCandidate();
       const first = await startAttempt(client, 'BACKEND', 'MIDDLE');
       await client.post(`/candidate/assessments/${first.body.id}/abandon`);
-      ctx.clock.advanceHours(25);
+      ctx.clock.advanceHours(RETRY_HOURS + 1);
+      await client.relogin();
       const second = await startAttempt(client, 'BACKEND', 'MIDDLE');
       const prints = async (id: string) => (await ctx.prisma.assessmentItem.findMany({ where: { attemptId: id } })).map((i) => i.fingerprint);
       const a = await prints(first.body.id);
@@ -282,13 +287,13 @@ describe('тестирование: жизненный цикл попытки, 
       const again = await startAttempt(client, 'BACKEND', 'MIDDLE');
       expect(again.status).toBe(409);
       expect(again.body.details.reason).toBe('RETRY_COOLDOWN');
-      expect(new Date(again.body.details.availableAt).getTime()).toBe(new Date(started.body.expiresAt).getTime() + 24 * 3_600_000);
+      expect(new Date(again.body.details.availableAt).getTime()).toBe(new Date(started.body.expiresAt).getTime() + RETRY_HOURS * 3_600_000);
       expect((await startAttempt(client, 'BACKEND', 'JUNIOR')).status).toBe(201);
     });
   });
 
   describe('неуспех, прерывание и путь к более низкому грейду', () => {
-    it('неуспешная первая попытка не выдаёт грейд и не публикует профиль; ограничения указывают точную дату', async () => {
+    it('неуспешная первая попытка не выдаёт грейд: опубликованный профиль виден только с пометкой «грейд не подтверждён»; ограничения указывают точную дату', async () => {
       const client = await freshCandidate();
       await client.put('/candidate/consents', { profilePublication: true });
       await client.patch('/candidate/profile', { isDiscoverable: true });
@@ -300,23 +305,27 @@ describe('тестирование: жизненный цикл попытки, 
       expect((await qualificationOf(client)).qualifications).toEqual([]);
       const me = await client.get('/auth/me');
       expect(me.body.candidate.confirmedGrade).toBeNull();
-      expect(me.body.candidate.discoverable).toBe(false);
-      expect(me.body.candidate.discoverabilityIssues.map((i: { code: string }) => i.code)).toContain('NO_CONFIRMED_QUALIFICATION');
+      // Рекомендация организаторов: не скрывать, а показывать ниже подтверждённых с пометкой.
+      expect(me.body.candidate.discoverable).toBe(true);
+      expect((await client.get('/candidate/profile')).body.discoverability.gradeConfirmed).toBe(false);
 
       const retry = await startAttempt(client, 'BACKEND', 'MIDDLE');
       expect(retry.status).toBe(409);
       expect(retry.body.details.reason).toBe('RETRY_COOLDOWN');
-      expect(new Date(retry.body.details.availableAt).getTime()).toBe(new Date(result.body.finishedAt).getTime() + 24 * 3_600_000);
+      expect(new Date(retry.body.details.availableAt).getTime()).toBe(new Date(result.body.finishedAt).getTime() + RETRY_HOURS * 3_600_000);
     });
 
-    it('граница 24 часов: за секунду до — 409, ровно через 24 часа — 201', async () => {
+    it('граница 30 дней: за секунду до — 409, ровно через 30 дней — 201; более ранний повтор не открывается', async () => {
       const client = await freshCandidate();
       const first = await startAttempt(client, 'BACKEND', 'MIDDLE');
       const failed = await submitAttempt(ctx, client, first.body.id, 'wrong');
       const finishedAt = new Date(failed.body.finishedAt).getTime();
-      ctx.clock.set(new Date(finishedAt + 24 * 3_600_000 - 1000));
-      expect((await startAttempt(client, 'BACKEND', 'MIDDLE')).status).toBe(409);
       ctx.clock.set(new Date(finishedAt + 24 * 3_600_000));
+      expect((await startAttempt(client, 'BACKEND', 'MIDDLE')).status).toBe(409);
+      ctx.clock.set(new Date(finishedAt + RETRY_HOURS * 3_600_000 - 1000));
+      await client.relogin();
+      expect((await startAttempt(client, 'BACKEND', 'MIDDLE')).status).toBe(409);
+      ctx.clock.set(new Date(finishedAt + RETRY_HOURS * 3_600_000));
       expect((await startAttempt(client, 'BACKEND', 'MIDDLE')).status).toBe(201);
     });
 
@@ -445,9 +454,10 @@ describe('тестирование: жизненный цикл попытки, 
       await client.patch('/candidate/profile', { activeSpecialization: 'FRONTEND' });
       const me = await client.get('/auth/me');
       expect(me.body.candidate.confirmedGrade).toBeNull();
-      expect(me.body.candidate.discoverable).toBe(false);
+      expect((await client.get('/candidate/profile')).body.discoverability.gradeConfirmed).toBe(false);
       await client.patch('/candidate/profile', { activeSpecialization: 'BACKEND' });
-      expect((await client.get('/auth/me')).body.candidate.discoverable).toBe(true);
+      expect((await client.get('/auth/me')).body.candidate.confirmedGrade).toBe('MIDDLE');
+      expect((await client.get('/candidate/profile')).body.discoverability.gradeConfirmed).toBe(true);
     });
 
     it('изменение заявленного грейда не меняет подтверждённую квалификацию', async () => {

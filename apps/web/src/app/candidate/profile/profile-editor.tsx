@@ -42,6 +42,7 @@ const schema = z
     city: z.string().trim().max(80).refine((v) => v === '' || v.length >= 2, 'Город: не менее 2 символов'),
     timezone: z.string(),
     experienceMonths: optionalInt('Опыт', 600),
+    birthDate: z.string().refine((v) => v === '' || /^\d{4}-\d{2}-\d{2}$/.test(v), 'Дата в формате ГГГГ-ММ-ДД'),
     teamRoles: z.array(z.string()),
     industries: z.array(z.string()),
     skills: z.array(z.object({ code: z.string(), months: z.number().nullable() })).max(40, 'Не более 40 навыков'),
@@ -76,6 +77,7 @@ function toForm(data: OwnProfileResponse): FormValues {
     city: p.city ?? '',
     timezone: p.timezone ?? '',
     experienceMonths: p.experienceMonths?.toString() ?? '',
+    birthDate: p.birthDate ?? '',
     teamRoles: p.teamRoles,
     industries: p.industries,
     skills: p.skills.map((s) => ({ code: s.code, months: s.months })),
@@ -99,6 +101,7 @@ function toUpdate(values: FormValues): ProfileUpdate {
     city: values.city.trim() || null,
     timezone: values.timezone || null,
     experienceMonths: intOrNull(values.experienceMonths),
+    birthDate: values.birthDate || null,
     teamRoles: values.teamRoles,
     industries: values.industries,
     skills: values.skills.map((s: PickedSkill) => ({ code: s.code, months: s.months })),
@@ -201,6 +204,14 @@ function ProfileForm({ data }: { data: OwnProfileResponse }) {
               </Field>
               <Field label="Опыт по специальности, месяцев" error={errors.experienceMonths?.message} required hint="Указано вами, тестом не проверяется">
                 {(props) => <Input inputMode="numeric" {...props} {...register('experienceMonths')} />}
+              </Field>
+              <Field
+                label="Дата рождения"
+                required
+                error={errors.birthDate?.message}
+                hint="Работодатели видят только отметку «16–17 лет», если она применима. Платформа доступна с 16 лет; для 16–17 лет нужно согласие законного представителя."
+              >
+                {(props) => <Input type="date" {...props} {...register('birthDate')} />}
               </Field>
             </div>
             <div className="mt-5 grid gap-5">
@@ -324,7 +335,9 @@ function ProfileForm({ data }: { data: OwnProfileResponse }) {
         <aside className="space-y-6" aria-label="Подтверждённые данные">
           <Card>
             <CardHeader as="h3" title="Для попадания в поиск" />
-            {data.discoverability.discoverable ? (
+            {data.discoverability.discoverable && !data.discoverability.gradeConfirmed ? (
+              <Alert tone="warning">Профиль виден, но грейд не подтверждён тестом: вы показываетесь после подтверждённых кандидатов, с пометкой.</Alert>
+            ) : data.discoverability.discoverable ? (
               <Alert tone="success">Профиль виден работодателям в поиске.</Alert>
             ) : (
               <>

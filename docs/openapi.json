@@ -997,6 +997,84 @@
         ]
       }
     },
+    "/api/v1/candidate/consents/guardian": {
+      "put": {
+        "description": "Нужно для публикации профиля кандидата 16–17 лет. В MVP — заявление кандидата с ФИО представителя; подтверждение самим представителем вне MVP. Отзыв скрывает профиль из поиска.",
+        "operationId": "CandidateProfiles_updateGuardianConsent",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuardianConsentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OwnProfileResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "GUARDIAN_CONSENT_NOT_APPLICABLE — кандидату не 16–17 лет или не указана дата рождения",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED. VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Согласие законного представителя (кандидаты 16–17 лет)",
+        "tags": [
+          "candidate"
+        ]
+      }
+    },
     "/api/v1/candidate/qualifications": {
       "get": {
         "operationId": "CandidateProfiles_qualifications",
@@ -1765,7 +1843,7 @@
         ]
       },
       "put": {
-        "description": "Компания не верифицируется в MVP и не отображается как проверенная.",
+        "description": "Смена названия снимает метку доверия: проверку нужно пройти заново.",
         "operationId": "Companies_upsert",
         "parameters": [],
         "requestBody": {
@@ -1835,6 +1913,93 @@
           }
         ],
         "summary": "Создать или обновить профиль компании",
+        "tags": [
+          "employer"
+        ]
+      }
+    },
+    "/api/v1/employer/company/verification": {
+      "post": {
+        "description": "Проверяются ИНН (контрольные разряды), наличие организации в реестре, совпадение названия и домена почты аккаунта с доменом организации. В MVP реестр демонстрационный. Результат не блокирует основной сценарий; кандидаты видят метку «Компания проверена».",
+        "operationId": "Companies_verify",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyCompanyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "company": {
+                      "$ref": "#/components/schemas/CompanyView"
+                    }
+                  },
+                  "required": [
+                    "company"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "COMPANY_PROFILE_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED. VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Добровольная проверка компании (метка доверия)",
         "tags": [
           "employer"
         ]
@@ -2249,7 +2414,7 @@
     },
     "/api/v1/employer/candidates": {
       "get": {
-        "description": "Только кандидаты с подтверждённой квалификацией и опубликованным профилем. Сортировка по категории, затем по качеству теста и бонусу ФСП. Контакты не возвращаются.",
+        "description": "Опубликованные профили. Сортировка по категории (специализация → подтверждённый грейд), внутри — качество теста и бонус ФСП. Кандидаты без подтверждённого грейда — после подтверждённых своей специализации, с пометкой и без балла (includeUnconfirmed=false скрывает их; category=SPEC:UNCONFIRMED — только они). Контакты не возвращаются.",
         "operationId": "Matching_bank",
         "parameters": [
           {
@@ -2307,7 +2472,7 @@
             "in": "query",
             "description": "Категория «специализация:грейд», например BACKEND:MIDDLE.",
             "schema": {
-              "pattern": "^(FRONTEND|BACKEND|ML_ENGINEER|MANUAL_QA):(JUNIOR|MIDDLE|SENIOR)$",
+              "pattern": "^(FRONTEND|BACKEND|ML_ENGINEER|MANUAL_QA):(JUNIOR|MIDDLE|SENIOR|UNCONFIRMED)$",
               "example": "BACKEND:MIDDLE",
               "type": "string"
             }
@@ -2356,6 +2521,16 @@
             "required": false,
             "in": "query",
             "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "includeUnconfirmed",
+            "required": false,
+            "in": "query",
+            "description": "Показывать кандидатов без подтверждённого тестом грейда (после подтверждённых своей специализации, с пометкой)",
+            "schema": {
+              "default": true,
               "type": "boolean"
             }
           },
@@ -6032,6 +6207,113 @@
         ]
       }
     },
+    "/api/v1/employer/tasks/{id}/assign": {
+      "post": {
+        "description": "Адресная отправка активного задания кандидату, которого видит компания (в поиске или по доступу к контактам); подтверждённый грейд не нужен. Не зависит от недельного периода регулярных заданий. Не более одного неотвеченного адресного задания от компании одному кандидату.",
+        "operationId": "EmployerTasks_assign",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignTaskDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Задание отправлено кандидату",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskAssignmentReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "TASK_NOT_FOUND | CANDIDATE_NOT_FOUND. Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "TASK_NOT_ACTIVE | DIRECT_TASK_PENDING | TASK_ALREADY_ASSIGNED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Отправить задание конкретному кандидату",
+        "tags": [
+          "employer-tasks"
+        ]
+      }
+    },
     "/api/v1/employer/tasks/{id}/submissions": {
       "get": {
         "description": "Псевдоним и подтверждённый грейд; ФИО и контакты не раскрываются. pendingOnly=true — только разборы без оценки.",
@@ -6249,7 +6531,7 @@
     },
     "/api/v1/candidate/tasks": {
       "get": {
-        "description": "Новое задание предлагается при открытии раздела, не чаще раза в 7 дней и только если нет неотвеченного. Задания подбираются по подтверждённой тестом квалификации и показываются кандидатам, которых видят работодатели. Выполнение не меняет подтверждённый грейд и не влияет на подбор.",
+        "description": "Регулярное задание предлагается при открытии раздела, не чаще раза в 7 дней и только если нет неотвеченного; подбирается по подтверждённой тестом квалификации и показывается кандидатам, которых видят работодатели. Адресные задания от работодателей (direct) приходят независимо от этого. Выполнение не меняет подтверждённый грейд и не влияет на подбор.",
         "operationId": "CandidateTasks_overview",
         "parameters": [],
         "responses": {
@@ -7103,7 +7385,9 @@
               "NO_PUBLICATION_CONSENT",
               "NOT_DISCOVERABLE",
               "PAUSED",
-              "NO_CONFIRMED_QUALIFICATION"
+              "NO_CONFIRMED_QUALIFICATION",
+              "UNDERAGE",
+              "GUARDIAN_CONSENT_REQUIRED"
             ]
           },
           "missingFields": {
@@ -7182,6 +7466,9 @@
           },
           "newInvitations": {
             "type": "number"
+          },
+          "pendingDirectTasks": {
+            "type": "number"
           }
         },
         "required": [
@@ -7194,7 +7481,8 @@
           "profileId",
           "alias",
           "discoverable",
-          "newInvitations"
+          "newInvitations",
+          "pendingDirectTasks"
         ]
       },
       "EmployerMeStateDto": {
@@ -7655,6 +7943,13 @@
             "minimum": 0,
             "maximum": 600
           },
+          "birthDate": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "1998-04-21",
+            "description": "Дата рождения (ГГГГ-ММ-ДД). Работодатели видят только признак «16–17 лет»."
+          },
           "skills": {
             "maxItems": 40,
             "type": "array",
@@ -7751,6 +8046,23 @@
         },
         "required": [
           "profilePublication"
+        ]
+      },
+      "GuardianConsentDto": {
+        "type": "object",
+        "properties": {
+          "consent": {
+            "type": "boolean",
+            "description": "Законный представитель кандидата 16–17 лет согласен на публикацию профиля и рассмотрение предложений."
+          },
+          "guardianName": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "ФИО законного представителя (обязательно при даче согласия). Работодателям не показывается."
+          }
+        },
+        "required": [
+          "consent"
         ]
       },
       "StartAssessmentDto": {
@@ -7911,6 +8223,20 @@
           "name",
           "contactChannelType",
           "contactValue"
+        ]
+      },
+      "VerifyCompanyDto": {
+        "type": "object",
+        "properties": {
+          "inn": {
+            "type": "string",
+            "pattern": "^\\d{10}(\\d{2})?$",
+            "example": "0077010019",
+            "description": "ИНН: 10 цифр (юрлицо) или 12 (ИП)"
+          }
+        },
+        "required": [
+          "inn"
         ]
       },
       "PreferredSkillDto": {
@@ -8275,6 +8601,11 @@
             "minLength": 3,
             "maxLength": 200,
             "example": "hr@example.com"
+          },
+          "minorConditionsAcknowledged": {
+            "type": "boolean",
+            "description": "Обязательно для кандидатов 16–17 лет: работодатель знает об особых условиях труда работников до 18 лет (ТК РФ, гл. 42).",
+            "default": false
           }
         },
         "required": [
@@ -8718,6 +9049,24 @@
           }
         }
       },
+      "AssignTaskDto": {
+        "type": "object",
+        "properties": {
+          "candidateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Кандидат, которому отправляется задание"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Сообщение кандидату (видно ему вместе с заданием)"
+          }
+        },
+        "required": [
+          "candidateId"
+        ]
+      },
       "ReviewSubmissionDto": {
         "type": "object",
         "properties": {
@@ -8842,11 +9191,15 @@
               },
               "profilePublication": {
                 "$ref": "#/components/schemas/ConsentState"
+              },
+              "guardian": {
+                "$ref": "#/components/schemas/ConsentState"
               }
             },
             "required": [
               "dataProcessing",
-              "profilePublication"
+              "profilePublication",
+              "guardian"
             ],
             "additionalProperties": false
           },
@@ -8854,6 +9207,9 @@
             "type": "object",
             "properties": {
               "discoverable": {
+                "type": "boolean"
+              },
+              "gradeConfirmed": {
                 "type": "boolean"
               },
               "issues": {
@@ -8865,9 +9221,11 @@
             },
             "required": [
               "discoverable",
+              "gradeConfirmed",
               "issues"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "gradeConfirmed=false — кандидат виден работодателям после подтверждённых, с пометкой «грейд не подтверждён»."
           },
           "qualification": {
             "nullable": true,
@@ -8970,6 +9328,26 @@
             "type": "number",
             "nullable": true
           },
+          "birthDate": {
+            "type": "string",
+            "description": "ГГГГ-ММ-ДД.",
+            "nullable": true
+          },
+          "ageGroup": {
+            "type": "string",
+            "enum": [
+              "UNDER_16",
+              "MINOR_16_17",
+              "ADULT",
+              null
+            ],
+            "nullable": true
+          },
+          "guardianName": {
+            "type": "string",
+            "description": "ФИО законного представителя (16–17 лет); работодателям не показывается.",
+            "nullable": true
+          },
           "skills": {
             "type": "array",
             "items": {
@@ -9056,6 +9434,9 @@
           "activeSpecialization",
           "declaredGrade",
           "experienceMonths",
+          "birthDate",
+          "ageGroup",
+          "guardianName",
           "skills",
           "teamRoles",
           "experienceDescription",
@@ -9191,7 +9572,9 @@
               "NO_PUBLICATION_CONSENT",
               "NOT_DISCOVERABLE",
               "PAUSED",
-              "NO_CONFIRMED_QUALIFICATION"
+              "NO_CONFIRMED_QUALIFICATION",
+              "UNDERAGE",
+              "GUARDIAN_CONSENT_REQUIRED"
             ]
           },
           "message": {
@@ -9360,6 +9743,10 @@
           "experienceMonths": {
             "type": "number",
             "nullable": true
+          },
+          "minor": {
+            "type": "boolean",
+            "description": "16–17 лет (дата рождения работодателю не раскрывается)."
           },
           "city": {
             "type": "string",
@@ -9571,6 +9958,7 @@
           "qualification",
           "declaredGrade",
           "experienceMonths",
+          "minor",
           "city",
           "workFormats",
           "salaryExpectation",
@@ -11221,6 +11609,10 @@
           "respondedAt": {
             "type": "string",
             "nullable": true
+          },
+          "minorConditionsAcknowledged": {
+            "type": "boolean",
+            "description": "Работодатель подтвердил особые условия труда для кандидата 16–17 лет."
           }
         },
         "required": [
@@ -11236,7 +11628,8 @@
           "createdAt",
           "expiresAt",
           "viewedAt",
-          "respondedAt"
+          "respondedAt",
+          "minorConditionsAcknowledged"
         ],
         "additionalProperties": false
       },
@@ -11299,6 +11692,10 @@
             "type": "string",
             "nullable": true
           },
+          "minorConditionsAcknowledged": {
+            "type": "boolean",
+            "description": "Работодатель подтвердил особые условия труда для кандидата 16–17 лет."
+          },
           "description": {
             "type": "string"
           },
@@ -11342,9 +11739,7 @@
           },
           "companyVerified": {
             "type": "boolean",
-            "enum": [
-              false
-            ]
+            "description": "Компания прошла добровольную проверку (метка доверия)."
           },
           "events": {
             "type": "array",
@@ -11437,6 +11832,7 @@
           "events",
           "expiresAt",
           "id",
+          "minorConditionsAcknowledged",
           "respondedAt",
           "salaryFrom",
           "salaryTo",
@@ -11564,9 +11960,10 @@
           },
           "verified": {
             "type": "boolean",
-            "enum": [
-              false
-            ]
+            "description": "Добровольная метка доверия пройдена."
+          },
+          "verification": {
+            "$ref": "#/components/schemas/CompanyVerificationView"
           },
           "updatedAt": {
             "type": "string"
@@ -11583,7 +11980,77 @@
           "contactChannelType",
           "contactValue",
           "verified",
+          "verification",
           "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "CompanyVerificationView": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "NOT_REQUESTED",
+              "VERIFIED",
+              "REJECTED"
+            ]
+          },
+          "statusTitle": {
+            "type": "string"
+          },
+          "inn": {
+            "type": "string",
+            "nullable": true
+          },
+          "verifiedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "INN_FORMAT",
+                    "REGISTRY_FOUND",
+                    "NAME_MATCH",
+                    "EMAIL_DOMAIN"
+                  ]
+                },
+                "passed": {
+                  "type": "boolean"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "code",
+                "passed",
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "demo": {
+            "type": "boolean",
+            "description": "Проверка по демонстрационному реестру, а не по ЕГРЮЛ.",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "statusTitle",
+          "inn",
+          "verifiedAt",
+          "checks",
+          "demo"
         ],
         "additionalProperties": false
       },
@@ -11964,7 +12431,8 @@
               "additionalProperties": false,
               "properties": {
                 "bankScore": {
-                  "type": "number"
+                  "type": "number",
+                  "nullable": true
                 },
                 "category": {
                   "type": "string"
@@ -11982,13 +12450,37 @@
                   "$ref": "#/components/schemas/Specialization"
                 },
                 "grade": {
-                  "$ref": "#/components/schemas/Grade"
+                  "description": "Подтверждённый тестом грейд; null — грейд не подтверждён (кандидат показывается после подтверждённых, с пометкой).",
+                  "nullable": true,
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Grade"
+                    }
+                  ]
                 },
                 "gradeTitle": {
-                  "type": "string"
+                  "type": "string",
+                  "nullable": true
+                },
+                "gradeConfirmed": {
+                  "type": "boolean"
+                },
+                "declaredGrade": {
+                  "description": "Заявленный кандидатом грейд (самоописание).",
+                  "nullable": true,
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Grade"
+                    }
+                  ]
+                },
+                "declaredGradeTitle": {
+                  "type": "string",
+                  "nullable": true
                 },
                 "overallScore": {
-                  "type": "number"
+                  "type": "number",
+                  "nullable": true
                 },
                 "groupScores": {
                   "type": "array",
@@ -12096,6 +12588,10 @@
                 },
                 "hasContactAccess": {
                   "type": "boolean"
+                },
+                "minor": {
+                  "type": "boolean",
+                  "description": "16–17 лет: особые условия трудоустройства (ТК РФ, гл. 42)."
                 }
               },
               "required": [
@@ -12106,12 +12602,16 @@
                 "candidateId",
                 "category",
                 "city",
+                "declaredGrade",
+                "declaredGradeTitle",
                 "displayName",
                 "fsp",
                 "grade",
+                "gradeConfirmed",
                 "gradeTitle",
                 "groupScores",
                 "hasContactAccess",
+                "minor",
                 "overallScore",
                 "salary",
                 "salaryHidden",
@@ -12120,7 +12620,8 @@
                 "verifiedSkills",
                 "workFormats"
               ]
-            }
+            },
+            "description": "bankScore = null у кандидатов без подтверждённого грейда; category = «SPEC:UNCONFIRMED» для них."
           },
           "total": {
             "type": "number"
@@ -12202,6 +12703,9 @@
               "needTitle": {
                 "type": "string"
               },
+              "gradeConfirmed": {
+                "type": "boolean"
+              },
               "passes": {
                 "type": "boolean"
               },
@@ -12227,6 +12731,7 @@
             "required": [
               "needId",
               "needTitle",
+              "gradeConfirmed",
               "passes",
               "violations",
               "score",
@@ -12559,6 +13064,10 @@
           "totalMatched": {
             "type": "number"
           },
+          "totalUnconfirmed": {
+            "type": "number",
+            "description": "Кандидаты без подтверждённого грейда, показанные после подтверждённых (не входят в totalMatched)."
+          },
           "durationMs": {
             "type": "number"
           },
@@ -12637,6 +13146,7 @@
           "createdAt",
           "totalConsidered",
           "totalMatched",
+          "totalUnconfirmed",
           "durationMs",
           "emptyReasons",
           "rejectedBySkill",
@@ -12704,8 +13214,12 @@
                   false
                 ]
               },
+              "gradeConfirmed": {
+                "type": "boolean"
+              },
               "score": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "candidate": {
                 "$ref": "#/components/schemas/CandidateSummary"
@@ -12717,6 +13231,7 @@
             "required": [
               "rank",
               "unavailable",
+              "gradeConfirmed",
               "score",
               "candidate",
               "explanation"
@@ -12741,13 +13256,37 @@
             "$ref": "#/components/schemas/Specialization"
           },
           "grade": {
-            "$ref": "#/components/schemas/Grade"
+            "description": "Подтверждённый тестом грейд; null — грейд не подтверждён (кандидат показывается после подтверждённых, с пометкой).",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Grade"
+              }
+            ]
           },
           "gradeTitle": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
+          },
+          "gradeConfirmed": {
+            "type": "boolean"
+          },
+          "declaredGrade": {
+            "description": "Заявленный кандидатом грейд (самоописание).",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Grade"
+              }
+            ]
+          },
+          "declaredGradeTitle": {
+            "type": "string",
+            "nullable": true
           },
           "overallScore": {
-            "type": "number"
+            "type": "number",
+            "nullable": true
           },
           "groupScores": {
             "type": "array",
@@ -12855,6 +13394,10 @@
           },
           "hasContactAccess": {
             "type": "boolean"
+          },
+          "minor": {
+            "type": "boolean",
+            "description": "16–17 лет: особые условия трудоустройства (ТК РФ, гл. 42)."
           }
         },
         "required": [
@@ -12864,6 +13407,9 @@
           "specialization",
           "grade",
           "gradeTitle",
+          "gradeConfirmed",
+          "declaredGrade",
+          "declaredGradeTitle",
           "overallScore",
           "groupScores",
           "verifiedSkills",
@@ -12875,7 +13421,8 @@
           "fsp",
           "bookmarked",
           "activeInvitation",
-          "hasContactAccess"
+          "hasContactAccess",
+          "minor"
         ],
         "additionalProperties": false
       },
@@ -12906,6 +13453,9 @@
           },
           "totalMatched": {
             "type": "number"
+          },
+          "totalUnconfirmed": {
+            "type": "number"
           }
         },
         "required": [
@@ -12916,7 +13466,8 @@
           "filters",
           "parentRunId",
           "totalConsidered",
-          "totalMatched"
+          "totalMatched",
+          "totalUnconfirmed"
         ],
         "additionalProperties": false
       },
@@ -13026,6 +13577,10 @@
             "type": "string",
             "nullable": true
           },
+          "minorConditionsAcknowledged": {
+            "type": "boolean",
+            "description": "Работодатель подтвердил особые условия труда для кандидата 16–17 лет."
+          },
           "description": {
             "type": "string"
           },
@@ -13095,6 +13650,7 @@
           "events",
           "expiresAt",
           "id",
+          "minorConditionsAcknowledged",
           "needId",
           "needTitle",
           "respondedAt",
@@ -13156,6 +13712,10 @@
             "type": "string",
             "nullable": true
           },
+          "minorConditionsAcknowledged": {
+            "type": "boolean",
+            "description": "Работодатель подтвердил особые условия труда для кандидата 16–17 лет."
+          },
           "candidateId": {
             "type": "string"
           },
@@ -13183,6 +13743,7 @@
           "expiresAt",
           "hasContactAccess",
           "id",
+          "minorConditionsAcknowledged",
           "needId",
           "needTitle",
           "respondedAt",
@@ -13807,6 +14368,10 @@
             "type": "string",
             "nullable": true
           },
+          "companyVerified": {
+            "type": "boolean",
+            "description": "Компания прошла добровольную проверку (метка доверия)."
+          },
           "publishedAt": {
             "type": "string",
             "nullable": true
@@ -13846,6 +14411,7 @@
           "city",
           "companyIndustry",
           "companyName",
+          "companyVerified",
           "fit",
           "id",
           "myApplication",
@@ -13942,6 +14508,10 @@
             "type": "string",
             "nullable": true
           },
+          "companyVerified": {
+            "type": "boolean",
+            "description": "Компания прошла добровольную проверку (метка доверия)."
+          },
           "publishedAt": {
             "type": "string",
             "nullable": true
@@ -13980,10 +14550,7 @@
                 "nullable": true
               },
               "verified": {
-                "type": "boolean",
-                "enum": [
-                  false
-                ]
+                "type": "boolean"
               }
             },
             "required": [
@@ -14082,6 +14649,7 @@
           "company",
           "companyIndustry",
           "companyName",
+          "companyVerified",
           "description",
           "disclosure",
           "fit",
@@ -14610,6 +15178,9 @@
           "needsReview": {
             "type": "boolean"
           },
+          "source": {
+            "$ref": "#/components/schemas/TaskAssignmentSource"
+          },
           "verdict": {
             "nullable": true,
             "allOf": [
@@ -14642,6 +15213,7 @@
           "answerText",
           "isCorrect",
           "needsReview",
+          "source",
           "verdict",
           "verdictTitle",
           "reviewComment",
@@ -14650,6 +15222,14 @@
         "additionalProperties": false,
         "description": "Ответ кандидата для автора задания. Без ФИО и контактов: только псевдоним и подтверждённый грейд."
       },
+      "TaskAssignmentSource": {
+        "type": "string",
+        "enum": [
+          "ROTATION",
+          "DIRECT"
+        ],
+        "description": "ROTATION — регулярное предложение платформы; DIRECT — работодатель отправил задание лично."
+      },
       "TaskVerdict": {
         "type": "string",
         "enum": [
@@ -14657,6 +15237,42 @@
           "ACCEPTABLE",
           "WEAK"
         ]
+      },
+      "TaskAssignmentReceipt": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "candidateId": {
+            "type": "string"
+          },
+          "candidateAlias": {
+            "type": "string"
+          },
+          "taskId": {
+            "type": "string"
+          },
+          "taskTitle": {
+            "type": "string"
+          },
+          "offeredAt": {
+            "type": "string"
+          },
+          "dueAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "candidateId",
+          "candidateAlias",
+          "taskId",
+          "taskTitle",
+          "offeredAt",
+          "dueAt"
+        ],
+        "additionalProperties": false
       },
       "CandidateTasksResponse": {
         "type": "object",
@@ -14669,6 +15285,13 @@
                 "$ref": "#/components/schemas/CandidateTaskView"
               }
             ]
+          },
+          "direct": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CandidateTaskView"
+            },
+            "description": "Неотвеченные задания, которые работодатели отправили лично (не зависят от недельного периода)."
           },
           "history": {
             "type": "array",
@@ -14718,6 +15341,7 @@
         },
         "required": [
           "current",
+          "direct",
           "history",
           "intervalDays",
           "nextOfferAt",
@@ -14739,6 +15363,14 @@
           },
           "statusTitle": {
             "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/TaskAssignmentSource"
+          },
+          "note": {
+            "type": "string",
+            "description": "Сообщение компании к адресному заданию.",
+            "nullable": true
           },
           "offeredAt": {
             "type": "string"
@@ -14784,6 +15416,10 @@
               "companyName": {
                 "type": "string"
               },
+              "companyVerified": {
+                "type": "boolean",
+                "description": "Компания прошла добровольную проверку (метка доверия)."
+              },
               "closed": {
                 "type": "boolean"
               }
@@ -14797,6 +15433,7 @@
               "specialization",
               "specializationTitle",
               "companyName",
+              "companyVerified",
               "closed"
             ],
             "additionalProperties": false
@@ -14814,6 +15451,8 @@
           "id",
           "status",
           "statusTitle",
+          "source",
+          "note",
           "offeredAt",
           "dueAt",
           "submittedAt",

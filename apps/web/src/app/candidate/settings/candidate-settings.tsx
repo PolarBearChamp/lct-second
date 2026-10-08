@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, PageHeader } from '@/components/ui/card';
 import { ConfirmDialog } from '@/components/ui/dialog';
-import { Checkbox, ChoiceGroup } from '@/components/ui/field';
+import { Checkbox, ChoiceGroup, Field, Input } from '@/components/ui/field';
 import { ErrorState, LoadingBlock } from '@/components/ui/states';
 import { useToast } from '@/components/ui/toast';
 import { api, errorMessage } from '@/lib/api/client';
@@ -96,7 +96,11 @@ function PublicationSection({ data }: { data: OwnProfileResponse }) {
         description="Работодатели видят только обезличенную карточку: без ФИО, контактов, ссылок и свободного текста."
       />
       <div className="space-y-4">
-        {data.discoverability.discoverable ? (
+        {data.discoverability.discoverable && !data.discoverability.gradeConfirmed ? (
+          <Alert tone="warning" title="Профиль виден в поиске, но грейд не подтверждён">
+            Пока грейд не подтверждён тестом, работодатели видят вас после всех подтверждённых кандидатов, с пометкой «грейд не подтверждён» и без балла подбора. Пройдите тест — категория появится в поиске.
+          </Alert>
+        ) : data.discoverability.discoverable ? (
           <Alert tone="success" title="Профиль виден работодателям в поиске" />
         ) : (
           <Alert tone="warning" title="Профиль не виден в поиске">
@@ -107,6 +111,8 @@ function PublicationSection({ data }: { data: OwnProfileResponse }) {
             </ul>
           </Alert>
         )}
+
+        {data.profile.ageGroup === 'MINOR_16_17' || data.consents.guardian.active ? <GuardianConsentBlock data={data} /> : null}
 
         {consent.active ? (
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line p-4">
@@ -234,5 +240,59 @@ function PreviewSection() {
         Обезличивание снижает прямую идентифицируемость, но не гарантирует анонимность по совокупности признаков (город, стек, достижения).
       </p>
     </section>
+  );
+}
+
+/** Согласие законного представителя для кандидатов 16–17 лет (без него профиль не публикуется). */
+function GuardianConsentBlock({ data }: { data: OwnProfileResponse }) {
+  const queryClient = useQueryClient();
+  const { notify } = useToast();
+  const [name, setName] = useState(data.profile.guardianName ?? '');
+  const [confirmed, setConfirmed] = useState(false);
+  const active = data.consents.guardian.active;
+  const save = useMutation({
+    mutationFn: (consent: boolean) => api.put<OwnProfileResponse>('/candidate/consents/guardian', consent ? { consent, guardianName: name.trim() } : { consent }),
+    onSuccess: (updated) => {
+      queryClient.setQueryData(queryKeys.ownProfile, updated);
+      void queryClient.invalidateQueries({ queryKey: ['me'] });
+      notify(updated.consents.guardian.active ? 'Согласие законного представителя отмечено' : 'Согласие законного представителя отозвано', 'info');
+    },
+    onError: (error) => notify(errorMessage(error), 'danger'),
+  });
+  return (
+    <div className="rounded-xl border border-line p-4">
+      <h3 className="font-semibold">Согласие законного представителя (16–17 лет)</h3>
+      <p className="mt-1 text-sm text-muted">
+        Кандидатам до 18 лет нужно согласие родителя или иного законного представителя на публикацию профиля и рассмотрение предложений. Работодатели не видят
+        ФИО представителя и дату рождения — только отметку «16–17 лет»; приглашая вас, они подтверждают, что знают об особых условиях труда работников до 18 лет
+        (ТК РФ, глава 42). В MVP это ваше заявление; подтверждение самим представителем (подпись, Госуслуги) не реализовано.
+      </p>
+      {active ? (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <span className="text-sm">
+            Согласие отмечено{data.profile.guardianName ? `: ${data.profile.guardianName}` : ''}.
+          </span>
+          <Button variant="outline" size="sm" loading={save.isPending} onClick={() => save.mutate(false)}>
+            Отозвать
+          </Button>
+        </div>
+      ) : (
+        <form
+          className="mt-3 space-y-3"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (confirmed && name.trim().length >= 3) save.mutate(true);
+          }}
+        >
+          <Field label="ФИО законного представителя">
+            {(props) => <Input {...props} value={name} maxLength={120} onChange={(e) => setName(e.target.value)} />}
+          </Field>
+          <Checkbox checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} label="Законный представитель знает о публикации профиля и согласен на рассмотрение предложений о работе" />
+          <Button type="submit" size="sm" disabled={!confirmed || name.trim().length < 3} loading={save.isPending}>
+            Отметить согласие
+          </Button>
+        </form>
+      )}
+    </div>
   );
 }

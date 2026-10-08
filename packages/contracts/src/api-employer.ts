@@ -26,6 +26,8 @@ export interface InvitationBase {
   expiresAt: string;
   viewedAt: string | null;
   respondedAt: string | null;
+  /** Работодатель подтвердил особые условия труда для кандидата 16–17 лет. */
+  minorConditionsAcknowledged: boolean;
 }
 
 export interface InvitationEventView {
@@ -39,7 +41,8 @@ export interface CandidateInvitationDetail extends InvitationBase {
   employerContactType: ContactChannel;
   employerContact: string;
   company: { name: string; industry: string | null; industryTitle: string | null; website: string | null; description: string | null };
-  companyVerified: false;
+  /** Компания прошла добровольную проверку (метка доверия). */
+  companyVerified: boolean;
   events: InvitationEventView[];
   disclosure: { fullName: string | null; channels: Array<{ channel: ContactChannel; value: string | null }>; alsoShared: string[] };
   contactAccess: { active: boolean; grantedAt: string; revokedAt: string | null; channels: ContactChannel[] } | null;
@@ -76,6 +79,8 @@ export interface SendInvitationRequest {
   workFormat: WorkFormat;
   employerContactType: ContactChannel;
   employerContact: string;
+  /** Обязательно true для кандидатов 16–17 лет (ТК РФ, гл. 42). */
+  minorConditionsAcknowledged?: boolean;
 }
 
 export interface ContactAccessItem {
@@ -118,8 +123,24 @@ export interface CompanyView {
   contactPersonName: string | null;
   contactChannelType: ContactChannel | null;
   contactValue: string | null;
-  verified: false;
+  /** Добровольная метка доверия пройдена. */
+  verified: boolean;
+  verification: CompanyVerificationView;
   updatedAt: string;
+}
+
+export interface CompanyVerificationView {
+  status: 'NOT_REQUESTED' | 'VERIFIED' | 'REJECTED';
+  statusTitle: string;
+  inn: string | null;
+  verifiedAt: string | null;
+  checks: Array<{ code: 'INN_FORMAT' | 'REGISTRY_FOUND' | 'NAME_MATCH' | 'EMAIL_DOMAIN'; passed: boolean; text: string }>;
+  /** Проверка по демонстрационному реестру, а не по ЕГРЮЛ. */
+  demo: true;
+}
+
+export interface VerifyCompanyRequest {
+  inn: string;
 }
 
 export interface HiringNeedView {
@@ -196,9 +217,14 @@ export interface CandidateSummary {
   alias: string;
   displayName: string;
   specialization: Specialization;
-  grade: Grade;
-  gradeTitle: string;
-  overallScore: number;
+  /** Подтверждённый тестом грейд; null — грейд не подтверждён (кандидат показывается после подтверждённых, с пометкой). */
+  grade: Grade | null;
+  gradeTitle: string | null;
+  gradeConfirmed: boolean;
+  /** Заявленный кандидатом грейд (самоописание). */
+  declaredGrade: Grade | null;
+  declaredGradeTitle: string | null;
+  overallScore: number | null;
   groupScores: Array<{ group: string; title: string; score: number }>;
   verifiedSkills: CodeTitle[];
   selfReportedSkillsCount: number;
@@ -210,10 +236,13 @@ export interface CandidateSummary {
   bookmarked: boolean;
   activeInvitation: { id: string; status: InvitationStatus } | null;
   hasContactAccess: boolean;
+  /** 16–17 лет: особые условия трудоустройства (ТК РФ, гл. 42). */
+  minor: boolean;
 }
 
 export interface BankResponse {
-  items: Array<CandidateSummary & { bankScore: number; category: string }>;
+  /** bankScore = null у кандидатов без подтверждённого грейда; category = «SPEC:UNCONFIRMED» для них. */
+  items: Array<CandidateSummary & { bankScore: number | null; category: string }>;
   total: number;
   page: number;
   pageSize: number;
@@ -258,11 +287,13 @@ export interface SelectionRunSummary {
   parentRunId: string | null;
   totalConsidered: number;
   totalMatched: number;
+  totalUnconfirmed: number;
 }
 
 export type SelectionItem =
   | { rank: number; unavailable: true }
-  | { rank: number; unavailable: false; score: number; candidate: CandidateSummary; explanation: MatchExplanation };
+  /** gradeConfirmed=false — блок «без подтверждённого грейда» после всех подтверждённых: score = null. */
+  | { rank: number; unavailable: false; gradeConfirmed: boolean; score: number | null; candidate: CandidateSummary; explanation: MatchExplanation };
 
 export interface SelectionRunView {
   id: string;
@@ -285,6 +316,8 @@ export interface SelectionRunView {
   createdAt: string;
   totalConsidered: number;
   totalMatched: number;
+  /** Кандидаты без подтверждённого грейда, показанные после подтверждённых (не входят в totalMatched). */
+  totalUnconfirmed: number;
   durationMs: number;
   emptyReasons: Array<{ reason: string; text: string; count: number }>;
   rejectedBySkill: Array<{ skill: string; title: string; count: number }>;
@@ -298,7 +331,7 @@ export interface EmployerCandidateResponse {
   profile: CandidateProfileView;
   bookmarked: boolean;
   invitations: Array<{ id: string; status: InvitationStatus; title: string; createdAt: string; expiresAt: string }>;
-  match: { needId: string; needTitle: string; passes: boolean; violations: string[]; score: number | null; explanation: MatchExplanation | null } | null;
+  match: { needId: string; needTitle: string; gradeConfirmed: boolean; passes: boolean; violations: string[]; score: number | null; explanation: MatchExplanation | null } | null;
 }
 
 export type BookmarkItem =

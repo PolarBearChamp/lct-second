@@ -21,20 +21,29 @@ export class MatchingController {
   @Get('candidates')
   @ApiOperation({
     summary: 'Общий банк кандидатов с фильтрами',
-    description: 'Только кандидаты с подтверждённой квалификацией и опубликованным профилем. Сортировка по категории, затем по качеству теста и бонусу ФСП. Контакты не возвращаются.',
+    description:
+      'Опубликованные профили. Сортировка по категории (специализация → подтверждённый грейд), внутри — качество теста и бонус ФСП. Кандидаты без подтверждённого грейда — после подтверждённых своей специализации, с пометкой и без балла (includeUnconfirmed=false скрывает их; category=SPEC:UNCONFIRMED — только они). Контакты не возвращаются.',
   })
   async bank(@CurrentAuth() auth: AuthContext, @Query() query: BankQueryDto) {
     const company = await this.companies.requireCompany(auth.userId);
     let specialization = query.specialization;
     let grades = query.grades as GradeCode[] | undefined;
+    let includeUnconfirmed = query.includeUnconfirmed ?? true;
+    let onlyUnconfirmed = false;
     if (query.category) {
       const [spec, grade] = query.category.split(':');
       specialization = spec;
-      grades = [grade as GradeCode];
+      if (grade === 'UNCONFIRMED') {
+        onlyUnconfirmed = true;
+        grades = undefined;
+      } else {
+        grades = [grade as GradeCode];
+        includeUnconfirmed = false;
+      }
     }
     return this.matching.bank(
       company,
-      { specialization, grades, skills: query.skills, skillSource: query.skillSource ?? 'VERIFIED', workFormat: query.workFormat, hasFsp: query.hasFsp, city: query.city },
+      { specialization, grades, skills: query.skills, skillSource: query.skillSource ?? 'VERIFIED', workFormat: query.workFormat, hasFsp: query.hasFsp, city: query.city, includeUnconfirmed, onlyUnconfirmed },
       query.page ?? 1,
       query.pageSize ?? 20,
     );

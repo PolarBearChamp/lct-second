@@ -99,6 +99,8 @@ export function loadScenario(): Scenario {
           candidateId: c.id,
           alias: c.id,
           discoverable: c.discoverable ?? true,
+          declaredGrade: c.grade,
+          minor: false,
           specialization: spec,
           qualification: { specialization: spec, grade: c.grade, overallScore: c.overall, verifiedSkills: c.verified, groupScores: [] },
           selfReportedSkills: c.self,

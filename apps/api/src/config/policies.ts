@@ -51,7 +51,39 @@ export const ASSESSMENT_POLICIES: Record<string, AssessmentPolicy> = {
     reassessmentDays: 90,
     maxFingerprintRetries: 40,
   },
+  /**
+   * v2: повтор того же уровня после неуспеха — через 30 дней, а не 24 часа (организаторы на встрече с участниками привели
+   * в пример «месяц или два» и для смены грейда, и для повтора того же уровня). Пороги не менялись. Более низкий уровень
+   * после неуспеха по-прежнему доступен сразу.
+   */
+  'assessment-policy-v2': {
+    version: 'assessment-policy-v2',
+    durationMinutes: 30,
+    itemsPerGroup: 2,
+    minScoredParts: 12,
+    passOverall: 75,
+    passGroupMin: 50,
+    confidentOverall: 90,
+    confidentGroupMin: 75,
+    skillEvidence: { minCases: 2, minScore: 70 },
+    retryCooldownHours: 30 * 24,
+    reassessmentDays: 90,
+    maxFingerprintRetries: 40,
+  },
 };
+
+/** Текущая политика оценки по умолчанию (переопределяется ASSESSMENT_POLICY_VERSION). */
+export const DEFAULT_ASSESSMENT_POLICY = 'assessment-policy-v2';
+
+/** «30 дней» или «24 ч» — срок задержки в понятном виде. */
+export function formatCooldown(hours: number): string {
+  if (hours % 24 !== 0) return `${hours} ч`;
+  const days = hours / 24;
+  const mod10 = days % 10;
+  const mod100 = days % 100;
+  const word = mod10 === 1 && mod100 !== 11 ? 'день' : mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14) ? 'дня' : 'дней';
+  return `${days} ${word}`;
+}
 
 export interface MatchingFormula {
   version: string;
@@ -94,6 +126,7 @@ export const INVITATION_POLICIES: Record<string, InvitationPolicy> = {
 export const CONSENT_POLICY_VERSIONS = {
   DATA_PROCESSING: 'privacy-policy-2026-10',
   PROFILE_PUBLICATION: 'profile-publication-2026-10',
+  GUARDIAN_CONSENT: 'guardian-consent-2026-10',
 } as const;
 
 export const ONBOARDING_SURVEY_VERSION = 'onboarding-survey-v1';

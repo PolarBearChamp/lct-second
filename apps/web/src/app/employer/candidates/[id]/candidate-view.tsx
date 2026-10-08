@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { BookmarkButton } from '@/components/employer/bookmark-button';
 import { ExplanationPanel } from '@/components/employer/explanation-panel';
 import { InviteForm } from '@/components/employer/invite-form';
+import { SendTaskCard } from '@/components/tasks/send-task-card';
 import { InvitationStatusBadge } from '@/components/invitations/invitation-status';
 import { CandidateCard } from '@/components/profile/candidate-card';
 import { Alert } from '@/components/ui/alert';
@@ -59,13 +60,20 @@ export function EmployerCandidateView({ id, needId }: { id: string; needId?: str
           {match ? (
             <Card>
               <CardHeader title={`Соответствие потребности «${match.needTitle}»`} />
-              {match.passes && match.explanation && match.score !== null ? (
+              {!match.gradeConfirmed ? (
+                <Alert tone="warning" title="Грейд не подтверждён тестом" className="mb-4">
+                  {match.passes
+                    ? 'По заявленным данным кандидат подходит под условия потребности, но в подборке он показывается после всех подтверждённых и без балла.'
+                    : `По заявленным данным не подходит: ${match.violations.join('; ')}.`}
+                </Alert>
+              ) : null}
+              {match.passes && match.explanation ? (
                 <ExplanationPanel explanation={match.explanation} score={match.score} />
-              ) : (
+              ) : match.gradeConfirmed ? (
                 <Alert tone="warning" title="Не проходит обязательные условия">
                   {match.violations.join('; ')}
                 </Alert>
-              )}
+              ) : null}
             </Card>
           ) : null}
           <CandidateCard view={profile} />
@@ -99,10 +107,12 @@ export function EmployerCandidateView({ id, needId }: { id: string; needId?: str
               key={needId ?? 'none'}
               candidateId={id}
               candidateLabel={profile.displayName}
+              candidateMinor={profile.minor}
               defaultNeedId={needId}
               onSent={() => void queryClient.invalidateQueries({ queryKey: key })}
             />
           )}
+          <SendTaskCard candidateId={id} candidateLabel={profile.displayName} />
         </aside>
       </div>
     </>

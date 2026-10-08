@@ -4,7 +4,7 @@ import type { MatchExplanation } from '@fsp/contracts';
  * Объяснение подбора из реальных данных правил (без LLM и выдуманных причин).
  * Score — относительная мера соответствия потребности, а не вероятность найма.
  */
-export function ExplanationPanel({ explanation, score }: { explanation: MatchExplanation; score: number }) {
+export function ExplanationPanel({ explanation, score }: { explanation: MatchExplanation; score: number | null }) {
   const c = explanation.components;
   const parts = [
     { label: 'Желательные навыки', comp: c.preferredFit, color: 'bg-brand-500' },
@@ -43,6 +43,12 @@ export function ExplanationPanel({ explanation, score }: { explanation: MatchExp
           <p className="text-sm text-muted">Все желательные навыки подтверждены тестом.</p>
         )}
       </div>
+      {score === null ? (
+        <p className="text-sm text-muted lg:col-span-2">
+          Балл подбора не считается: формула опирается на результат теста, а грейд кандидата тестом не подтверждён. Такие кандидаты показываются после всех
+          подтверждённых.
+        </p>
+      ) : (
       <div className="lg:col-span-2">
         <div className="mb-1 flex justify-between text-sm">
           <span className="text-muted">Вклад в оценку соответствия</span>
@@ -61,6 +67,7 @@ export function ExplanationPanel({ explanation, score }: { explanation: MatchExp
           ))}
         </ul>
       </div>
+      )}
     </div>
   );
 }

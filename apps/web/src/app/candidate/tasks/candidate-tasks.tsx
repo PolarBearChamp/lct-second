@@ -4,6 +4,7 @@ import type { CandidateTaskView } from '@fsp/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { CompanyVerifiedBadge } from '@/components/employer/company-verification';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button, LinkButton } from '@/components/ui/button';
@@ -24,7 +25,7 @@ export function CandidateTasks() {
   const [justSubmitted, setJustSubmitted] = useState<CandidateTaskView | null>(null);
   if (tasks.isPending) return <LoadingBlock lines={4} />;
   if (tasks.isError) return <ErrorState error={tasks.error} onRetry={() => tasks.refetch()} />;
-  const { current, history, practice, blocker, blockerMessage, nextOfferAt, intervalDays } = tasks.data;
+  const { current, direct, history, practice, blocker, blockerMessage, nextOfferAt, intervalDays } = tasks.data;
   return (
     <>
       <PageHeader
@@ -34,6 +35,15 @@ export function CandidateTasks() {
 
       <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
         <section aria-label="Текущее задание" className="space-y-6">
+          {direct.length ? (
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold">Отправлены вам лично</h2>
+              {direct.map((task) => (
+                <TaskCard key={task.id} task={task} onSubmitted={setJustSubmitted} />
+              ))}
+            </div>
+          ) : null}
+          {direct.length ? <h2 className="text-lg font-bold">Регулярное задание</h2> : null}
           {blocker ? (
             <Alert tone="warning" title="Задания сейчас не предлагаются" actions={<LinkButton href="/candidate/settings" variant="outline">Приватность и ФСП</LinkButton>}>
               {blockerMessage}
@@ -129,9 +139,12 @@ function TaskCard({ task, onSubmitted }: { task: CandidateTaskView; onSubmitted:
         <Badge tone="brand">{task.task.kindTitle}</Badge>
         <Badge>{task.task.specializationTitle}</Badge>
         <span className="text-sm text-muted">от компании «{task.task.companyName}»</span>
+        <CompanyVerifiedBadge verified={task.task.companyVerified} />
+        {task.source === 'DIRECT' ? <Badge tone="warning">лично вам</Badge> : null}
       </div>
       <h2 className="text-xl font-bold">{task.task.title}</h2>
       <p className="mt-2 whitespace-pre-line break-words text-[15px]">{task.task.prompt}</p>
+      {task.note ? <p className="mt-3 rounded-lg bg-canvas p-3 text-[15px]">Сообщение компании: {task.note}</p> : null}
       <p className="mt-2 text-sm text-muted">Ответить можно до {formatDateTime(task.dueAt)}.</p>
 
       <form

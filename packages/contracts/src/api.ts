@@ -49,7 +49,9 @@ export interface DiscoverabilityIssue {
     | 'NO_PUBLICATION_CONSENT'
     | 'NOT_DISCOVERABLE'
     | 'PAUSED'
-    | 'NO_CONFIRMED_QUALIFICATION';
+    | 'NO_CONFIRMED_QUALIFICATION'
+    | 'UNDERAGE'
+    | 'GUARDIAN_CONSENT_REQUIRED';
   message: string;
   missingFields?: string[];
 }
@@ -67,6 +69,8 @@ export interface MeResponse {
     discoverable: boolean;
     discoverabilityIssues: DiscoverabilityIssue[];
     newInvitations: number;
+    /** Неотвеченные задания, которые работодатели отправили лично. */
+    pendingDirectTasks: number;
   } | null;
   employer: {
     companyId: string | null;
@@ -156,6 +160,11 @@ export interface OwnProfile {
   activeSpecialization: Specialization | null;
   declaredGrade: Grade | null;
   experienceMonths: number | null;
+  /** ГГГГ-ММ-ДД. */
+  birthDate: string | null;
+  ageGroup: 'UNDER_16' | 'MINOR_16_17' | 'ADULT' | null;
+  /** ФИО законного представителя (16–17 лет); работодателям не показывается. */
+  guardianName: string | null;
   skills: Array<{ code: string; title: string; months: number | null; verified: boolean }>;
   teamRoles: string[];
   experienceDescription: string | null;
@@ -168,11 +177,17 @@ export interface OwnProfile {
   updatedAt: string;
 }
 
+export interface GuardianConsentRequest {
+  consent: boolean;
+  guardianName?: string;
+}
+
 export interface OwnProfileResponse {
   profile: OwnProfile;
   survey: { version: string; answers: SurveyAnswers; completedAt: string; recommendation: SurveyRecommendation } | null;
-  consents: { dataProcessing: ConsentState; profilePublication: ConsentState };
-  discoverability: { discoverable: boolean; issues: DiscoverabilityIssue[] };
+  consents: { dataProcessing: ConsentState; profilePublication: ConsentState; guardian: ConsentState };
+  /** gradeConfirmed=false — кандидат виден работодателям после подтверждённых, с пометкой «грейд не подтверждён». */
+  discoverability: { discoverable: boolean; gradeConfirmed: boolean; issues: DiscoverabilityIssue[] };
   qualification: QualificationView | null;
   verifiedSkills: string[];
 }
@@ -192,6 +207,8 @@ export type ProfileUpdate = Partial<{
   activeSpecialization: Specialization | null;
   declaredGrade: Grade | null;
   experienceMonths: number | null;
+  /** ГГГГ-ММ-ДД. */
+  birthDate: string | null;
   skills: Array<{ code: string; months?: number | null }>;
   teamRoles: string[];
   experienceDescription: string | null;
@@ -250,6 +267,8 @@ export interface CandidateProfileView {
   qualification: QualificationView | null;
   declaredGrade: CodeTitle | null;
   experienceMonths: number | null;
+  /** 16–17 лет (дата рождения работодателю не раскрывается). */
+  minor: boolean;
   city: string | null;
   workFormats: WorkFormat[];
   salaryExpectation: { from: number | null; to: number | null; currency: 'RUB'; period: 'MONTH'; gross: true } | null;

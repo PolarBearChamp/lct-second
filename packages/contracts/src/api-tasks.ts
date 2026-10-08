@@ -1,5 +1,8 @@
 import type { Grade, ShortTaskKind, ShortTaskStatus, Specialization, TaskAssignmentStatus, TaskVerdict } from './enums';
 
+/** ROTATION — регулярное предложение платформы; DIRECT — работодатель отправил задание лично. */
+export type TaskAssignmentSource = 'ROTATION' | 'DIRECT';
+
 // ───────────────────────────── Короткие задания работодателей ─────────────────────────────
 
 /** Задание в кабинете работодателя. Верный ответ виден только автору. */
@@ -60,6 +63,7 @@ export interface TaskSubmissionItem {
   answerText: string | null;
   isCorrect: boolean | null;
   needsReview: boolean;
+  source: TaskAssignmentSource;
   verdict: TaskVerdict | null;
   verdictTitle: string | null;
   reviewComment: string | null;
@@ -74,6 +78,21 @@ export interface TaskSubmissionsResponse {
   /** Только QUIZ. */
   quiz: { answered: number; correct: number } | null;
   items: TaskSubmissionItem[];
+}
+
+export interface AssignTaskRequest {
+  candidateId: string;
+  note?: string;
+}
+
+export interface TaskAssignmentReceipt {
+  id: string;
+  candidateId: string;
+  candidateAlias: string;
+  taskId: string;
+  taskTitle: string;
+  offeredAt: string;
+  dueAt: string;
 }
 
 export interface ReviewSubmissionRequest {
@@ -101,6 +120,9 @@ export interface CandidateTaskView {
   id: string;
   status: TaskAssignmentStatus;
   statusTitle: string;
+  source: TaskAssignmentSource;
+  /** Сообщение компании к адресному заданию. */
+  note: string | null;
   offeredAt: string;
   dueAt: string;
   submittedAt: string | null;
@@ -115,6 +137,8 @@ export interface CandidateTaskView {
     specialization: Specialization;
     specializationTitle: string;
     companyName: string;
+    /** Компания прошла добровольную проверку (метка доверия). */
+    companyVerified: boolean;
     closed: boolean;
   };
   result: CandidateTaskResult | null;
@@ -125,6 +149,8 @@ export type TaskOfferBlocker = 'NOT_DISCOVERABLE' | 'PAUSED' | 'NO_CONFIRMED_QUA
 export interface CandidateTasksResponse {
   /** Задание, ожидающее ответа. Новое предлагается не чаще раза в `intervalDays` дней, пока нет неотвеченного. */
   current: CandidateTaskView | null;
+  /** Неотвеченные задания, которые работодатели отправили лично (не зависят от недельного периода). */
+  direct: CandidateTaskView[];
   history: CandidateTaskView[];
   intervalDays: number;
   /** Когда можно ждать следующее задание; null — если есть текущее или предложений нет по причине из `blocker`. */

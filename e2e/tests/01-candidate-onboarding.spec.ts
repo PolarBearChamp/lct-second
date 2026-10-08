@@ -71,6 +71,7 @@ test('новый кандидат без ФСП: регистрация, под�
   // ── Затем обязательные поля, стек из справочника, контакты ──
   await page.getByLabel('Часовой пояс').selectOption('Europe/Moscow');
   await page.getByLabel('Опыт по специальности, месяцев').fill('36');
+  await page.getByLabel('Дата рождения').fill('1997-04-12');
   await page.getByLabel('Поиск по справочнику').fill('PostgreSQL');
   await page.getByRole('checkbox', { name: /^PostgreSQL/ }).check();
   await page.getByLabel('Поиск по справочнику').fill('SQL');

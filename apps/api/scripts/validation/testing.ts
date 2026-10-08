@@ -664,7 +664,7 @@ export interface TestingResults {
 }
 
 export function runTestingValidation(options: TestingOptions = DEFAULT_OPTIONS, log: (message: string) => void = () => undefined): TestingResults {
-  const policy = getAssessmentPolicy('assessment-policy-v1');
+  const policy = getAssessmentPolicy('assessment-policy-v2');
 
   log('Корректность генерации…');
   const rows: GenerationRow[] = [];

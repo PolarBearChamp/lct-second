@@ -19,16 +19,16 @@ interface ExternalParticipant {
   }>;
 }
 
-export function resolveFixturePath(file: string): string {
+export function resolveFixturePath(file: string, envVar = 'FSP_MOCK_DATA_PATH'): string {
   const candidates = [
-    process.env.FSP_MOCK_DATA_PATH,
+    process.env[envVar],
     path.resolve(process.cwd(), 'data/fixtures', file),
     path.resolve(process.cwd(), '../../data/fixtures', file),
     path.resolve(__dirname, '../../../../../data/fixtures', file),
     path.resolve(__dirname, '../../../../data/fixtures', file),
   ].filter((p): p is string => Boolean(p));
   const found = candidates.find((p) => existsSync(p));
-  if (!found) throw new Error(`Не найден файл фикстуры ${file}. Укажите путь в FSP_MOCK_DATA_PATH.`);
+  if (!found) throw new Error(`Не найден файл фикстуры ${file}. Укажите путь в ${envVar}.`);
   return found;
 }
 

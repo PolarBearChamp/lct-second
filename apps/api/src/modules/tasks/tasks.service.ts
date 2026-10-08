@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Clock } from '../../common/clock';
-import { conflict, notFound, unprocessable } from '../../common/errors';
+import { conflict, isUniqueViolation, notFound, unprocessable } from '../../common/errors';
 import { GRADE_TITLES, getSpecialization } from '../../domain/catalog/catalog';
 import { MAX_ACTIVE_TASKS_PER_COMPANY, validateTaskContent } from '../../domain/tasks/rules';
 import type { Company, Grade, Prisma, ShortTask, ShortTaskKind, ShortTaskStatus, TaskVerdict } from '../../generated/prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-import type { CreateTaskDto, ReviewSubmissionDto, TaskSubmissionsQueryDto, UpdateTaskDto } from './dto/task.dto';
+import { dueAtFor } from '../../domain/tasks/rules';
+import { ProfileViewService } from '../profile-view/profile-view.service';
+import type { AssignTaskDto, CreateTaskDto, ReviewSubmissionDto, TaskSubmissionsQueryDto, UpdateTaskDto } from './dto/task.dto';
 
 export const TASK_KIND_TEXT: Record<ShortTaskKind, string> = {
   QUIZ: 'Тест с одним верным ответом',
@@ -34,6 +36,7 @@ export class TasksService {
     private readonly prisma: PrismaService,
     private readonly clock: Clock,
     private readonly audit: AuditService,
+    private readonly views: ProfileViewService,
   ) {}
 
   async create(company: Company, userId: string, dto: CreateTaskDto, requestId: string) {
@@ -197,11 +200,69 @@ export class TasksService {
       answerText: row.answerText,
       isCorrect: row.isCorrect,
       needsReview: task.kind === 'APPROACH' && !row.verdict,
+      source: row.source,
       verdict: row.verdict,
       verdictTitle: row.verdict ? VERDICT_TEXT[row.verdict] : null,
       reviewComment: row.reviewComment,
       reviewedAt: row.reviewedAt?.toISOString() ?? null,
     };
+  }
+
+/**
+   * Адресная отправка активного задания конкретному кандидату (ответ организаторов: работодатель может направить задание
+   * конкретному человеку или опубликовать для широкого круга). Кандидат должен быть виден компании — в поиске или по доступу
+   * к контактам; подтверждённый грейд не нужен. Не более одного неотвеченного адресного задания от компании одному кандидату.
+   */
+  async assign(company: Company, userId: string, taskId: string, dto: AssignTaskDto, requestId: string) {
+    const task = await this.getOwn(company, taskId);
+    if (task.status !== 'ACTIVE') throw conflict('TASK_NOT_ACTIVE', 'Отправить можно только активное задание');
+    const now = this.clock.now();
+    if (task.deadlineAt && task.deadlineAt <= now) throw conflict('TASK_NOT_ACTIVE', 'Срок приёма ответов по заданию истёк');
+    const visible = (await this.views.isDiscoverable(dto.candidateId)) || Boolean(await this.views.activeGrant(dto.candidateId, company.id));
+    if (!visible) throw notFound('CANDIDATE_NOT_FOUND', 'Кандидат не найден или недоступен');
+    const pending = await this.prisma.taskAssignment.findFirst({
+      where: { candidateId: dto.candidateId, status: 'OFFERED', source: 'DIRECT', task: { companyId: company.id } },
+      select: { id: true },
+    });
+    if (pending) throw conflict('DIRECT_TASK_PENDING', 'У кандидата уже есть неотвеченное задание от вашей компании', { assignmentId: pending.id });
+    try {
+      const created = await this.prisma.$transaction(async (tx) => {
+        const assignment = await tx.taskAssignment.create({
+          data: {
+            taskId,
+            candidateId: dto.candidateId,
+            status: 'OFFERED',
+            source: 'DIRECT',
+            assignedByUserId: userId,
+            note: dto.note?.trim() || null,
+            offeredAt: now,
+            dueAt: dueAtFor(now, task.deadlineAt),
+          },
+          include: { candidate: { select: { alias: true } } },
+        });
+        await this.audit.recordTx(tx, {
+          actorUserId: userId,
+          action: 'task.assigned',
+          objectType: 'TaskAssignment',
+          objectId: assignment.id,
+          requestId,
+          metadata: { taskId, candidateId: dto.candidateId },
+        });
+        return assignment;
+      });
+      return {
+        id: created.id,
+        candidateId: created.candidateId,
+        candidateAlias: created.candidate.alias,
+        taskId,
+        taskTitle: task.title,
+        offeredAt: created.offeredAt.toISOString(),
+        dueAt: created.dueAt.toISOString(),
+      };
+    } catch (error) {
+      if (isUniqueViolation(error)) throw conflict('TASK_ALREADY_ASSIGNED', 'Это задание уже предлагалось кандидату');
+      throw error;
+    }
   }
 
   /** Оценка текстового разбора автором задания; повторная оценка заменяет предыдущую. */

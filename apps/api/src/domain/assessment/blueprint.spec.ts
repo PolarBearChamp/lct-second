@@ -4,7 +4,7 @@ import { assessableSkills, getFamily } from './bank/registry';
 import { buildAssessmentBlueprint, buildStandardBlueprint } from './blueprint';
 import { createRng } from './rng';
 
-const policy = getAssessmentPolicy('assessment-policy-v1');
+const policy = getAssessmentPolicy('assessment-policy-v2');
 
 describe('стандартный план теста', () => {
   for (const spec of SPECIALIZATION_CODES) {

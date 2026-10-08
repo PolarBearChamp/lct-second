@@ -45,6 +45,8 @@ enum ContactChannel {
 enum ConsentType {
   DATA_PROCESSING
   PROFILE_PUBLICATION
+  /// Согласие законного представителя кандидата 16–17 лет на публикацию профиля и рассмотрение предложений.
+  GUARDIAN_CONSENT
 }
 
 enum AttemptStatus {
@@ -107,6 +109,19 @@ enum TaskAssignmentStatus {
   SUBMITTED
   SKIPPED
   EXPIRED
+}
+
+enum TaskAssignmentSource {
+  /// Регулярное предложение платформы (не чаще раза в неделю).
+  ROTATION
+  /// Работодатель отправил задание конкретному кандидату.
+  DIRECT
+}
+
+enum CompanyVerificationStatus {
+  NOT_REQUESTED
+  VERIFIED
+  REJECTED
 }
 
 enum TaskVerdict {
@@ -242,6 +257,10 @@ model CandidateProfile {
   activeSpecializationCode String?
   declaredGrade            Grade?
   experienceMonths         Int?
+  /// Дата рождения: нужна для правил 16–17 лет; работодателям показывается только признак «16–17 лет».
+  birthDate                DateTime?        @db.Date
+  /// ФИО законного представителя (для кандидатов 16–17 лет); работодателям не показывается.
+  guardianName             String?
   teamRoles                String[]
   experienceDescription    String?
   softSkills               String[]
@@ -411,8 +430,8 @@ model AssessmentAnswer {
 // ───────────────────────────── Работодатель ─────────────────────────────
 
 model Company {
-  id                 String   @id @default(uuid()) @db.Uuid
-  ownerUserId        String   @unique @db.Uuid
+  id                 String                    @id @default(uuid()) @db.Uuid
+  ownerUserId        String                    @unique @db.Uuid
   name               String
   description        String?
   industry           String?
@@ -420,8 +439,14 @@ model Company {
   contactPersonName  String?
   contactChannelType String?
   contactValue       String?
-  createdAt          DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+  /// ИНН для добровольной проверки (метка доверия; основной сценарий без неё не блокируется).
+  inn                String?
+  verificationStatus CompanyVerificationStatus @default(NOT_REQUESTED)
+  verifiedAt         DateTime?                 @db.Timestamptz(3)
+  /// Результаты отдельных проверок последней попытки: [{ code, passed, text }].
+  verificationChecks Json?
+  createdAt          DateTime                  @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime                  @updatedAt @db.Timestamptz(3)
 
   owner         User                 @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
   needs         HiringNeed[]
@@ -478,6 +503,8 @@ model SelectionRun {
   createdAt        DateTime @db.Timestamptz(3)
   totalConsidered  Int
   totalMatched     Int
+  /// Кандидаты без подтверждённого грейда, показанные после подтверждённых (не входят в totalMatched).
+  totalUnconfirmed Int      @default(0)
   rejectionSummary Json
   durationMs       Int
 
@@ -491,13 +518,16 @@ model SelectionRun {
 }
 
 model SelectionResult {
-  id          String @id @default(uuid()) @db.Uuid
-  runId       String @db.Uuid
-  candidateId String @db.Uuid
-  rank        Int
-  score       Float
-  components  Json
-  explanation Json
+  id             String  @id @default(uuid()) @db.Uuid
+  runId          String  @db.Uuid
+  candidateId    String  @db.Uuid
+  rank           Int
+  /// null — кандидат без подтверждённого грейда (балл формулы не считается).
+  score          Float?
+  /// false — грейд не подтверждён тестом; такие кандидаты идут после всех подтверждённых.
+  gradeConfirmed Boolean @default(true)
+  components     Json
+  explanation    Json
 
   run       SelectionRun     @relation(fields: [runId], references: [id], onDelete: Cascade)
   candidate CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)
@@ -521,27 +551,29 @@ model CandidateBookmark {
 // ───────────────────────────── Приглашения и доступ к контактам ─────────────────────────────
 
 model Invitation {
-  id                  String           @id @default(uuid()) @db.Uuid
-  companyId           String           @db.Uuid
-  candidateId         String           @db.Uuid
-  needId              String?          @db.Uuid
-  title               String
-  description         String
-  salaryFrom          Int
-  salaryTo            Int
-  workFormat          WorkFormat
-  employerContactType ContactChannel
-  employerContact     String
+  id                          String           @id @default(uuid()) @db.Uuid
+  companyId                   String           @db.Uuid
+  candidateId                 String           @db.Uuid
+  needId                      String?          @db.Uuid
+  title                       String
+  description                 String
+  salaryFrom                  Int
+  salaryTo                    Int
+  workFormat                  WorkFormat
+  employerContactType         ContactChannel
+  employerContact             String
   /// Снимок данных компании на момент отправки (без приватных данных кандидата).
-  companySnapshot     Json
-  status              InvitationStatus @default(SENT)
-  createdAt           DateTime         @db.Timestamptz(3)
-  expiresAt           DateTime         @db.Timestamptz(3)
-  viewedAt            DateTime?        @db.Timestamptz(3)
-  respondedAt         DateTime?        @db.Timestamptz(3)
-  createdByUserId     String           @db.Uuid
-  clientRequestId     String?
-  policyVersion       String
+  companySnapshot             Json
+  status                      InvitationStatus @default(SENT)
+  createdAt                   DateTime         @db.Timestamptz(3)
+  expiresAt                   DateTime         @db.Timestamptz(3)
+  viewedAt                    DateTime?        @db.Timestamptz(3)
+  respondedAt                 DateTime?        @db.Timestamptz(3)
+  createdByUserId             String           @db.Uuid
+  clientRequestId             String?
+  policyVersion               String
+  /// Работодатель подтвердил, что знает об особых условиях труда работников до 18 лет (ТК РФ, гл. 42).
+  minorConditionsAcknowledged Boolean          @default(false)
 
   company   Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
   candidate CandidateProfile  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
@@ -765,20 +797,25 @@ model ShortTask {
 
 /// Предложение задания конкретному кандидату и его ответ. Не чаще одного задания в неделю; не более одного неотвеченного за раз.
 model TaskAssignment {
-  id            String               @id @default(uuid()) @db.Uuid
-  taskId        String               @db.Uuid
-  candidateId   String               @db.Uuid
-  status        TaskAssignmentStatus @default(OFFERED)
-  offeredAt     DateTime             @db.Timestamptz(3)
-  dueAt         DateTime             @db.Timestamptz(3)
-  answerText    String?
-  selectedIndex Int?
-  isCorrect     Boolean?
-  submittedAt   DateTime?            @db.Timestamptz(3)
-  skippedAt     DateTime?            @db.Timestamptz(3)
-  verdict       TaskVerdict?
-  reviewComment String?
-  reviewedAt    DateTime?            @db.Timestamptz(3)
+  id               String               @id @default(uuid()) @db.Uuid
+  taskId           String               @db.Uuid
+  candidateId      String               @db.Uuid
+  status           TaskAssignmentStatus @default(OFFERED)
+  source           TaskAssignmentSource @default(ROTATION)
+  /// Для DIRECT — кто отправил (сотрудник компании-автора).
+  assignedByUserId String?              @db.Uuid
+  /// Для DIRECT — сопроводительное сообщение компании (видно кандидату).
+  note             String?
+  offeredAt        DateTime             @db.Timestamptz(3)
+  dueAt            DateTime             @db.Timestamptz(3)
+  answerText       String?
+  selectedIndex    Int?
+  isCorrect        Boolean?
+  submittedAt      DateTime?            @db.Timestamptz(3)
+  skippedAt        DateTime?            @db.Timestamptz(3)
+  verdict          TaskVerdict?
+  reviewComment    String?
+  reviewedAt       DateTime?            @db.Timestamptz(3)
 
   task      ShortTask        @relation(fields: [taskId], references: [id], onDelete: Cascade)
   candidate CandidateProfile @relation(fields: [candidateId], references: [id], onDelete: Cascade)

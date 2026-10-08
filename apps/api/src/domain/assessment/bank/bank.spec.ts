@@ -18,7 +18,7 @@ import { assessableSkills, BANK_VERSION, FAMILIES, familiesFor, getFamily } from
 
 const SEEDS_PER_GRADE = 300;
 const seeds = Array.from({ length: SEEDS_PER_GRADE }, (_, i) => `bank-test-seed-${i}`);
-const policy = getAssessmentPolicy('assessment-policy-v1');
+const policy = getAssessmentPolicy('assessment-policy-v2');
 
 function selectAllAnswer(instance: PrivateTaskInstance): ItemAnswer {
   const parts: ItemAnswer['parts'] = {};

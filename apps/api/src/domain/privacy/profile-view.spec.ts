@@ -17,6 +17,7 @@ const profile: ProfileSource = {
   activeSpecializationCode: 'BACKEND',
   declaredGrade: 'SENIOR',
   experienceMonths: 60,
+  birthDate: new Date('1995-06-15T00:00:00Z'),
   teamRoles: ['MENTOR'],
   experienceDescription: 'Работал в КомпанииСекрет, делал проект СверхСекретный.',
   softSkills: ['TEAMWORK'],

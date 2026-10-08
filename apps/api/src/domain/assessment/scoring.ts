@@ -1,4 +1,4 @@
-import type { AssessmentPolicy } from '../../config/policies';
+import { formatCooldown, type AssessmentPolicy } from '../../config/policies';
 import { getGroup, GRADE_ORDER, skillTitle, type GradeCode } from '../catalog/catalog';
 import type { ItemEvaluation } from './types';
 
@@ -148,7 +148,7 @@ export function recommendationsFor(score: AttemptScore, grade: GradeCode, policy
     result.push({
       kind: 'RETRY_SAME_GRADE',
       grade,
-      message: `Повторить тест на уровень ${grade} можно через ${policy.retryCooldownHours} ч.`,
+      message: `Повторить тест на уровень ${grade} можно через ${formatCooldown(policy.retryCooldownHours)}.`,
     });
   }
   return result;

@@ -146,6 +146,12 @@ export class UpdateProfileDto {
   @Max(600)
   experienceMonths?: number | null;
 
+  @ApiPropertyOptional({ nullable: true, example: '1998-04-21', description: 'Дата рождения (ГГГГ-ММ-ДД). Работодатели видят только признак «16–17 лет».' })
+  @IsOptional()
+  @ValidateIf((_, v) => v !== null)
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'Дата в формате ГГГГ-ММ-ДД' })
+  birthDate?: string | null;
+
   @ApiPropertyOptional({ type: [SkillInputDto] })
   @IsOptional()
   @IsArray()
@@ -214,6 +220,19 @@ export class SurveyAnswersDto {
   @ApiProperty({ example: { focus: 'SERVER', industries: ['FINTECH'], recentTasks: ['API', 'DB'], experience: 'Y1_3', autonomy: 'INDEPENDENT' } })
   @IsObject()
   answers!: Record<string, string | string[]>;
+}
+
+export class GuardianConsentDto {
+  /** Законный представитель кандидата 16–17 лет согласен на публикацию профиля и рассмотрение предложений. */
+  @ApiProperty()
+  @IsBoolean()
+  consent!: boolean;
+
+  @ApiPropertyOptional({ maxLength: 120, description: 'ФИО законного представителя (обязательно при даче согласия). Работодателям не показывается.' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  guardianName?: string;
 }
 
 export class UpdateConsentsDto {

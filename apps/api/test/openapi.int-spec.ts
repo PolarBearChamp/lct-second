@@ -104,6 +104,10 @@ describe('OpenAPI: ответы API соответствуют описанию'
     checked('GET /candidate/assessments/{id}/result', await client.get(`/candidate/assessments/${attemptId}/result`), 200);
     checked('GET /candidate/qualifications', await client.get('/candidate/qualifications'), 200);
     checked('PUT /candidate/consents', await client.put('/candidate/consents', { profilePublication: true }), 200);
+    // Кандидат 16–17 лет: согласие законного представителя (затем возвращаем взрослую дату рождения для остального сценария).
+    await client.patch('/candidate/profile', { birthDate: '2009-06-01' });
+    checked('PUT /candidate/consents/guardian', await client.put('/candidate/consents/guardian', { consent: true, guardianName: 'Иванова Мария Петровна' }), 200);
+    await client.patch('/candidate/profile', { birthDate: '1995-06-15' });
     await publish(client);
     checked('GET /candidate/profile/preview', await client.get('/candidate/profile/preview'), 200);
 
@@ -131,6 +135,7 @@ describe('OpenAPI: ответы API соответствуют описанию'
 
     checked('GET /employer/company', await ec.get('/employer/company'), 200);
     checked('PUT /employer/company', await ec.put('/employer/company', { name: 'Тест Компания', industry: 'FINTECH', contactChannelType: 'EMAIL', contactValue: 'hr@test-company.example' }), 200);
+    checked('POST /employer/company/verification', await ec.post('/employer/company/verification', { inn: '0077050050' }), 200);
 
     const need = checked('POST /employer/needs', await ec.post('/employer/needs', defaultNeed()), 201);
     const needId = need.body.id as string;
@@ -257,6 +262,8 @@ describe('OpenAPI: ответы API соответствуют описанию'
     const skipTarget = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
     const skipOffer = (await skipTarget.client.get('/candidate/tasks')).body.current as { id: string };
     checked('POST /candidate/tasks/{id}/skip', await skipTarget.client.post(`/candidate/tasks/${skipOffer.id}/skip`), 200);
+    const directTarget = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
+    checked('POST /employer/tasks/{id}/assign', await ec.post(`/employer/tasks/${draft.body.id}/assign`, { candidateId: directTarget.candidateId, note: 'Проверим подход' }), 201);
     checked('POST /employer/tasks/{id}/close', await ec.post(`/employer/tasks/${draft.body.id}/close`), 200);
   }, 120_000);
 

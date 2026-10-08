@@ -28,11 +28,13 @@ test('неуспех первой попытки: грейд не выдан, п
   await expect(page.getByText('Подтверждённый грейд не выдан и не изменён.')).toBeVisible();
   await expect(page.getByText('Уверенное прохождение', { exact: true })).toHaveCount(0);
 
-  // Грейда нет, профиль не опубликован.
+  // Грейда нет.
   const me = (await (await page.request.get('/api/v1/auth/me')).json()) as { candidate: { confirmedGrade: string | null; discoverable: boolean; discoverabilityIssues: Array<{ code: string }> } };
   expect(me.candidate.confirmedGrade).toBeNull();
   expect(me.candidate.discoverable).toBe(false);
-  expect(me.candidate.discoverabilityIssues.map((i) => i.code)).toContain('NO_CONFIRMED_QUALIFICATION');
+  // Без подтверждённого грейда кандидат может быть виден (ниже подтверждённых, с пометкой), но этот профиль ещё не опубликован.
+  const profile = (await (await page.request.get('/api/v1/candidate/profile')).json()) as { discoverability: { gradeConfirmed: boolean } };
+  expect(profile.discoverability.gradeConfirmed).toBe(false);
 
   // ── Повтор Middle закрыт с точной датой; Junior доступен сразу ──
   await page.goto('/candidate/assessments');
@@ -41,7 +43,7 @@ test('неуспех первой попытки: грейд не выдан, п
   const middle = gradeCards.nth(1);
   await expect(middle.getByText('недоступен')).toBeVisible();
   await expect(middle.getByText(/Доступно: \d{1,2} [а-я]+ \d{4} г\.,? (в )?\d{2}:\d{2}/)).toBeVisible(); // точная дата и время повтора
-  await expect(middle.getByText(/возможна через 24 ч после завершения предыдущей неуспешной попытки/)).toBeVisible();
+  await expect(middle.getByText(/возможна через 30 дней после завершения предыдущей неуспешной попытки/)).toBeVisible();
   await expect(middle.getByRole('button', { name: 'Начать тест' })).toBeDisabled();
   const junior = gradeCards.nth(0);
   await expect(junior.getByText('доступен', { exact: true })).toBeVisible();

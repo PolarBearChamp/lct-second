@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Alert } from '@/components/ui/alert';
+import { CompanyVerificationCard } from '@/components/employer/company-verification';
 import { Button } from '@/components/ui/button';
 import { Card, PageHeader } from '@/components/ui/card';
 import { Field, Input, Select, Textarea } from '@/components/ui/field';
@@ -75,9 +75,6 @@ function Form({ initial }: { initial: CompanyView | null }) {
   return (
     <>
       <PageHeader title="Профиль компании" description="Эти данные кандидат увидит в приглашении. Способ связи нужен, чтобы кандидат мог ответить после принятия." />
-      <Alert tone="warning" className="mb-6">
-        Компании не проходят верификацию в MVP и нигде не отображаются как проверенные.
-      </Alert>
       <Card>
         <form className="grid gap-4" onSubmit={handleSubmit((v) => save.mutate(v))} noValidate>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -128,6 +125,7 @@ function Form({ initial }: { initial: CompanyView | null }) {
           </div>
         </form>
       </Card>
+      {initial ? <CompanyVerificationCard company={initial} /> : null}
     </>
   );
 }

@@ -18,13 +18,39 @@ const ready: DiscoverabilityFacts = {
   isDiscoverable: true,
   availability: 'ACTIVE',
   confirmedSpecializations: ['BACKEND'],
+  birthDate: new Date('1995-06-15T00:00:00Z'),
+  hasGuardianConsent: false,
 };
 
 const codes = (facts: Partial<DiscoverabilityFacts>) => evaluateDiscoverability({ ...ready, ...facts }).issues.map((i) => i.code);
 
+const NOW = new Date('2026-10-09T12:00:00Z');
+
+describe('возраст: 16+ и согласие законного представителя для 16–17 лет', () => {
+  it('без даты рождения профиль неполон', () => {
+    expect(codes({ birthDate: null })).toContain('PROFILE_INCOMPLETE');
+  });
+
+  it('младше 16 — не публикуется', () => {
+    const result = evaluateDiscoverability({ ...ready, birthDate: new Date('2011-01-01T00:00:00Z') }, NOW);
+    expect(result.discoverable).toBe(false);
+    expect(result.issues.map((i) => i.code)).toContain('UNDERAGE');
+  });
+
+  it('16–17 лет — только с согласием законного представителя', () => {
+    const minor = { ...ready, birthDate: new Date('2009-03-01T00:00:00Z') };
+    expect(evaluateDiscoverability(minor, NOW).issues.map((i) => i.code)).toEqual(['GUARDIAN_CONSENT_REQUIRED']);
+    expect(evaluateDiscoverability({ ...minor, hasGuardianConsent: true }, NOW).discoverable).toBe(true);
+  });
+
+  it('взрослому согласие представителя не нужно', () => {
+    expect(evaluateDiscoverability(ready, NOW).discoverable).toBe(true);
+  });
+});
+
 describe('условия попадания кандидата в поиск', () => {
   it('все условия выполнены — кандидат виден', () => {
-    expect(evaluateDiscoverability(ready)).toEqual({ discoverable: true, issues: [] });
+    expect(evaluateDiscoverability(ready)).toEqual({ discoverable: true, gradeConfirmed: true, issues: [] });
   });
 
   it.each<[string, Partial<DiscoverabilityFacts>, string]>([
@@ -37,18 +63,21 @@ describe('условия попадания кандидата в поиск', (
     ['нет согласия на публикацию', { hasActivePublicationConsent: false }, 'NO_PUBLICATION_CONSENT'],
     ['видимость выключена', { isDiscoverable: false }, 'NOT_DISCOVERABLE'],
     ['статус PAUSED', { availability: 'PAUSED' }, 'PAUSED'],
-    ['нет подтверждённой квалификации', { confirmedSpecializations: [] }, 'NO_CONFIRMED_QUALIFICATION'],
   ])('%s → недоступен', (_title, facts, code) => {
     expect(codes(facts)).toContain(code);
     expect(evaluateDiscoverability({ ...ready, ...facts }).discoverable).toBe(false);
   });
 
-  it('квалификация другой специализации не делает кандидата видимым по активной', () => {
-    expect(codes({ activeSpecializationCode: 'FRONTEND', confirmedSpecializations: ['BACKEND'] })).toContain('NO_CONFIRMED_QUALIFICATION');
+  it('без подтверждённого грейда кандидат виден, но помечен: gradeConfirmed = false (рекомендация организаторов)', () => {
+    expect(evaluateDiscoverability({ ...ready, confirmedSpecializations: [] })).toEqual({ discoverable: true, gradeConfirmed: false, issues: [] });
   });
 
-  it('заявленный грейд не влияет на видимость — только подтверждённая квалификация', () => {
-    expect(evaluateDiscoverability({ ...ready, declaredGrade: 'SENIOR' }).discoverable).toBe(true);
-    expect(codes({ confirmedSpecializations: [], declaredGrade: 'SENIOR' })).toContain('NO_CONFIRMED_QUALIFICATION');
+  it('квалификация другой специализации не подтверждает активную', () => {
+    expect(evaluateDiscoverability({ ...ready, activeSpecializationCode: 'FRONTEND', confirmedSpecializations: ['BACKEND'] }).gradeConfirmed).toBe(false);
+  });
+
+  it('заявленный грейд не подтверждает категорию: только тест', () => {
+    expect(evaluateDiscoverability({ ...ready, confirmedSpecializations: [], declaredGrade: 'SENIOR' }).gradeConfirmed).toBe(false);
+    expect(codes({ confirmedSpecializations: [] })).toEqual([]);
   });
 });

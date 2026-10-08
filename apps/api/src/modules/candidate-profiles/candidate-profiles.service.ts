@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Clock } from '../../common/clock';
-import { isUniqueViolation, notFound, unprocessable } from '../../common/errors';
+import { isUniqueViolation, notFound, unprocessable, conflict } from '../../common/errors';
 import { CONSENT_POLICY_VERSIONS } from '../../config/policies';
 import {
   INDUSTRIES,
@@ -12,6 +12,7 @@ import {
   getSkill,
 } from '../../domain/catalog/catalog';
 import { recommendFromSurvey, SURVEY_VERSION, validateSurveyAnswers, type SurveyAnswers } from '../../domain/catalog/survey';
+import { ageGroup, isPlausibleBirthDate } from '../../domain/candidate/age';
 import { evaluateDiscoverability } from '../../domain/candidate/discoverability';
 import { buildProfileView } from '../../domain/privacy/profile-view';
 import type { Prisma } from '../../generated/prisma/client';
@@ -19,7 +20,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { ProfileViewService } from '../profile-view/profile-view.service';
 import { candidateFactsInclude, hasActivePublicationConsent, toDiscoverabilityFacts } from './candidate-facts';
-import type { UpdateConsentsDto, UpdateProfileDto } from './dto/profile.dto';
+import type { GuardianConsentDto, UpdateConsentsDto, UpdateProfileDto } from './dto/profile.dto';
 
 @Injectable()
 export class CandidateProfilesService {
@@ -44,11 +45,11 @@ export class CandidateProfilesService {
     if (!profile) throw notFound('PROFILE_NOT_FOUND', 'Профиль кандидата не найден');
     const consents = await this.prisma.consentRecord.findMany({ where: { userId }, orderBy: { acceptedAt: 'desc' } });
     const publicationConsent = await hasActivePublicationConsent(this.prisma, userId);
-    const discoverability = evaluateDiscoverability(toDiscoverabilityFacts(profile, publicationConsent));
+    const discoverability = evaluateDiscoverability(toDiscoverabilityFacts(profile, publicationConsent), this.clock.now());
     const loaded = await this.views.load(profile.id);
     const view = buildProfileView('OWNER', loaded!.profile, loaded!.qualification, loaded!.fsp);
     const verified = new Set(view.skills.filter((s) => s.source === 'VERIFIED').map((s) => s.code));
-    const consentState = (type: 'DATA_PROCESSING' | 'PROFILE_PUBLICATION') => {
+    const consentState = (type: 'DATA_PROCESSING' | 'PROFILE_PUBLICATION' | 'GUARDIAN_CONSENT') => {
       // Действующая запись важнее более «свежей» отозванной: при равных метках времени порядок не определён.
       const latest = consents.find((c) => c.type === type && !c.withdrawnAt) ?? consents.find((c) => c.type === type);
       return {
@@ -78,6 +79,9 @@ export class CandidateProfilesService {
         activeSpecialization: profile.activeSpecializationCode,
         declaredGrade: profile.declaredGrade,
         experienceMonths: profile.experienceMonths,
+        birthDate: profile.birthDate ? profile.birthDate.toISOString().slice(0, 10) : null,
+        ageGroup: ageGroup(profile.birthDate, this.clock.now()),
+        guardianName: profile.guardianName,
         skills: profile.skills.map((s) => ({
           code: s.skillCode,
           title: getSkill(s.skillCode)?.title ?? s.skillCode,
@@ -97,7 +101,7 @@ export class CandidateProfilesService {
       survey: survey
         ? { version: survey.version, answers: survey.answers, completedAt: survey.completedAt, recommendation: recommendFromSurvey(survey.answers) }
         : null,
-      consents: { dataProcessing: consentState('DATA_PROCESSING'), profilePublication: consentState('PROFILE_PUBLICATION') },
+      consents: { dataProcessing: consentState('DATA_PROCESSING'), profilePublication: consentState('PROFILE_PUBLICATION'), guardian: consentState('GUARDIAN_CONSENT') },
       discoverability,
       qualification: view.qualification,
       verifiedSkills: [...verified],
@@ -123,6 +127,9 @@ export class CandidateProfilesService {
     const salaryTo = dto.salaryTo !== undefined ? dto.salaryTo : current.salaryTo;
     if (salaryFrom !== null && salaryTo !== null && salaryFrom > salaryTo) {
       addError('salaryTo', 'Значение «до» должно быть не меньше значения «от»');
+    }
+    if (dto.birthDate && !isPlausibleBirthDate(new Date(`${dto.birthDate}T00:00:00Z`), this.clock.now())) {
+      addError('birthDate', 'Проверьте дату рождения: не в будущем, возраст от 10 до 100 лет');
     }
     if (Object.keys(errors).length) throw unprocessable('VALIDATION_FAILED', 'Проверьте введённые данные', { fields: errors });
 
@@ -154,6 +161,7 @@ export class CandidateProfilesService {
     assign('showSalaryToEmployers');
     assign('showFspToEmployers');
     assign('disclosureChannels');
+    if (dto.birthDate !== undefined) data.birthDate = dto.birthDate ? new Date(`${dto.birthDate}T00:00:00Z`) : null;
     if (dto.activeSpecialization !== undefined) {
       data.activeSpecialization = dto.activeSpecialization
         ? { connect: { code: dto.activeSpecialization } }
@@ -239,6 +247,51 @@ export class CandidateProfilesService {
     } catch (error) {
       // Параллельный повторный запрос уже создал действующее согласие (уникальный индекс) — итог тот же.
       if (!isUniqueViolation(error)) throw error;
+    }
+    return this.getOwnProfile(userId);
+  }
+
+  /**
+   * Согласие законного представителя (кандидаты 16–17 лет). В MVP — заявление кандидата с ФИО представителя; подтверждение
+   * самим представителем (подпись, Госуслуги) вне MVP. Отзыв скрывает профиль из поиска.
+   */
+  async updateGuardianConsent(userId: string, dto: GuardianConsentDto, requestId: string) {
+    const now = this.clock.now();
+    const profile = await this.prisma.candidateProfile.findUnique({ where: { userId } });
+    if (!profile) throw notFound('PROFILE_NOT_FOUND', 'Профиль кандидата не найден');
+    if (dto.consent) {
+      if (ageGroup(profile.birthDate, now) !== 'MINOR_16_17') {
+        throw conflict('GUARDIAN_CONSENT_NOT_APPLICABLE', 'Согласие законного представителя нужно только кандидатам 16–17 лет: укажите дату рождения');
+      }
+      const guardianName = dto.guardianName?.trim() || profile.guardianName;
+      if (!guardianName) throw unprocessable('VALIDATION_FAILED', 'Укажите ФИО законного представителя', { fields: { guardianName: ['Укажите ФИО законного представителя'] } });
+      try {
+        await this.prisma.$transaction(async (tx) => {
+          await tx.candidateProfile.update({ where: { id: profile.id }, data: { guardianName } });
+          const active = await tx.consentRecord.findFirst({ where: { userId, type: 'GUARDIAN_CONSENT', withdrawnAt: null } });
+          if (!active) {
+            await tx.consentRecord.create({ data: { userId, type: 'GUARDIAN_CONSENT', policyVersion: CONSENT_POLICY_VERSIONS.GUARDIAN_CONSENT, acceptedAt: now } });
+          }
+          await this.audit.recordTx(tx, {
+            actorUserId: userId,
+            action: 'candidate.guardian_consent_given',
+            objectType: 'ConsentRecord',
+            objectId: profile.id,
+            requestId,
+            metadata: { policyVersion: CONSENT_POLICY_VERSIONS.GUARDIAN_CONSENT },
+          });
+        });
+      } catch (error) {
+        if (!isUniqueViolation(error)) throw error;
+      }
+    } else {
+      await this.prisma.$transaction(async (tx) => {
+        const changed = await tx.consentRecord.updateMany({ where: { userId, type: 'GUARDIAN_CONSENT', withdrawnAt: null }, data: { withdrawnAt: now } });
+        if (changed.count && ageGroup(profile.birthDate, now) === 'MINOR_16_17') {
+          await tx.candidateProfile.update({ where: { id: profile.id }, data: { isDiscoverable: false } });
+        }
+        await this.audit.recordTx(tx, { actorUserId: userId, action: 'candidate.guardian_consent_withdrawn', objectType: 'ConsentRecord', objectId: profile.id, requestId });
+      });
     }
     return this.getOwnProfile(userId);
   }

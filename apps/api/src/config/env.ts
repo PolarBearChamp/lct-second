@@ -29,7 +29,7 @@ const envSchema = z
     MAIL_FROM: z.string().min(3).default('ФСП Таланты <no-reply@fsp-talent.example>'),
     EMAIL_VERIFICATION_TTL_HOURS: z.coerce.number().int().min(1).max(168).default(24),
     FSP_PROVIDER: z.enum(['mock']).default('mock'),
-    ASSESSMENT_POLICY_VERSION: z.string().default('assessment-policy-v1'),
+    ASSESSMENT_POLICY_VERSION: z.string().default('assessment-policy-v2'),
     MATCHING_FORMULA_VERSION: z.string().default('matching-formula-v1'),
     INVITATION_POLICY_VERSION: z.string().default('invitation-policy-v1'),
     SWAGGER_ENABLED: booleanFromString.default(true),

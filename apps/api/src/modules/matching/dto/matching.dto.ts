@@ -57,7 +57,7 @@ export class BankQueryDto extends PageQueryDto {
   /** Категория «специализация:грейд», например BACKEND:MIDDLE. */
   @ApiPropertyOptional({ example: 'BACKEND:MIDDLE' })
   @IsOptional()
-  @Matches(/^(FRONTEND|BACKEND|ML_ENGINEER|MANUAL_QA):(JUNIOR|MIDDLE|SENIOR)$/)
+  @Matches(/^(FRONTEND|BACKEND|ML_ENGINEER|MANUAL_QA):(JUNIOR|MIDDLE|SENIOR|UNCONFIRMED)$/)
   category?: string;
 
   @ApiPropertyOptional({ description: 'Коды навыков через запятую' })
@@ -83,6 +83,12 @@ export class BankQueryDto extends PageQueryDto {
   @Transform(bool)
   @IsBoolean()
   hasFsp?: boolean;
+
+  @ApiPropertyOptional({ default: true, description: 'Показывать кандидатов без подтверждённого тестом грейда (после подтверждённых своей специализации, с пометкой)' })
+  @IsOptional()
+  @Transform(bool)
+  @IsBoolean()
+  includeUnconfirmed?: boolean;
 
   @ApiPropertyOptional()
   @IsOptional()

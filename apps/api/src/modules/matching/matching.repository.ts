@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { isMinor } from '../../domain/candidate/age';
 import { evaluateDiscoverability } from '../../domain/candidate/discoverability';
 import type { GradeCode } from '../../domain/catalog/catalog';
 import type { MatchCandidate } from '../../domain/matching/rank';
@@ -7,7 +8,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { toDiscoverabilityFacts } from '../candidate-profiles/candidate-facts';
 
 const include = {
-  user: { select: { emailVerifiedAt: true } },
+  user: { select: { emailVerifiedAt: true, consents: { where: { type: 'GUARDIAN_CONSENT' as const, withdrawnAt: null }, select: { id: true } } } },
   _count: { select: { skills: true } },
   skills: { select: { skillCode: true } },
   qualifications: true,
@@ -19,7 +20,7 @@ type Loaded = Prisma.CandidateProfileGetPayload<{ include: typeof include }>;
 
 /**
  * Загрузка кандидатов для подбора. SQL отсекает заведомо невидимых (флаг видимости, статус, email,
- * квалификация); затем те же правила, что в профиле кандидата, проверяются функцией evaluateDiscoverability.
+ * активная специализация; подтверждённый грейд не обязателен — такие кандидаты идут отдельным блоком); затем те же правила, что в профиле кандидата, проверяются функцией evaluateDiscoverability.
  */
 @Injectable()
 export class MatchingRepository {
@@ -39,7 +40,6 @@ export class MatchingRepository {
             availability: 'ACTIVE',
             user: { emailVerifiedAt: { not: null } },
             activeSpecializationCode: options.specialization ?? { not: null },
-            qualifications: { some: options.specialization ? { specializationCode: options.specialization } : {} },
           }
         : {}),
     };
@@ -66,6 +66,8 @@ export class MatchingRepository {
       candidateId: profile.id,
       alias: profile.alias,
       discoverable: evaluateDiscoverability(facts).discoverable,
+      declaredGrade: (profile.declaredGrade as GradeCode | null) ?? null,
+      minor: isMinor(profile.birthDate, new Date()),
       specialization: qualification ? specialization : profile.activeSpecializationCode,
       qualification: qualification
         ? {

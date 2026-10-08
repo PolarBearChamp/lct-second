@@ -1,10 +1,16 @@
+import { ageGroup, MIN_PUBLICATION_AGE } from './age';
+
 /**
  * Условия попадания кандидата в поиск работодателей (все одновременно):
  *  1. Email подтверждён.
  *  2. Обязательные поля профиля заполнены и выбран хотя бы один канал связи с заполненным значением.
  *  3. Действует согласие на публикацию профиля и включена видимость (isDiscoverable).
  *  4. Статус готовности ACTIVE.
- *  5. Есть подтверждённая квалификация по активной специализации.
+ *  5. Возраст не меньше 16 лет; для 16–17 лет — действующее согласие законного представителя.
+ *
+ * Подтверждённый тестом грейд **не** обязателен (рекомендация организаторов на встрече с участниками: не скрывать кандидата,
+ * а показывать ниже с пометкой). Без подтверждения кандидат виден работодателям после всех подтверждённых, с пометкой
+ * «грейд не подтверждён»; категорию по-прежнему определяет только тест. Признак — gradeConfirmed.
  *
  * Одна и та же функция используется для экрана кандидата, /auth/me и фильтра подбора.
  */
@@ -16,7 +22,9 @@ export type DiscoverabilityIssueCode =
   | 'NO_PUBLICATION_CONSENT'
   | 'NOT_DISCOVERABLE'
   | 'PAUSED'
-  | 'NO_CONFIRMED_QUALIFICATION';
+  | 'NO_CONFIRMED_QUALIFICATION'
+  | 'UNDERAGE'
+  | 'GUARDIAN_CONSENT_REQUIRED';
 
 export interface DiscoverabilityIssue {
   code: DiscoverabilityIssueCode;
@@ -43,6 +51,9 @@ export interface DiscoverabilityFacts {
   availability: string;
   /** Специализации, по которым есть подтверждённая квалификация. */
   confirmedSpecializations: string[];
+  birthDate: Date | null;
+  /** Действующее согласие законного представителя (для кандидатов 16–17 лет). */
+  hasGuardianConsent: boolean;
 }
 
 export const REQUIRED_PROFILE_FIELDS: Array<{ field: string; title: string; check: (facts: DiscoverabilityFacts) => boolean }> = [
@@ -54,6 +65,7 @@ export const REQUIRED_PROFILE_FIELDS: Array<{ field: string; title: string; chec
   { field: 'declaredGrade', title: 'заявленный грейд', check: (f) => Boolean(f.declaredGrade) },
   { field: 'experienceMonths', title: 'опыт в месяцах', check: (f) => f.experienceMonths !== null },
   { field: 'skills', title: 'стек из справочника', check: (f) => f.skillsCount > 0 },
+  { field: 'birthDate', title: 'дата рождения', check: (f) => f.birthDate !== null },
 ];
 
 /** Каналы связи, которые реально можно раскрыть (выбраны и заполнены). */
@@ -70,7 +82,14 @@ export function missingProfileFields(facts: DiscoverabilityFacts): string[] {
   return REQUIRED_PROFILE_FIELDS.filter((rule) => !rule.check(facts)).map((rule) => rule.field);
 }
 
-export function evaluateDiscoverability(facts: DiscoverabilityFacts): { discoverable: boolean; issues: DiscoverabilityIssue[] } {
+export interface DiscoverabilityResult {
+  discoverable: boolean;
+  /** Есть подтверждённый тестом грейд по активной специализации (иначе кандидат виден ниже подтверждённых, с пометкой). */
+  gradeConfirmed: boolean;
+  issues: DiscoverabilityIssue[];
+}
+
+export function evaluateDiscoverability(facts: DiscoverabilityFacts, now: Date = new Date()): DiscoverabilityResult {
   const issues: DiscoverabilityIssue[] = [];
   if (!facts.emailVerified) issues.push({ code: 'EMAIL_NOT_VERIFIED', message: 'Email не подтверждён' });
 
@@ -90,11 +109,11 @@ export function evaluateDiscoverability(facts: DiscoverabilityFacts): { discover
   }
   if (!facts.isDiscoverable) issues.push({ code: 'NOT_DISCOVERABLE', message: 'Профиль скрыт из поиска' });
   if (facts.availability !== 'ACTIVE') issues.push({ code: 'PAUSED', message: 'Вы приостановили рассмотрение предложений' });
-  if (!facts.activeSpecializationCode || !facts.confirmedSpecializations.includes(facts.activeSpecializationCode)) {
-    issues.push({
-      code: 'NO_CONFIRMED_QUALIFICATION',
-      message: 'Нет подтверждённого тестом грейда по активной специализации',
-    });
+  const group = ageGroup(facts.birthDate, now);
+  if (group === 'UNDER_16') issues.push({ code: 'UNDERAGE', message: `Публикация профиля доступна с ${MIN_PUBLICATION_AGE} лет` });
+  if (group === 'MINOR_16_17' && !facts.hasGuardianConsent) {
+    issues.push({ code: 'GUARDIAN_CONSENT_REQUIRED', message: 'Кандидатам 16–17 лет нужно согласие законного представителя (раздел «Приватность и ФСП»)' });
   }
-  return { discoverable: issues.length === 0, issues };
+  const gradeConfirmed = Boolean(facts.activeSpecializationCode && facts.confirmedSpecializations.includes(facts.activeSpecializationCode));
+  return { discoverable: issues.length === 0, gradeConfirmed, issues };
 }

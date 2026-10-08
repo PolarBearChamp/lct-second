@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsOptional, IsString, IsUrl, MaxLength, MinLength, ValidateIf } from 'class-validator';
+import { IsIn, IsOptional, IsString, IsUrl, Matches, MaxLength, MinLength, ValidateIf } from 'class-validator';
 
 export class UpsertCompanyDto {
   @ApiProperty({ example: 'ООО «Пример Технологии»' })
@@ -46,4 +46,11 @@ export class UpsertCompanyDto {
   @MinLength(3)
   @MaxLength(200)
   contactValue!: string;
+}
+
+export class VerifyCompanyDto {
+  @ApiProperty({ example: '0077010019', description: 'ИНН: 10 цифр (юрлицо) или 12 (ИП)' })
+  @IsString()
+  @Matches(/^\d{10}(\d{2})?$/, { message: 'ИНН — 10 или 12 цифр' })
+  inn!: string;
 }

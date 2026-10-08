@@ -1,7 +1,7 @@
 import { getMatchingFormula } from '../../config/policies';
 import type { GradeCode } from '../catalog/catalog';
 import { fspEvidence } from './fsp-relevance';
-import { mandatoryViolations, paginate, preferredFit, rankBank, rankForNeed, salaryOverlaps, type MatchCandidate, type NeedSpec } from './rank';
+import { mandatoryViolations, paginate, preferredFit, rankBank, rankForNeed, salaryOverlaps, unconfirmedViolations, type MatchCandidate, type NeedSpec } from './rank';
 
 const formula = getMatchingFormula('matching-formula-v1');
 
@@ -13,6 +13,8 @@ const candidate = (overrides: Partial<MatchCandidate> & { grade?: GradeCode; ver
     candidateId: `00000000-0000-4000-8000-${String(counter).padStart(12, '0')}`,
     alias: `C${counter}`,
     discoverable: true,
+    declaredGrade: grade,
+    minor: false,
     specialization: 'BACKEND',
     qualification: { specialization: 'BACKEND', grade, overallScore: score, verifiedSkills: verified, groupScores: [] },
     selfReportedSkills: [],
@@ -219,14 +221,84 @@ describe('стабильность порядка и пагинация', () => 
     expect(ranked[0].overallScore).toBe(90);
   });
 
-  it('банк не включает невидимых и кандидатов без квалификации', () => {
-    const bank = [candidate({ discoverable: false }), { ...candidate(), qualification: null }, candidate()];
-    expect(rankBank(bank, {}, formula)).toHaveLength(1);
+  it('банк не включает невидимых; кандидат без квалификации — после подтверждённых своей специализации, без балла', () => {
+    const unconfirmed = { ...candidate(), qualification: null };
+    const bank = [candidate({ discoverable: false }), unconfirmed, candidate({ grade: 'JUNIOR' })];
+    const ranked = rankBank(bank, {}, formula);
+    expect(ranked).toHaveLength(2);
+    expect(ranked[1]).toMatchObject({ candidateId: unconfirmed.candidateId, grade: null, bankScore: null, overallScore: null });
+    expect(rankBank(bank, { includeUnconfirmed: false }, formula)).toHaveLength(1);
+    expect(rankBank(bank, { onlyUnconfirmed: true }, formula).map((r) => r.candidateId)).toEqual([unconfirmed.candidateId]);
+  });
+
+  it('фильтры банка для кандидатов без подтверждения: грейд — по заявленному, «навыки подтверждены тестом» их исключают', () => {
+    const unconfirmed = { ...candidate({ selfReportedSkills: ['kafka'] }), qualification: null, declaredGrade: 'SENIOR' as const };
+    expect(rankBank([unconfirmed], { grades: ['MIDDLE'] }, formula)).toHaveLength(0);
+    expect(rankBank([unconfirmed], { grades: ['SENIOR'] }, formula)).toHaveLength(1);
+    expect(rankBank([unconfirmed], { skills: ['kafka'], skillSource: 'VERIFIED' }, formula)).toHaveLength(0);
+    expect(rankBank([unconfirmed], { skills: ['kafka'], skillSource: 'ANY' }, formula)).toHaveLength(1);
   });
 
   it('фильтры банка: навыки только подтверждённые или любые', () => {
     const self = candidate({ verified: ['sql'], selfReportedSkills: ['kafka'] });
     expect(rankBank([self], { skills: ['kafka'], skillSource: 'VERIFIED' }, formula)).toHaveLength(0);
     expect(rankBank([self], { skills: ['kafka'], skillSource: 'ANY' }, formula)).toHaveLength(1);
+  });
+});
+
+describe('кандидаты без подтверждённого грейда (рекомендация организаторов: показывать ниже, с пометкой)', () => {
+  const unconfirmed = (overrides: Partial<MatchCandidate> = {}): MatchCandidate => ({
+    ...candidate({ selfReportedSkills: ['sql', 'postgresql'] }),
+    qualification: null,
+    declaredGrade: 'MIDDLE',
+    ...overrides,
+  });
+
+  it('идут отдельным блоком после всех подтверждённых, без балла, с рангами после подтверждённых', () => {
+    const confirmedLow = candidate({ score: 75 });
+    const strongUnconfirmed = unconfirmed({ selfReportedSkills: ['sql', 'postgresql', 'kafka'] });
+    const result = rankForNeed([strongUnconfirmed, confirmedLow], need({ preferredSkills: [{ skill: 'kafka', mode: 'SELF_REPORTED_ALLOWED' }] }), formula);
+    expect(result.ranked.map((r) => r.candidateId)).toEqual([confirmedLow.candidateId]);
+    expect(result.unconfirmed).toHaveLength(1);
+    expect(result.unconfirmed[0]).toMatchObject({ candidateId: strongUnconfirmed.candidateId, rank: 2, declaredGrade: 'MIDDLE' });
+    expect(result.unconfirmed[0].explanation.notVerified[0]).toContain('Грейд не подтверждён тестом');
+    expect(result.unconfirmed[0].explanation.components.assessmentQuality.contribution).toBe(0);
+  });
+
+  it('условия те же, но по заявленным данным: заявленный грейд, обязательные навыки из самоописания, формат, город, вилка', () => {
+    expect(unconfirmedViolations(unconfirmed(), need())).toEqual([]);
+    expect(unconfirmedViolations(unconfirmed({ declaredGrade: 'JUNIOR' }), need())).toContain('GRADE');
+    expect(unconfirmedViolations(unconfirmed({ declaredGrade: null }), need())).toContain('GRADE');
+    expect(unconfirmedViolations(unconfirmed({ selfReportedSkills: ['sql'] }), need())).toContain('REQUIRED_SKILL');
+    expect(unconfirmedViolations(unconfirmed({ workFormats: ['OFFICE'] }), need())).toContain('WORK_FORMAT');
+    expect(unconfirmedViolations(unconfirmed({ salary: { from: 500_000, to: null } }), need())).toContain('SALARY');
+  });
+
+  it('уточнения, требующие результата теста, такие кандидаты не проходят', () => {
+    expect(unconfirmedViolations(unconfirmed(), need(), { minOverallScore: 80 })).toContain('REFINEMENT_SCORE');
+    expect(unconfirmedViolations(unconfirmed(), need(), { extraRequiredSkills: ['sql'] })).toContain('REFINEMENT_SKILL');
+    expect(rankForNeed([unconfirmed()], need(), formula, { minOverallScore: 80 }).unconfirmed).toEqual([]);
+  });
+
+  it('скрытый кандидат и кандидат другой специализации в блок не попадают', () => {
+    expect(rankForNeed([unconfirmed({ discoverable: false })], need(), formula).unconfirmed).toEqual([]);
+    expect(rankForNeed([unconfirmed({ specialization: 'FRONTEND' })], need(), formula).unconfirmed).toEqual([]);
+  });
+
+  it('порядок внутри блока: желательные навыки из самоописания ↓, затем бонус ФСП ↓, затем id ↑ — и не зависит от входной перестановки', () => {
+    const spec = need({ preferredSkills: [{ skill: 'kafka', mode: 'SELF_REPORTED_ALLOWED' }] });
+    const withKafka = unconfirmed({ selfReportedSkills: ['sql', 'postgresql', 'kafka'] });
+    const withFsp = unconfirmed({ fspAchievements: [{ externalId: 'x', eventId: 'e', discipline: 'PRODUCT', place: 1, teamRole: null }] });
+    const plain = unconfirmed();
+    const order = rankForNeed([plain, withFsp, withKafka], spec, formula).unconfirmed.map((r) => r.candidateId);
+    expect(order[0]).toBe(withKafka.candidateId);
+    expect(rankForNeed([withKafka, plain, withFsp], spec, formula).unconfirmed.map((r) => r.candidateId)).toEqual(order);
+  });
+
+  it('подтверждённый ранжирующий блок и его метрики не меняются от присутствия неподтверждённых', () => {
+    const confirmed = [candidate({ score: 90 }), candidate({ score: 80 })];
+    const alone = rankForNeed(confirmed, need(), formula).ranked;
+    const mixed = rankForNeed([...confirmed, unconfirmed(), unconfirmed()], need(), formula).ranked;
+    expect(mixed).toEqual(alone);
   });
 });

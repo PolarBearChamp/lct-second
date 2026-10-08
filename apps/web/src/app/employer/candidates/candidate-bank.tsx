@@ -142,6 +142,12 @@ export function CandidateBank() {
               {(props) => <Input {...props} defaultValue={params.get('city') ?? ''} onBlur={(e) => setParam('city', e.target.value.trim() || null)} />}
             </Field>
             <Checkbox checked={params.get('hasFsp') === 'true'} onChange={(e) => setParam('hasFsp', e.target.checked ? 'true' : null)} label="Есть достижения ФСП" />
+            <Checkbox
+              checked={params.get('includeUnconfirmed') !== 'false'}
+              onChange={(e) => setParam('includeUnconfirmed', e.target.checked ? null : 'false')}
+              label="Показывать без подтверждённого грейда"
+              description="Такие кандидаты ещё не прошли тест: они идут после подтверждённых своей специализации, с пометкой и без балла."
+            />
             <Button variant="ghost" size="sm" onClick={() => router.replace(pathname)}>
               Сбросить фильтры
             </Button>
@@ -166,7 +172,7 @@ export function CandidateBank() {
                     <li key={item.candidateId}>
                       {showCategory ? (
                         <h2 className="mb-2 mt-2 font-brand text-sm font-bold text-brand-700">
-                          {SPECIALIZATION_LABELS[item.specialization]} · {GRADE_LABELS[item.grade]}
+                          {SPECIALIZATION_LABELS[item.specialization]} · {item.grade ? GRADE_LABELS[item.grade] : 'грейд не подтверждён тестом (ниже подтверждённых)'}
                         </h2>
                       ) : null}
                       <CandidateSummaryCard candidate={item} href={`/employer/candidates/${item.candidateId}`} />

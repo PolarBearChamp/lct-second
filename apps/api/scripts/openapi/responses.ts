@@ -53,6 +53,7 @@ export const RESPONSES: Record<string, ResponseSpec> = {
   'GET /candidate/profile/preview': ok(ref('CandidateProfileView'), 'Обезличенная карточка так, как её видит работодатель без доступа'),
   'PUT /candidate/survey': ok(obj({ survey: obj({ version: str, answers: { type: 'object', additionalProperties: true }, completedAt: str }), recommendation: ref('SurveyRecommendation') })),
   'PUT /candidate/consents': ok(ref('OwnProfileResponse')),
+  'PUT /candidate/consents/guardian': ok(ref('OwnProfileResponse')),
   'GET /candidate/qualifications': ok(ref('QualificationsResponse')),
   'POST /candidate/profile/resume': ok(ref('ResumeAnalysisResponse'), 'Предложения для профиля по PDF-резюме (файл не сохраняется, ничего не применено)'),
   'GET /candidate/profile/pdf': pdf('PDF собственного профиля (вложение, Cache-Control: private, no-store)'),
@@ -81,6 +82,7 @@ export const RESPONSES: Record<string, ResponseSpec> = {
 
   'GET /employer/company': ok(obj({ company: nullable(ref('CompanyView')) })),
   'PUT /employer/company': ok(obj({ company: ref('CompanyView') })),
+  'POST /employer/company/verification': ok(obj({ company: ref('CompanyView') })),
   'POST /employer/needs': created(ref('HiringNeedView')),
   'GET /employer/needs': ok(arrayOf(ref('HiringNeedView'))),
   'GET /employer/needs/{id}': ok(ref('HiringNeedView')),
@@ -129,6 +131,7 @@ export const RESPONSES: Record<string, ResponseSpec> = {
   'POST /employer/tasks/{id}/publish': ok(ref('EmployerTaskView')),
   'POST /employer/tasks/{id}/close': ok(ref('EmployerTaskView')),
   'GET /employer/tasks/{id}/submissions': ok(ref('TaskSubmissionsResponse')),
+  'POST /employer/tasks/{id}/assign': created(ref('TaskAssignmentReceipt'), 'Задание отправлено кандидату'),
   'POST /employer/task-submissions/{id}/review': ok(ref('TaskSubmissionItem')),
 
   'GET /candidate/tasks': ok(ref('CandidateTasksResponse')),

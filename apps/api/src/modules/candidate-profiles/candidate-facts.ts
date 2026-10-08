@@ -3,7 +3,7 @@ import type { Prisma } from '../../generated/prisma/client';
 import type { PrismaService, Tx } from '../../prisma/prisma.service';
 
 export const candidateFactsInclude = {
-  user: { select: { emailVerifiedAt: true } },
+  user: { select: { emailVerifiedAt: true, consents: { where: { type: 'GUARDIAN_CONSENT', withdrawnAt: null }, select: { id: true } } } },
   _count: { select: { skills: true } },
   qualifications: { select: { specializationCode: true } },
 } satisfies Prisma.CandidateProfileInclude;
@@ -39,5 +39,7 @@ export function toDiscoverabilityFacts(profile: CandidateWithFacts, publicationC
     isDiscoverable: profile.isDiscoverable,
     availability: profile.availability,
     confirmedSpecializations: profile.qualifications.map((q) => q.specializationCode),
+    birthDate: profile.birthDate,
+    hasGuardianConsent: profile.user.consents.length > 0,
   };
 }

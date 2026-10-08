@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Equals, IsIn, IsInt, IsOptional, IsString, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { Equals, IsIn, IsInt, IsOptional, IsString, IsUUID, Max, MaxLength, Min, MinLength, IsBoolean } from 'class-validator';
 import { PageQueryDto } from '../../matching/dto/matching.dto';
 
 export class SendInvitationDto {
@@ -56,6 +56,12 @@ export class SendInvitationDto {
   @MinLength(3)
   @MaxLength(200)
   employerContact!: string;
+
+  /** Обязательно для кандидатов 16–17 лет: работодатель знает об особых условиях труда работников до 18 лет (ТК РФ, гл. 42). */
+  @ApiPropertyOptional({ default: false })
+  @IsOptional()
+  @IsBoolean()
+  minorConditionsAcknowledged?: boolean;
 }
 
 export class AcceptInvitationDto {

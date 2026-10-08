@@ -37,6 +37,10 @@ export interface CandidateDef {
   showFsp: boolean;
   role: 'MAIN' | 'EXTRA';
   note: string;
+  /** Возраст на момент seed (лет); по умолчанию — детерминированно 21–40. */
+  ageYears?: number;
+  /** Согласие законного представителя (для 16–17 лет). */
+  guardianName?: string;
 }
 
 const SPEC_SHORT: Record<SpecializationCode, string> = { FRONTEND: 'fe', BACKEND: 'be', ML_ENGINEER: 'ml', MANUAL_QA: 'qa' };
@@ -139,6 +143,8 @@ export function extraCandidates(used: Set<string>): CandidateDef[] {
     make({ key: 'fsp-error', email: 'fsp.error@demo.example', ...heroName('Виктор Сбойный', false, used), specialization: 'BACKEND', declaredGrade: 'SENIOR', publication: 'PUBLISHED', attempts: [{ grade: 'SENIOR', outcome: 'PASS', daysAgo: 18 }], fsp: { kind: 'SYNC_ERROR', id: 'FSP-DEMO-3001' }, note: 'ФСП в состоянии SYNC_ERROR: реестр недоступен, последняя успешная история сохранена' }),
     make({ key: 'fsp-empty-1', email: 'fsp.empty1@demo.example', ...heroName('Юлия Пустая', true, used), specialization: 'FRONTEND', declaredGrade: 'MIDDLE', publication: 'PUBLISHED', attempts: [{ grade: 'MIDDLE', outcome: 'PASS', daysAgo: 22 }], fsp: { kind: 'LINK', id: 'FSP-DEMO-2001', code: '502288' }, note: 'ФСП привязан, истории нет — основной сценарий не ломается' }),
     make({ key: 'fsp-empty-2', email: 'fsp.empty2@demo.example', ...heroName('Артём Нулевой', false, used), specialization: 'MANUAL_QA', declaredGrade: 'MIDDLE', publication: 'PUBLISHED', attempts: [{ grade: 'MIDDLE', outcome: 'PASS', daysAgo: 33 }], fsp: { kind: 'LINK', id: 'FSP-DEMO-2002', code: '377190' }, note: 'ФСП привязан, истории нет' }),
+    make({ key: 'unconfirmed', email: 'unconfirmed.candidate@demo.example', ...heroName('Глеб Неподтверждённый', false, used), specialization: 'BACKEND', declaredGrade: 'MIDDLE', publication: 'PUBLISHED', attempts: [], note: 'Профиль опубликован, теста ещё нет: виден работодателям после подтверждённых, с пометкой «грейд не подтверждён» (рекомендация организаторов)' }),
+    make({ key: 'teen', email: 'teen.candidate@demo.example', ...heroName('Ева Юная', true, used), specialization: 'FRONTEND', declaredGrade: 'JUNIOR', publication: 'PUBLISHED', attempts: [{ grade: 'JUNIOR', outcome: 'PASS', daysAgo: 6 }], ageYears: 17, guardianName: 'Юная Ольга Петровна', note: 'Кандидат 17 лет с согласием законного представителя: у работодателей отметка «16–17 лет», приглашение требует подтвердить особые условия труда' }),
   ];
 }
 
@@ -152,11 +158,13 @@ export interface CompanyDef {
   contactPersonName: string;
   contactChannelType: 'EMAIL' | 'PHONE' | 'MESSENGER';
   contactValue: string;
+  /** ИНН из демонстрационного реестра — компания проходит добровольную проверку (метка доверия). */
+  inn?: string;
 }
 
 export const COMPANIES: CompanyDef[] = [
-  { key: 'fintech', email: 'hr.fintech@demo.example', name: 'Демо Финтех', industry: 'FINTECH', website: 'https://fintech.demo.example', description: 'Вымышленная платёжная платформа: приём платежей, переводы и антифрод.', contactPersonName: 'Светлана Кузьмина', contactChannelType: 'EMAIL', contactValue: 'jobs@fintech.demo.example' },
-  { key: 'retail', email: 'hr.retail@demo.example', name: 'Демо Ритейл', industry: 'ECOMMERCE', website: 'https://retail.demo.example', description: 'Вымышленный интернет-магазин электроники с собственной логистикой.', contactPersonName: 'Максим Орлов', contactChannelType: 'MESSENGER', contactValue: '@retail_demo_hr' },
+  { key: 'fintech', email: 'hr.fintech@demo.example', name: 'Демо Финтех', industry: 'FINTECH', website: 'https://fintech.demo.example', description: 'Вымышленная платёжная платформа: приём платежей, переводы и антифрод.', contactPersonName: 'Светлана Кузьмина', contactChannelType: 'EMAIL', contactValue: 'jobs@fintech.demo.example', inn: '0077010019' },
+  { key: 'retail', email: 'hr.retail@demo.example', name: 'Демо Ритейл', industry: 'ECOMMERCE', website: 'https://retail.demo.example', description: 'Вымышленный интернет-магазин электроники с собственной логистикой.', contactPersonName: 'Максим Орлов', contactChannelType: 'MESSENGER', contactValue: '@retail_demo_hr', inn: '0077020024' },
   { key: 'industry', email: 'hr.industry@demo.example', name: 'Демо Индустрия', industry: 'INDUSTRIAL', website: 'https://industry.demo.example', description: 'Вымышленный производитель промышленного оборудования, развивает аналитику и предиктивное обслуживание.', contactPersonName: 'Ирина Белова', contactChannelType: 'EMAIL', contactValue: 'talent@industry.demo.example' },
   { key: 'edu', email: 'hr.edu@demo.example', name: 'Демо Образование', industry: 'EDTECH', website: 'https://edu.demo.example', description: 'Вымышленная онлайн-школа программирования.', contactPersonName: 'Павел Громов', contactChannelType: 'PHONE', contactValue: '+7 (900) 000-00-42' },
 ];

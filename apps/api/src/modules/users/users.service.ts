@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Clock } from '../../common/clock';
 import { evaluateDiscoverability, missingProfileFields } from '../../domain/candidate/discoverability';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
@@ -11,7 +12,10 @@ import type { MeResponseDto, OnboardingStepDto } from './dto/me.dto';
 /** Состояние текущего пользователя и прогресс онбординга. */
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly clock: Clock,
+  ) {}
 
   async getMe(userId: string): Promise<MeResponseDto> {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
@@ -34,7 +38,7 @@ export class UsersService {
       });
       const consent = await hasActivePublicationConsent(this.prisma, userId);
       const facts = toDiscoverabilityFacts(profile, consent);
-      const { discoverable, issues } = evaluateDiscoverability(facts);
+      const { discoverable, issues } = evaluateDiscoverability(facts, this.clock.now());
       const activeQualification = profile.activeSpecializationCode
         ? await this.prisma.candidateQualification.findUnique({
             where: {
@@ -47,6 +51,10 @@ export class UsersService {
         : null;
       const newInvitations = await this.prisma.invitation.count({
         where: { candidateId: profile.id, status: 'SENT' },
+      });
+      // Адресные задания от работодателей, ждущие ответа (срок не истёк, задание активно).
+      const pendingDirectTasks = await this.prisma.taskAssignment.count({
+        where: { candidateId: profile.id, source: 'DIRECT', status: 'OFFERED', dueAt: { gt: this.clock.now() }, task: { status: 'ACTIVE' } },
       });
       const steps: OnboardingStepDto[] = [
         { key: 'EMAIL', title: 'Подтверждение email', done: facts.emailVerified },
@@ -66,6 +74,7 @@ export class UsersService {
         discoverable,
         discoverabilityIssues: issues,
         newInvitations,
+        pendingDirectTasks,
       };
     } else {
       const company = await this.prisma.company.findUnique({ where: { ownerUserId: userId } });

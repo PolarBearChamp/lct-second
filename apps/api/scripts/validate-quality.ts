@@ -47,7 +47,7 @@ function main(): void {
   const findingsFile = path.join(repoRoot(), 'data', 'validation', 'findings.json');
   const findings = JSON.parse(readFileSync(findingsFile, 'utf8')) as Finding[];
   const gates = [...matching.gates, ...testing.gates, ...resume.gates];
-  const policy = getAssessmentPolicy('assessment-policy-v1');
+  const policy = getAssessmentPolicy('assessment-policy-v2');
   const formula = getMatchingFormula('matching-formula-v1');
 
   const results: ValidationResults = {

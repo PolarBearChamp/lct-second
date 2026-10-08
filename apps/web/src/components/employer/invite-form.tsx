@@ -16,7 +16,7 @@ import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader } from '@/components/ui/card';
 import { ConfirmDialog } from '@/components/ui/dialog';
-import { Field, Input, Select, Textarea } from '@/components/ui/field';
+import { Checkbox, Field, Input, Select, Textarea } from '@/components/ui/field';
 import { useToast } from '@/components/ui/toast';
 import { api, ApiError, errorMessage, idempotencyKey } from '@/lib/api/client';
 import { formatSalaryRange } from '@/lib/format';
@@ -26,7 +26,20 @@ import { useCompany, useNeeds } from '@/lib/employer-queries';
  * Предложение кандидату: обязательная вилка (₽/мес, GROSS), формат, способ связи. Потребность — необязательна.
  * После отправки предложение неизменно: для новых условий нужно отозвать его и отправить новое.
  */
-export function InviteForm({ candidateId, candidateLabel, defaultNeedId, onSent }: { candidateId: string; candidateLabel: string; defaultNeedId?: string; onSent: (inv: EmployerInvitationDetail) => void }) {
+export function InviteForm({
+  candidateId,
+  candidateLabel,
+  candidateMinor = false,
+  defaultNeedId,
+  onSent,
+}: {
+  candidateId: string;
+  candidateLabel: string;
+  /** Кандидату 16–17 лет: нужно подтвердить особые условия труда (ТК РФ, гл. 42). */
+  candidateMinor?: boolean;
+  defaultNeedId?: string;
+  onSent: (inv: EmployerInvitationDetail) => void;
+}) {
   const queryClient = useQueryClient();
   const { notify } = useToast();
   const company = useCompany().data?.company;
@@ -43,6 +56,7 @@ export function InviteForm({ candidateId, candidateLabel, defaultNeedId, onSent 
   const [contact, setContact] = useState(company?.contactValue ?? '');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [preview, setPreview] = useState(false);
+  const [minorAck, setMinorAck] = useState(false);
   const [key] = useState(() => idempotencyKey());
 
   const applyNeed = (need: HiringNeedView | undefined) => {
@@ -67,6 +81,7 @@ export function InviteForm({ candidateId, candidateLabel, defaultNeedId, onSent 
     workFormat,
     employerContactType: contactType,
     employerContact: contact.trim(),
+    ...(candidateMinor ? { minorConditionsAcknowledged: minorAck } : {}),
   });
 
   const send = useMutation({
@@ -167,6 +182,7 @@ export function InviteForm({ candidateId, candidateLabel, defaultNeedId, onSent 
         open={preview}
         title="Проверьте предложение перед отправкой"
         confirmLabel="Отправить приглашение"
+        confirmDisabled={candidateMinor && !minorAck}
         loading={send.isPending}
         onClose={() => setPreview(false)}
         onConfirm={() => send.mutate()}
@@ -181,6 +197,13 @@ export function InviteForm({ candidateId, candidateLabel, defaultNeedId, onSent 
         <p>
           Связь: {CONTACT_CHANNEL_LABELS[contactType]} — {contact}
         </p>
+        {candidateMinor ? (
+          <Alert tone="warning" title="Кандидату 16–17 лет">
+            Для работников до 18 лет действуют особые условия (ТК РФ, глава 42): сокращённая продолжительность рабочего времени, запрет вредных, опасных и ночных работ,
+            сверхурочной работы и командировок, обязательный медосмотр.
+            <Checkbox className="mt-2" checked={minorAck} onChange={(e) => setMinorAck(e.target.checked)} label="Мы знаем об особых условиях труда работников до 18 лет и готовы их соблюдать" />
+          </Alert>
+        ) : null}
         <Alert tone="info">После отправки изменить условия нельзя: нужно отозвать приглашение и отправить новое. Срок ответа — 14 дней.</Alert>
       </ConfirmDialog>
     </Card>

@@ -2,7 +2,7 @@ import { addDays, addHours } from '../../common/clock';
 import { getAssessmentPolicy } from '../../config/policies';
 import { checkEligibility, type EligibilityAttempt, type EligibilityInput } from './eligibility';
 
-const policy = getAssessmentPolicy('assessment-policy-v1');
+const policy = getAssessmentPolicy('assessment-policy-v2');
 const NOW = new Date('2026-10-05T12:00:00.000Z');
 
 const input = (overrides: Partial<EligibilityInput> = {}): EligibilityInput => ({
@@ -33,17 +33,22 @@ describe('допуск к тестированию', () => {
     expect(result).toMatchObject({ allowed: false, reason: 'ACTIVE_ATTEMPT', activeAttemptId: 'a1' });
   });
 
-  describe('повтор того же грейда после неуспеха — 24 часа', () => {
+  describe('повтор того же грейда после неуспеха — 30 дней (политика v2)', () => {
     const finishedAt = new Date('2026-10-04T12:00:00.000Z');
 
-    it('за минуту до истечения 24 часов запрещено, дата доступности точная', () => {
-      const result = checkEligibility(input({ now: new Date(addHours(finishedAt, 24).getTime() - 60_000), attempts: [failed('MIDDLE', finishedAt)] }));
+    it('за минуту до истечения 30 дней запрещено, дата доступности точная, срок в сообщении — в днях', () => {
+      const result = checkEligibility(input({ now: new Date(addHours(finishedAt, 30 * 24).getTime() - 60_000), attempts: [failed('MIDDLE', finishedAt)] }));
       expect(result).toMatchObject({ allowed: false, reason: 'RETRY_COOLDOWN' });
-      expect(result.availableAt?.toISOString()).toBe('2026-10-05T12:00:00.000Z');
+      expect(result.availableAt?.toISOString()).toBe('2026-11-03T12:00:00.000Z');
+      expect(result.message).toContain('через 30 дней');
     });
 
-    it('ровно через 24 часа разрешено', () => {
-      expect(checkEligibility(input({ now: addHours(finishedAt, 24), attempts: [failed('MIDDLE', finishedAt)] })).allowed).toBe(true);
+    it('через сутки (прежнее правило v1) ещё запрещено', () => {
+      expect(checkEligibility(input({ now: addHours(finishedAt, 24), attempts: [failed('MIDDLE', finishedAt)] })).allowed).toBe(false);
+    });
+
+    it('ровно через 30 дней разрешено', () => {
+      expect(checkEligibility(input({ now: addHours(finishedAt, 30 * 24), attempts: [failed('MIDDLE', finishedAt)] })).allowed).toBe(true);
     });
 
     it.each(['FAILED', 'EXPIRED', 'ABANDONED'] as const)('%s тоже запускает задержку', (status) => {

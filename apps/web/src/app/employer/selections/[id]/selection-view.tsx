@@ -111,10 +111,13 @@ function Run({ run }: { run: SelectionRunView }) {
             </div>
             <p className="mt-2 text-sm text-muted">
               Подходят {run.totalMatched} из {run.totalConsidered} опубликованных кандидатов специализации. Порядок: оценка соответствия → балл теста → идентификатор.
+              {run.totalUnconfirmed > 0
+                ? ` Ещё ${run.totalUnconfirmed} — без подтверждённого грейда: подходят по заявленным данным и показаны после всех подтверждённых, без балла.`
+                : ''}
             </p>
           </Card>
 
-          {run.totalMatched === 0 ? (
+          {run.totalMatched === 0 && run.totalUnconfirmed === 0 ? (
             <EmptyState
               title="Никто не прошёл обязательные условия"
               description={
@@ -139,7 +142,7 @@ function Run({ run }: { run: SelectionRunView }) {
             />
           ) : (
             <ol className="space-y-4">
-              {run.items.map((item) =>
+              {run.items.map((item, index) =>
                 item.unavailable ? (
                   <li key={item.rank} className="card flex items-center gap-3 p-5 text-muted">
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-canvas font-brand font-bold">{item.rank}</span>
@@ -147,6 +150,11 @@ function Run({ run }: { run: SelectionRunView }) {
                   </li>
                 ) : (
                   <li key={item.rank}>
+                    {!item.gradeConfirmed && (index === 0 || run.items[index - 1].unavailable || (run.items[index - 1] as { gradeConfirmed?: boolean }).gradeConfirmed !== false) ? (
+                      <h2 className="mb-3 mt-2 font-brand text-sm font-bold text-warning-700">
+                        Без подтверждённого грейда — подходят по заявленным данным, показаны после всех подтверждённых
+                      </h2>
+                    ) : null}
                     <CandidateSummaryCard
                       candidate={item.candidate}
                       rank={item.rank}

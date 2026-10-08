@@ -2,7 +2,7 @@ import { getAssessmentPolicy } from '../../config/policies';
 import { recommendationsFor, scoreAttempt, skillEvidence, type ScoredItemInput } from './scoring';
 import type { ItemEvaluation, PartEvaluation } from './types';
 
-const policy = getAssessmentPolicy('assessment-policy-v1');
+const policy = getAssessmentPolicy('assessment-policy-v2');
 const GROUPS = ['G1', 'G2', 'G3'];
 
 /** Кейс с точной долей earned/total (в долях верных частей). */
@@ -107,11 +107,11 @@ describe('рекомендации после теста', () => {
     expect(recommendations.some((r) => r.message.toLowerCase().includes('отдельно'))).toBe(true);
   });
 
-  it('после неуспеха предлагается более низкий уровень и повтор через 24 часа', () => {
+  it('после неуспеха предлагается более низкий уровень и повтор через 30 дней', () => {
     const score = scoreAttempt(attempt([2, 4], [2, 4], [2, 4]), GROUPS, policy);
     const recommendations = recommendationsFor(score, 'MIDDLE', policy);
     expect(recommendations.some((r) => r.kind === 'RETRY_LOWER_GRADE' && r.grade === 'JUNIOR')).toBe(true);
-    expect(recommendations.some((r) => r.kind === 'RETRY_SAME_GRADE' && r.message.includes('24'))).toBe(true);
+    expect(recommendations.some((r) => r.kind === 'RETRY_SAME_GRADE' && r.message.includes('30 дней'))).toBe(true);
   });
 
   it('для Junior нет рекомендации перейти ниже', () => {

@@ -22,7 +22,7 @@ import { ConfirmDialog } from '@/components/ui/dialog';
 import { EmptyState, ErrorState, LoadingBlock, Spinner } from '@/components/ui/states';
 import { useToast } from '@/components/ui/toast';
 import { api, errorMessage, idempotencyKey } from '@/lib/api/client';
-import { formatDateTime } from '@/lib/format';
+import { formatDateTime, formatHoursPeriod } from '@/lib/format';
 import { queryKeys, useAttempts, useEligibility, useQualifications, useSpecializations } from '@/lib/queries';
 
 const EVENT_LABELS = {
@@ -126,7 +126,7 @@ function Overview({ data }: { data: EligibilityResponse }) {
             <strong>Навык подтверждён:</strong> оценён минимум в {r.skillMinCases} кейсах с результатом ≥ {r.skillMinScore}.
           </div>
           <div>
-            <strong>Пересдача:</strong> того же уровня — через {r.retryCooldownHours} ч; новая оценка после подтверждения — через {r.reassessmentDays} дней.
+            <strong>Пересдача:</strong> того же уровня — через {formatHoursPeriod(r.retryCooldownHours)} (уровень ниже — сразу); новая оценка после подтверждения — через {r.reassessmentDays} дней.
           </div>
         </div>
         <p className="mt-3 text-xs text-muted">
@@ -199,7 +199,7 @@ function GradeChoice({ data }: { data: EligibilityResponse }) {
         <p>
           На тест отводится <strong>{data.rules.durationMinutes} минут</strong>. Таймер серверный: закрытие вкладки не останавливает его.
         </p>
-        <p>Кнопка «Прервать» завершает попытку без результата — повторить этот уровень можно будет через {data.rules.retryCooldownHours} ч.</p>
+        <p>Кнопка «Прервать» завершает попытку без результата — повторить этот уровень можно будет через {formatHoursPeriod(data.rules.retryCooldownHours)}.</p>
         {selected?.warnings.map((w) => (
           <Alert key={w.code} tone="warning">
             {w.message}

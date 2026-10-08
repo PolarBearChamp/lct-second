@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { InvitationStatusBadge } from '@/components/invitations/invitation-status';
+import { CompanyVerifiedBadge } from '@/components/employer/company-verification';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button, LinkButton } from '@/components/ui/button';
@@ -107,7 +108,15 @@ export function CandidateInvitationDetailView({ id }: { id: string }) {
             <CardHeader as="h3" title="Компания" />
             <DefinitionList
               items={[
-                { term: 'Название', value: inv.company.name },
+                {
+                  term: 'Название',
+                  value: (
+                    <span className="flex flex-wrap items-center gap-2">
+                      {inv.company.name}
+                      <CompanyVerifiedBadge verified={inv.companyVerified} />
+                    </span>
+                  ),
+                },
                 { term: 'Отрасль', value: inv.company.industryTitle ?? '—' },
                 {
                   term: 'Сайт',

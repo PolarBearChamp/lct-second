@@ -38,6 +38,13 @@ export function plural(n: number, one: string, few: string, many: string): strin
   return many;
 }
 
+/** Срок в часах → «30 дней» или «5 ч». */
+export function formatHoursPeriod(hours: number): string {
+  if (hours % 24 !== 0) return `${hours} ч`;
+  const days = hours / 24;
+  return `${days} ${plural(days, 'день', 'дня', 'дней')}`;
+}
+
 /** Оставшееся время в формате мм:сс (или чч:мм:сс). */
 export function formatCountdown(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000));

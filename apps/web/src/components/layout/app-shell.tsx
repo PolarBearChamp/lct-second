@@ -82,7 +82,12 @@ const CANDIDATE_NAV: NavItem[] = [
   { href: '/candidate/assessments', label: 'Тестирование', match: '/candidate/assessments' },
   { href: '/candidate/vacancies', label: 'Вакансии', match: '/candidate/vacancies' },
   { href: '/candidate/applications', label: 'Мои отклики', match: '/candidate/applications' },
-  { href: '/candidate/tasks', label: 'Короткие задания', match: '/candidate/tasks' },
+  {
+    href: '/candidate/tasks',
+    label: 'Короткие задания',
+    match: '/candidate/tasks',
+    badge: (me) => me.candidate?.pendingDirectTasks ?? null,
+  },
   {
     href: '/candidate/invitations',
     label: 'Приглашения',
