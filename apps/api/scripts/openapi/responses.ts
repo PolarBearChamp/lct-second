@@ -63,6 +63,7 @@ export const RESPONSES: Record<string, ResponseSpec> = {
   'GET /candidate/assessments': ok(arrayOf(ref('AttemptSummary'))),
   'GET /candidate/assessments/{id}': ok(ref('AttemptView')),
   'PUT /candidate/assessments/{id}/answers/{itemId}': ok(ref('SavedAnswer')),
+  'POST /candidate/assessments/{id}/signals': { status: 204, description: 'Сигналы приняты (счётчики добавлены к активной попытке)' },
   'POST /candidate/assessments/{id}/submit': ok(ref('AttemptResult')),
   'POST /candidate/assessments/{id}/abandon': ok(ref('AttemptSummary')),
   'GET /candidate/assessments/{id}/result': ok(ref('AttemptResult')),

@@ -14,14 +14,14 @@ const FSP = { fspId: 'FSP-DEMO-1001', code: '731905' };
 const FSP_EVENT_TITLES = ['Демо: финал кубка по продуктовому программированию 2025', 'Демо: региональный этап по алгоритмическому программированию 2024'];
 
 const REDACTED_KEYS = [
-  'alias', 'candidateId', 'city', 'declaredGrade', 'displayName', 'experienceMonths', 'fsp', 'industries', 'minor', 'mode', 'qualification',
+  'alias', 'candidateId', 'city', 'declaredGrade', 'displayName', 'experienceMonths', 'fsp', 'industries', 'minor', 'mode', 'otherCategories', 'qualification',
   'salaryExpectation', 'skills', 'softSkills', 'specialization', 'teamRoles', 'updatedAt', 'workFormats',
 ];
 const REDACTED_ACHIEVEMENT_KEYS = ['discipline', 'eventLevel', 'isDemo', 'outcome', 'participationType', 'place', 'relevantToSpecialization', 'skillTags', 'year'];
 const GRANTED_ACHIEVEMENT_KEYS = [...REDACTED_ACHIEVEMENT_KEYS, 'eventDate', 'eventTitle', 'teamRole'].sort();
 const BANK_ITEM_KEYS = [
   'activeInvitation', 'alias', 'bankScore', 'bookmarked', 'candidateId', 'category', 'city', 'declaredGrade', 'declaredGradeTitle', 'displayName', 'fsp', 'grade',
-  'gradeConfirmed', 'gradeTitle', 'groupScores', 'hasContactAccess', 'minor', 'overallScore', 'salary', 'salaryHidden', 'selfReportedSkillsCount', 'specialization', 'verifiedSkills', 'workFormats',
+  'gradeConfirmed', 'gradeTitle', 'groupScores', 'hasContactAccess', 'integrityLevel', 'minor', 'otherCategories', 'overallScore', 'salary', 'salaryHidden', 'selfReportedSkillsCount', 'specialization', 'verifiedSkills', 'workFormats',
 ];
 
 describe('приватность: единое представление профиля для JSON и PDF', () => {

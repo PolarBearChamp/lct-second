@@ -56,7 +56,7 @@ export class MatchingController {
   })
   @ApiResponse({ status: 404, description: 'CANDIDATE_NOT_FOUND' })
   async candidate(@CurrentAuth() auth: AuthContext, @Param('id', UuidPipe) id: string, @Query() query: CandidateQueryDto, @RequestId() requestId: string) {
-    return this.matching.candidate(await this.companies.requireCompany(auth.userId), auth.userId, id, query.needId, requestId);
+    return this.matching.candidate(await this.companies.requireCompany(auth.userId), auth.userId, id, query.needId, requestId, query.specialization);
   }
 
   @Post('needs/:id/selections')

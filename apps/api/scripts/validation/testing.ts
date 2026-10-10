@@ -292,7 +292,7 @@ function profileAnswer(instance: PrivateTaskInstance, accuracyByGroup: number[],
   return { parts };
 }
 
-function uniformRandomAnswer(instance: PrivateTaskInstance, rng: Rng): ItemAnswer {
+export function uniformRandomAnswer(instance: PrivateTaskInstance, rng: Rng): ItemAnswer {
   const parts: ItemAnswer['parts'] = {};
   for (const part of instance.public.parts) {
     switch (part.format) {

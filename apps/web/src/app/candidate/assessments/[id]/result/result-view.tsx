@@ -5,6 +5,7 @@ import { AttemptStatusBadge } from '@/components/candidate/attempt-status';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { LinkButton } from '@/components/ui/button';
+import { IntegritySummary } from '@/components/profile/integrity';
 import { Card, CardHeader, PageHeader } from '@/components/ui/card';
 import { BigScore, ScoreBar } from '@/components/ui/score';
 import { ErrorState, LoadingBlock } from '@/components/ui/states';
@@ -77,6 +78,26 @@ function ResultBody({ r }: { r: AttemptResult }) {
             <p className="text-muted">Для прерванной попытки баллы не рассчитываются.</p>
           </Card>
         )}
+
+        {r.integrity ? (
+          <Card>
+            <CardHeader
+              title="Сигналы при прохождении"
+              description="Эти отметки видите вы и работодатель рядом с подтверждённым грейдом. Они не меняют баллы."
+            />
+            <IntegritySummary integrity={r.integrity} />
+            <dl className="mt-3 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-[240px_1fr]">
+              <dt className="text-muted">Вкладка теста скрывалась</dt>
+              <dd>
+                {r.integrity.counters.tabHiddenCount} раз, суммарно около {Math.round(r.integrity.counters.tabHiddenMs / 60_000)} мин
+              </dd>
+              <dt className="text-muted">Вставок в поля ответа</dt>
+              <dd>{r.integrity.counters.pasteCount}</dd>
+              <dt className="text-muted">Копирований текста задания</dt>
+              <dd>{r.integrity.counters.copyCount}</dd>
+            </dl>
+          </Card>
+        ) : null}
 
         {r.skills.length ? (
           <Card>

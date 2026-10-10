@@ -175,7 +175,7 @@ export function CandidateBank() {
                           {SPECIALIZATION_LABELS[item.specialization]} · {item.grade ? GRADE_LABELS[item.grade] : 'грейд не подтверждён тестом (ниже подтверждённых)'}
                         </h2>
                       ) : null}
-                      <CandidateSummaryCard candidate={item} href={`/employer/candidates/${item.candidateId}`} />
+                      <CandidateSummaryCard candidate={item} href={`/employer/candidates/${item.candidateId}?specialization=${item.specialization}`} />
                     </li>
                   );
                 })}

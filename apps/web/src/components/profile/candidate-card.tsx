@@ -5,6 +5,7 @@ import {
   type CandidateProfileView,
 } from '@fsp/contracts';
 import type { ReactNode } from 'react';
+import { IntegritySummary } from '@/components/profile/integrity';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { ScoreBar } from '@/components/ui/score';
@@ -57,6 +58,11 @@ export function CandidateCard({ view, extra }: { view: CandidateProfileView; ext
           <div className="min-w-0">
             <h2 className="text-xl font-bold">{view.displayName}</h2>
             <p className="text-muted">{view.specialization?.title ?? 'Специализация не выбрана'}</p>
+            {view.otherCategories.length ? (
+              <p className="mt-1 text-sm text-muted">
+                Также подтверждено: {view.otherCategories.map((c) => `${c.specializationTitle} · ${c.gradeTitle}`).join('; ')}
+              </p>
+            ) : null}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -71,28 +77,31 @@ export function CandidateCard({ view, extra }: { view: CandidateProfileView; ext
 
       <Section title="Подтверждено тестом" tone="verified">
         {q ? (
-          <div className="grid gap-5 md:grid-cols-2">
-            <div className="space-y-3">
-              <ScoreBar label="Общий балл" score={q.overallScore} />
-              {q.groupScores.map((g) => (
-                <ScoreBar key={g.group} label={g.title} score={g.score} compact />
-              ))}
-              <p className="text-xs text-muted">Подтверждено {formatDate(q.confirmedAt)}</p>
+          <div className="space-y-4">
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="space-y-3">
+                <ScoreBar label="Общий балл" score={q.overallScore} />
+                {q.groupScores.map((g) => (
+                  <ScoreBar key={g.group} label={g.title} score={g.score} compact />
+                ))}
+                <p className="text-xs text-muted">Подтверждено {formatDate(q.confirmedAt)}</p>
+              </div>
+              <div>
+                <div className="mb-2 text-sm text-muted">Навыки, подтверждённые заданиями</div>
+                {verifiedSkills.length ? (
+                  <ul className="flex flex-wrap gap-2">
+                    {verifiedSkills.map((s) => (
+                      <li key={s.code}>
+                        <Badge tone="success">✓ {s.title}</Badge>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted">Нет навыков с достаточным покрытием заданиями.</p>
+                )}
+              </div>
             </div>
-            <div>
-              <div className="mb-2 text-sm text-muted">Навыки, подтверждённые заданиями</div>
-              {verifiedSkills.length ? (
-                <ul className="flex flex-wrap gap-2">
-                  {verifiedSkills.map((s) => (
-                    <li key={s.code}>
-                      <Badge tone="success">✓ {s.title}</Badge>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-muted">Нет навыков с достаточным покрытием заданиями.</p>
-              )}
-            </div>
+            <IntegritySummary integrity={q.integrity} />
           </div>
         ) : (
           <p className="text-sm text-muted">Подтверждённой квалификации по активной специализации нет.</p>

@@ -90,12 +90,16 @@ test('новый кандидат без ФСП: регистрация, под�
   await startButtons.nth(1).click(); // Middle
   await page.getByRole('button', { name: 'Начать — таймер запустится' }).click();
   await expect(page).toHaveURL(/\/candidate\/assessments\/[0-9a-f-]{36}$/);
-  await takeAssessmentInUi(page, email, 'correct');
+  await takeAssessmentInUi(page, email, 'correct', { simulateTabSwitches: 3 });
 
   // ── Результат и подтверждённая категория ──
   await expect(page.getByRole('heading', { name: 'Результат тестирования' })).toBeVisible();
   await expect(page.getByText(/Тест пройден: грейд Middle подтверждён/)).toBeVisible();
   await expect(page.getByText('Уверенное прохождение', { exact: true })).toBeVisible();
+  // Сигналы честности: кандидат видит ту же сводку, что и работодатель; на результат они не влияют.
+  await expect(page.getByRole('heading', { name: 'Сигналы при прохождении' })).toBeVisible();
+  await expect(page.getByText(/Вкладка теста скрывалась 3 раза/).first()).toBeVisible();
+  await expect(page.getByText(/ничего не доказывают.*не влияют на баллы и грейд/).first()).toBeVisible();
   await page.goto('/candidate');
   await expect(page.getByText('Работодатели видят только грейд, подтверждённый тестированием.')).toBeVisible();
   await expect(page.getByText('Middle').first()).toBeVisible();

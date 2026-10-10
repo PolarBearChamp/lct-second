@@ -33,7 +33,7 @@ export class FspService {
     const loaded = await this.views.load(candidateId);
     if (!loaded) throw notFound();
     const link = await this.prisma.fspLink.findUnique({ where: { candidateId } });
-    const view = buildProfileView('OWNER', loaded.profile, loaded.qualification, loaded.fsp);
+    const view = buildProfileView('OWNER', loaded.profile, loaded.qualification, loaded.fsp, null, loaded.extras);
     return {
       provider: this.provider.name,
       demo: this.provider.isDemo,

@@ -29,6 +29,8 @@ export interface MatchCandidate {
   declaredGrade: GradeCode | null;
   /** Кандидату 16–17 лет: особые условия трудоустройства (ТК РФ, гл. 42). Дата рождения не передаётся. */
   minor: boolean;
+  /** Остальные подтверждённые категории кандидата (кроме той, по которой он оценивается в этой записи). */
+  otherCategories: Array<{ specialization: string; grade: GradeCode }>;
   specialization: string | null;
   qualification: {
     specialization: string;
@@ -36,6 +38,8 @@ export interface MatchCandidate {
     overallScore: number;
     verifiedSkills: string[];
     groupScores: Array<{ group: string; title: string; score: number }>;
+    /** Сводный уровень сигналов честности попытки (информация, на подбор не влияет); null — оценки нет. */
+    integrityLevel: 'NONE' | 'NOTE' | 'ATTENTION' | null;
   } | null;
   selfReportedSkills: string[];
   workFormats: string[];

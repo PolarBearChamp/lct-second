@@ -59,6 +59,16 @@ test('без подтверждённого грейда — ниже с пом�
   await expect(industry.page.getByText('Почта аккаунта на домене организации (demo.example)')).toBeVisible();
   await industry.context.close();
 
+  // ── Две подтверждённые категории: кандидат виден в обеих, в карточке — выбранная категория и остальные ──
+  await fintech.page.goto('/employer/candidates?category=BACKEND:MIDDLE');
+  await expect(fintech.page.locator('article', { hasText: 'Также подтверждено: Frontend-разработчик · Junior' }).first()).toBeVisible();
+  await fintech.page.goto('/employer/candidates?category=FRONTEND:JUNIOR');
+  const multiCard = fintech.page.locator('article', { hasText: 'Также подтверждено: Backend-разработчик · Middle' }).first();
+  await expect(multiCard).toBeVisible();
+  await multiCard.getByRole('link').first().click();
+  await expect(fintech.page.getByText('Грейд по тесту: Junior').first()).toBeVisible();
+  await expect(fintech.page.getByText('Также подтверждено: Backend-разработчик · Middle').first()).toBeVisible();
+
   // ── Кандидат 16–17 лет: отметка и подтверждение особых условий при приглашении ──
   await fintech.page.goto('/employer/candidates?category=FRONTEND:JUNIOR');
   const teenCard = fintech.page.locator('article', { has: fintech.page.getByText('16–17 лет', { exact: true }) }).first();

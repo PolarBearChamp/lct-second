@@ -15,6 +15,7 @@ import { useToast } from '@/components/ui/toast';
 import { api, ApiError, errorMessage } from '@/lib/api/client';
 import { formatCountdown } from '@/lib/format';
 import { queryKeys, useAttempt } from '@/lib/queries';
+import { useIntegritySignals } from '@/lib/use-integrity-signals';
 
 const AUTOSAVE_DELAY_MS = 800;
 
@@ -37,6 +38,8 @@ function Runner({ initial }: { initial: AttemptView }) {
   const queryClient = useQueryClient();
   const { notify } = useToast();
   const items = initial.items;
+  // Сигналы честности (счётчики без содержимого) раз в ~20 с и перед завершением; на баллы не влияют.
+  const signals = useIntegritySignals(initial.id, true);
 
   // Ответы и номера ревизий. localRevision растёт при каждой правке; savedRevision — последняя принятая сервером.
   const [answers, setAnswers] = useState<Record<string, ItemAnswer>>(() =>
@@ -168,6 +171,7 @@ function Runner({ initial }: { initial: AttemptView }) {
       .filter((item) => localRevision.current[item.id] > savedRevision.current[item.id])
       .map((item) => ({ itemId: item.id, answer: answersRef.current[item.id], revision: localRevision.current[item.id] }));
     try {
+      await signals.flush();
       const result = await api.post<AttemptResult>(`/candidate/assessments/${initial.id}/submit`, { answers: finalAnswers });
       goToResult(result);
     } catch (error) {

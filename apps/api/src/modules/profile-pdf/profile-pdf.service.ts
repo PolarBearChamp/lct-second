@@ -143,8 +143,17 @@ export class ProfilePdfService {
       const verified = view.qualification.skillEvidence.filter((s) => s.status === 'CONFIRMED');
       paragraph(`Навыки, подтверждённые заданиями: ${verified.map((s) => s.title).join(', ') || 'нет навыков с достаточным покрытием'}`);
       paragraph(`Подтверждено: ${view.qualification.confirmedAt.slice(0, 10)}`, 8.5, MUTED);
+      const integrity = view.qualification.integrity;
+      if (integrity) {
+        // Та же сводка, что в карточке: нейтральные формулировки, информация (не доказательство), на грейд не влияет.
+        const text = integrity.signals.length ? integrity.signals.map((signal) => signal.text).join('; ') : 'отметок нет';
+        paragraph(`Сигналы при прохождении теста (информация, на баллы и грейд не влияют): ${text}`, 8.5, MUTED);
+      }
     } else {
       paragraph('Подтверждённой квалификации по активной специализации нет.', 9.5, MUTED);
+    }
+    if (view.otherCategories.length) {
+      paragraph(`Другие подтверждённые категории: ${view.otherCategories.map((c) => `${c.specializationTitle} · ${c.gradeTitle} (${c.overallScore}/100)`).join('; ')}`, 9.5);
     }
 
     // ── Указано кандидатом ──

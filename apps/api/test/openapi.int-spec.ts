@@ -99,6 +99,7 @@ describe('OpenAPI: ответы API соответствуют описанию'
       await client.put(`/candidate/assessments/${attemptId}/answers/${first.id}`, { answer: { parts: {} }, revision: 1 }),
       200,
     );
+    checked('POST /candidate/assessments/{id}/signals', await client.post(`/candidate/assessments/${attemptId}/signals`, { tabHiddenCount: 1, tabHiddenMs: 4000 }), 204);
     const submitted = checked('POST /candidate/assessments/{id}/submit', await submitAttempt(ctx, client, attemptId), 200);
     expect(submitted.body.status).toBe('PASSED');
     checked('GET /candidate/assessments/{id}/result', await client.get(`/candidate/assessments/${attemptId}/result`), 200);

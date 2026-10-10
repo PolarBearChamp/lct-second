@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, Param, Query, Res } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiProduces, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
 import type { AuthContext } from '../../common/request-context';
@@ -9,6 +9,7 @@ import { CurrentAuth, RequestId, Roles } from '../auth/decorators';
 import { CandidateProfilesService } from '../candidate-profiles/candidate-profiles.service';
 import { CompaniesService } from '../companies/companies.service';
 import { ProfileViewService } from '../profile-view/profile-view.service';
+import { PdfQueryDto } from './dto/pdf-query.dto';
 import { ProfilePdfService } from './profile-pdf.service';
 
 /** PDF генерируется на backend после проверки прав; ссылка не публичная, ответ не кэшируется. */
@@ -47,9 +48,15 @@ export class ProfilePdfController {
   @ApiOperation({ summary: 'PDF кандидата в объёме прав компании', description: 'Обезличенный до принятия приглашения; с контактами — только при действующем доступе этой компании.' })
   @ApiProduces('application/pdf')
   @ApiResponse({ status: 404, description: 'CANDIDATE_NOT_FOUND' })
-  async employer(@CurrentAuth() auth: AuthContext, @Param('id', UuidPipe) id: string, @Res() res: Response, @RequestId() requestId: string) {
+  async employer(
+    @CurrentAuth() auth: AuthContext,
+    @Param('id', UuidPipe) id: string,
+    @Query() query: PdfQueryDto,
+    @Res() res: Response,
+    @RequestId() requestId: string,
+  ) {
     const company = await this.companies.requireCompany(auth.userId);
-    const view = await this.views.employerView(company.id, id);
+    const view = await this.views.employerView(company.id, id, query.specialization);
     await this.audit.record({
       actorUserId: auth.userId,
       action: 'candidate.pdf_downloaded',

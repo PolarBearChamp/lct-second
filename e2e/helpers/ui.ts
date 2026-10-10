@@ -60,9 +60,10 @@ async function answerPart(fieldset: Locator, part: PublicPart, key: PartKey): Pr
 
 /**
  * Проходит открытую попытку в интерфейсе: «правильно» — ответы по ключам из БД; «пусто» — без ответов.
- * Затем завершает тест через диалог подтверждения.
+ * Затем завершает тест через диалог подтверждения. simulateTabSwitches — сколько раз «уйти» со вкладки теста перед завершением
+ * (подмена document.visibilityState и событие visibilitychange, как при переключении вкладки в браузере).
  */
-export async function takeAssessmentInUi(page: Page, email: string, mode: 'correct' | 'empty'): Promise<AttemptItem[]> {
+export async function takeAssessmentInUi(page: Page, email: string, mode: 'correct' | 'empty', options: { simulateTabSwitches?: number } = {}): Promise<AttemptItem[]> {
   await expect(page.getByRole('timer', { name: 'Оставшееся время' })).toBeVisible();
   const { items } = await activeAttemptItems(email);
   if (mode === 'correct') {
@@ -77,6 +78,19 @@ export async function takeAssessmentInUi(page: Page, email: string, mode: 'corre
     const total = items.reduce((sum, item) => sum + item.parts.length, 0);
     await expect(page.getByText(`из ${total}`).first()).toBeVisible();
     await expect(page.getByText('Ответы сохранены')).toBeVisible({ timeout: 30_000 });
+  }
+  if (options.simulateTabSwitches) {
+    await page.evaluate(async (times) => {
+      const setVisibility = (state: 'hidden' | 'visible') => {
+        Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => state });
+        document.dispatchEvent(new Event('visibilitychange'));
+      };
+      for (let i = 0; i < times; i += 1) {
+        setVisibility('hidden');
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        setVisibility('visible');
+      }
+    }, options.simulateTabSwitches);
   }
   await page.getByRole('button', { name: 'Завершить тест' }).click();
   await page.getByRole('button', { name: 'Завершить и получить результат' }).click();

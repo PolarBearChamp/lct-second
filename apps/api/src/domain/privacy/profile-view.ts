@@ -24,6 +24,14 @@ import { isMinor } from '../candidate/age';
  * новое поле в БД не попадёт наружу случайно. Тот же результат используется для PDF.
  */
 
+/** Дополнительные данные для показа нескольких категорий кандидата. */
+export interface ProfileViewExtras {
+  /** Специализация, по которой показывается квалификация (по умолчанию — активная). */
+  focusSpecialization?: string | null;
+  /** Все подтверждённые квалификации кандидата (показанная исключается автоматически). */
+  otherQualifications?: QualificationSource[];
+}
+
 export type ProfileViewMode = 'OWNER' | 'EMPLOYER_REDACTED' | 'EMPLOYER_GRANTED';
 
 export interface ProfileSource {
@@ -63,6 +71,8 @@ export interface QualificationSource {
   confirmedAt: Date;
   nextReassessmentAt: Date;
   policyVersion: string;
+  /** Итог оценки сигналов честности попытки, подтвердившей квалификацию (JSON попытки). */
+  integrity?: unknown;
 }
 
 export interface FspSource {
@@ -114,6 +124,8 @@ export interface QualificationView {
   groupScores: Array<{ group: string; title: string; score: number }>;
   skillEvidence: SkillEvidenceView[];
   confirmedAt: string;
+  /** Как проходилась попытка: информация, на грейд не влияет. null — оценки нет (старые попытки). */
+  integrity: { level: 'NONE' | 'NOTE' | 'ATTENTION'; signals: Array<{ code: string; severity: 'NOTE' | 'ATTENTION'; text: string; value: number }> } | null;
 }
 
 export interface AchievementView {
@@ -142,6 +154,8 @@ export interface CandidateProfileView {
   specialization: { code: string; title: string } | null;
   qualification: QualificationView | null;
   declaredGrade: { code: string; title: string } | null;
+  /** Остальные подтверждённые категории кандидата (кроме показанной в `qualification`). */
+  otherCategories: Array<{ specialization: string; specializationTitle: string; grade: string; gradeTitle: string; overallScore: number }>;
   experienceMonths: number | null;
   /** 16–17 лет (во всех режимах: работодателю нужно для законного предложения). Дата рождения не раскрывается. */
   minor: boolean;
@@ -176,6 +190,19 @@ function parseGroupScores(value: unknown): Array<{ group: string; title: string;
     .map((g) => ({ group: String(g.group), title: String(g.title ?? g.group), score: Number(g.score) }));
 }
 
+/** Сводка сигналов без счётчиков: работодателю и в PDF — только уровень и нейтральные формулировки. */
+export function parseIntegrity(value: unknown): QualificationView['integrity'] {
+  if (!value || typeof value !== 'object') return null;
+  const raw = value as { level?: unknown; signals?: unknown };
+  if (raw.level !== 'NONE' && raw.level !== 'NOTE' && raw.level !== 'ATTENTION') return null;
+  const signals = Array.isArray(raw.signals)
+    ? raw.signals
+        .filter((s): s is { code: string; severity: 'NOTE' | 'ATTENTION'; text: string; value: number } => !!s && typeof s === 'object' && 'code' in s && 'text' in s)
+        .map((s) => ({ code: String(s.code), severity: s.severity === 'ATTENTION' ? ('ATTENTION' as const) : ('NOTE' as const), text: String(s.text), value: Number(s.value) }))
+    : [];
+  return { level: raw.level, signals };
+}
+
 function parseSkillEvidence(value: unknown): SkillEvidenceView[] {
   if (!Array.isArray(value)) return [];
   return value
@@ -198,14 +225,16 @@ export function buildProfileView(
   qualification: QualificationSource | null,
   fsp: FspSource | null,
   grant: GrantSource | null = null,
+  extras: ProfileViewExtras = {},
 ): CandidateProfileView {
   const isOwner = mode === 'OWNER';
   const isGranted = mode === 'EMPLOYER_GRANTED';
   if (isGranted && !grant) throw new Error('EMPLOYER_GRANTED требует действующего доступа');
 
-  const specCode = profile.activeSpecializationCode;
+  // Показанная категория — активная специализация или явно выбранная (карточка по потребности другой специализации).
+  const specCode = extras.focusSpecialization ?? profile.activeSpecializationCode;
   const spec = specCode ? getSpecialization(specCode) : undefined;
-  // Квалификация показывается только по активной специализации.
+  const isActiveFocus = specCode === profile.activeSpecializationCode;
   const activeQualification = qualification && qualification.specializationCode === specCode ? qualification : null;
   const evidence = activeQualification ? parseSkillEvidence(activeQualification.skillEvidence) : [];
   const verified = new Set(evidence.filter((e) => e.status === 'CONFIRMED').map((e) => e.skill));
@@ -268,9 +297,20 @@ export function buildProfileView(
           groupScores: parseGroupScores(activeQualification.groupScores),
           skillEvidence: evidence,
           confirmedAt: activeQualification.confirmedAt.toISOString(),
+          integrity: parseIntegrity(activeQualification.integrity),
         }
       : null,
-    declaredGrade: profile.declaredGrade
+    otherCategories: (extras.otherQualifications ?? [])
+      .filter((q) => q.specializationCode !== specCode)
+      .map((q) => ({
+        specialization: q.specializationCode,
+        specializationTitle: getSpecialization(q.specializationCode)?.title ?? q.specializationCode,
+        grade: q.confirmedGrade,
+        gradeTitle: GRADE_TITLES[q.confirmedGrade as GradeCode] ?? q.confirmedGrade,
+        overallScore: q.overallScore,
+      })),
+    // Заявленный грейд относится к активной специализации; для другой категории он не показывается.
+    declaredGrade: profile.declaredGrade && isActiveFocus
       ? { code: profile.declaredGrade, title: GRADE_TITLES[profile.declaredGrade as GradeCode] ?? profile.declaredGrade }
       : null,
     experienceMonths: profile.experienceMonths,

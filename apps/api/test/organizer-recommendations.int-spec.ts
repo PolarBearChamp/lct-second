@@ -1,6 +1,7 @@
 import { createTestApp, resetDatabase, type TestContext } from './helpers/app';
 import { Client } from './helpers/client';
-import { createCandidate, createEmployer, defaultNeed, fillProfile, invitationBody, publish, taskBody, uniqueEmail, vacancyBody } from './helpers/factories';
+import { normalize, readPdf } from './helpers/pdf';
+import { createCandidate, createEmployer, defaultNeed, fillProfile, invitationBody, publish, startAttempt, submitAttempt, taskBody, uniqueEmail, vacancyBody } from './helpers/factories';
 
 /**
  * Изменения по итогам встречи организаторов с участниками:
@@ -194,6 +195,124 @@ describe('рекомендации организаторов', () => {
       const result = await client.post('/employer/company/verification', { inn: '0077050050' });
       expect(result.body.company.verification.status).toBe('REJECTED');
       expect(result.body.company.verification.checks.filter((c: { passed: boolean }) => !c.passed).map((c: { code: string }) => c.code)).toEqual(['EMAIL_DOMAIN']);
+    });
+  });
+
+  describe('несколько подтверждённых категорий (VS.2)', () => {
+    const frontendNeed = (overrides: Record<string, unknown> = {}) => defaultNeed({ title: 'Frontend-разработчик', specialization: 'FRONTEND', allowedGrades: ['JUNIOR'], requiredSkills: [], ...overrides });
+
+    /** Кандидат с Backend Middle (активная) и подтверждённым Frontend Junior. */
+    async function multiCandidate() {
+      const person = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
+      const started = await startAttempt(person.client, 'FRONTEND', 'JUNIOR');
+      expect(started.status).toBe(201);
+      expect((await submitAttempt(ctx, person.client, started.body.id)).body.status).toBe('PASSED');
+      return person;
+    }
+
+    it('в общем банке — по строке на каждую категорию; в строке видны остальные категории; фильтр по специализации — одна строка', async () => {
+      const employer = await createEmployer(ctx);
+      const multi = await multiCandidate();
+      const single = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
+
+      const bank = await employer.client.get('/employer/candidates');
+      expect(bank.status).toBe(200);
+      const rows = bank.body.items.filter((i: { candidateId: string }) => i.candidateId === multi.candidateId);
+      expect(rows.map((r: { category: string }) => r.category).sort()).toEqual(['BACKEND:MIDDLE', 'FRONTEND:JUNIOR']);
+      const backend = rows.find((r: { category: string }) => r.category === 'BACKEND:MIDDLE');
+      const frontend = rows.find((r: { category: string }) => r.category === 'FRONTEND:JUNIOR');
+      expect(backend.otherCategories).toEqual([expect.objectContaining({ specialization: 'FRONTEND', grade: 'JUNIOR', gradeTitle: 'Junior' })]);
+      expect(frontend.otherCategories).toEqual([expect.objectContaining({ specialization: 'BACKEND', grade: 'MIDDLE' })]);
+      expect(frontend).toMatchObject({ specialization: 'FRONTEND', grade: 'JUNIOR', gradeConfirmed: true });
+      // Кандидат только с одной категорией — одна строка и пустой список остальных.
+      const singleRows = bank.body.items.filter((i: { candidateId: string }) => i.candidateId === single.candidateId);
+      expect(singleRows).toHaveLength(1);
+      expect(singleRows[0].otherCategories).toEqual([]);
+
+      const onlyFrontend = await employer.client.get('/employer/candidates?specialization=FRONTEND');
+      expect(onlyFrontend.body.items.map((i: { candidateId: string; category: string }) => [i.candidateId, i.category])).toEqual([[multi.candidateId, 'FRONTEND:JUNIOR']]);
+      expect((await employer.client.get('/employer/candidates?category=FRONTEND:JUNIOR')).body.items).toHaveLength(1);
+      expect((await employer.client.get('/employer/candidates?category=BACKEND:MIDDLE')).body.items).toHaveLength(2);
+    });
+
+    it('подборка по потребности другой специализации находит кандидата по его подтверждённой категории', async () => {
+      const employer = await createEmployer(ctx);
+      const multi = await multiCandidate();
+      const backendOnly = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
+      const need = await employer.client.post('/employer/needs', frontendNeed());
+      expect(need.status).toBe(201);
+      const run = await employer.client.post(`/employer/needs/${need.body.id}/selections`, {});
+      expect(run.status).toBe(201);
+      expect(run.body.totalMatched).toBe(1);
+      expect(run.body.items.map((i: { candidate: { candidateId: string } }) => i.candidate.candidateId)).toEqual([multi.candidateId]);
+      expect(run.body.items[0].candidate).toMatchObject({ specialization: 'FRONTEND', grade: 'JUNIOR', gradeConfirmed: true });
+      expect(run.body.items[0].candidate.otherCategories).toEqual([expect.objectContaining({ specialization: 'BACKEND', grade: 'MIDDLE' })]);
+      // Повторное открытие сохранённой подборки показывает ту же категорию, а не активную специализацию кандидата.
+      const reopened = await employer.client.get(`/employer/selections/${run.body.id}`);
+      expect(reopened.body.items[0].candidate).toMatchObject({ specialization: 'FRONTEND', grade: 'JUNIOR' });
+      expect(backendOnly.candidateId).not.toBe(multi.candidateId);
+    });
+
+    it('карточка показывает категорию потребности (или выбранную специализацию) и остальные; заявленный грейд — только для активной', async () => {
+      const employer = await createEmployer(ctx);
+      const multi = await multiCandidate();
+      const need = await employer.client.post('/employer/needs', frontendNeed());
+
+      const byDefault = await employer.client.get(`/employer/candidates/${multi.candidateId}`);
+      expect(byDefault.body.profile.qualification).toMatchObject({ specialization: 'BACKEND', grade: 'MIDDLE' });
+      expect(byDefault.body.profile.declaredGrade).toMatchObject({ code: 'MIDDLE' });
+      expect(byDefault.body.profile.otherCategories).toEqual([expect.objectContaining({ specialization: 'FRONTEND', grade: 'JUNIOR' })]);
+
+      for (const url of [`?needId=${need.body.id}`, '?specialization=FRONTEND']) {
+        const card = await employer.client.get(`/employer/candidates/${multi.candidateId}${url}`);
+        expect(card.status).toBe(200);
+        expect(card.body.profile.qualification).toMatchObject({ specialization: 'FRONTEND', grade: 'JUNIOR' });
+        expect(card.body.profile.specialization.code).toBe('FRONTEND');
+        expect(card.body.profile.declaredGrade).toBeNull();
+        expect(card.body.profile.otherCategories).toEqual([expect.objectContaining({ specialization: 'BACKEND', grade: 'MIDDLE' })]);
+      }
+      expect((await employer.client.get(`/employer/candidates/${multi.candidateId}?needId=${need.body.id}`)).body.match).toMatchObject({ gradeConfirmed: true, passes: true });
+      // Специализация без подтверждения у кандидата — показывается активная категория.
+      const none = await employer.client.get(`/employer/candidates/${multi.candidateId}?specialization=ML_ENGINEER`);
+      expect(none.body.profile.qualification).toMatchObject({ specialization: 'BACKEND' });
+      expect((await employer.client.get(`/employer/candidates/${multi.candidateId}?specialization=DESIGNER`)).status).toBe(422);
+    });
+
+    it('PDF строится той же категорией, что и карточка: по умолчанию активная, с ?specialization — выбранная', async () => {
+      const employer = await createEmployer(ctx);
+      const multi = await multiCandidate();
+      const pdfText = async (query = '') => {
+        const res = await employer.client.getBuffer(`/employer/candidates/${multi.candidateId}/pdf${query}`);
+        expect(res.status).toBe(200);
+        return normalize(readPdf(res.body).text);
+      };
+      const byDefault = await pdfText();
+      expect(byDefault).toContain('Грейд по результатам тестирования: Middle');
+      expect(byDefault).toContain('Другие подтверждённые категории: Frontend-разработчик · Junior');
+      const frontend = await pdfText('?specialization=FRONTEND');
+      expect(frontend).toContain('Грейд по результатам тестирования: Junior');
+      expect(frontend).toContain('Другие подтверждённые категории: Backend-разработчик · Middle');
+      expect((await employer.client.getBuffer(`/employer/candidates/${multi.candidateId}/pdf?specialization=DESIGNER`)).status).toBe(422);
+    });
+
+    it('кандидат без подтверждения во второй специализации в ней не виден; скрытый — нигде', async () => {
+      const employer = await createEmployer(ctx);
+      const backendOnly = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE' });
+      const hidden = await createCandidate(ctx, { specialization: 'BACKEND', grade: 'MIDDLE', publish: false });
+      expect((await employer.client.get('/employer/candidates?specialization=FRONTEND')).body.items).toEqual([]);
+      const ids = (await employer.client.get('/employer/candidates')).body.items.map((i: { candidateId: string }) => i.candidateId);
+      expect(ids).toEqual([backendOnly.candidateId]);
+      expect(ids).not.toContain(hidden.candidateId);
+    });
+
+    it('PDF и JSON одного представления: в PDF указаны остальные категории', async () => {
+      const employer = await createEmployer(ctx);
+      const multi = await multiCandidate();
+      const pdf = await employer.client.getBuffer(`/employer/candidates/${multi.candidateId}/pdf`);
+      expect(pdf.status).toBe(200);
+      const text = normalize(readPdf(pdf.body).text);
+      expect(text).toContain('Другие подтверждённые категории');
+      expect(text).toContain('Frontend-разработчик');
     });
   });
 

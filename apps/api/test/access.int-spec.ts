@@ -76,7 +76,7 @@ describe('контроль доступа: проверка всех маршр�
   it('перечень маршрутов полон: публичные из списка существуют, защищённые описаны и помечены security', () => {
     const keys = new Set(operations.map(key));
     for (const publicKey of PUBLIC_OPERATIONS) expect(keys).toContain(publicKey);
-    expect(operations.length).toBeGreaterThanOrEqual(89);
+    expect(operations.length).toBeGreaterThanOrEqual(93);
     expect(protectedOps.length).toBeGreaterThanOrEqual(65);
     expect(operations.filter((op) => !op.summary).map(key)).toEqual([]);
     // Каждый непубличный маршрут объявлен защищённым в OpenAPI — иначе документация вводит в заблуждение.

@@ -98,6 +98,12 @@ export class BankQueryDto extends PageQueryDto {
 }
 
 export class CandidateQueryDto {
+  /** Показать квалификацию этой специализации (у кандидата может быть несколько категорий). Потребность имеет приоритет. */
+  @ApiPropertyOptional({ enum: ['FRONTEND', 'BACKEND', 'ML_ENGINEER', 'MANUAL_QA'] })
+  @IsOptional()
+  @IsIn(['FRONTEND', 'BACKEND', 'ML_ENGINEER', 'MANUAL_QA'])
+  specialization?: string;
+
   /** Если задано — в ответ добавляется объяснение соответствия этой потребности. */
   @ApiPropertyOptional()
   @IsOptional()

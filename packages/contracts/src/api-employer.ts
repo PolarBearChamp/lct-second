@@ -1,4 +1,4 @@
-import type { AchievementView, CandidateProfileView, CodeTitle, ContentBlock, PublicPart } from './api';
+import type { AchievementView, CandidateProfileView, CodeTitle, ContentBlock, IntegrityLevel, PublicPart } from './api';
 import type {
   ContactChannel,
   FspLinkState,
@@ -238,6 +238,10 @@ export interface CandidateSummary {
   hasContactAccess: boolean;
   /** 16–17 лет: особые условия трудоустройства (ТК РФ, гл. 42). */
   minor: boolean;
+  /** Другие подтверждённые категории кандидата (он виден и в них). */
+  otherCategories: Array<{ specialization: Specialization; specializationTitle: string; grade: Grade; gradeTitle: string }>;
+  /** Сводный уровень сигналов честности попытки, подтвердившей грейд; null — оценки нет. Информация, на грейд не влияет. */
+  integrityLevel: IntegrityLevel | null;
 }
 
 export interface BankResponse {

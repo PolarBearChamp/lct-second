@@ -1,6 +1,7 @@
 import { getSpecialization, type GradeCode } from '../../src/domain/catalog/catalog';
 import type { GitInfo } from './common';
 import { num, pct } from './common';
+import type { GradingResults, ScenarioResult } from './grading';
 import type { Aggregate, MatchingResults, NeedMetrics } from './matching';
 import type { ResumeResults } from './resume';
 import type { CellResult, TestingResults } from './testing';
@@ -24,6 +25,7 @@ export interface ValidationResults {
   versions: Record<string, string>;
   matching: MatchingResults;
   testing: TestingResults;
+  grading: GradingResults;
   resume: ResumeResults;
   findings: Finding[];
   limitations: string[];
@@ -329,6 +331,126 @@ function testingSection(r: ValidationResults): string {
   return lines.join('\n');
 }
 
+const LEVEL_NAMES = ['нет уровня', 'Junior', 'Middle', 'Senior'];
+
+function gradingSection(r: ValidationResults): string {
+  const g = r.grading;
+  const m = g.main;
+  const lines: string[] = [];
+  lines.push('### 2.9 Определение грейда: повторное прохождение (test-retest) и разделяющая сила заданий');
+  lines.push('');
+  lines.push(
+    'Ответ организаторов на вопрос о проверке стабильности грейда: ожидается повторное прохождение теста одним и тем же профилем со сравнением присвоенных грейдов и оценка разделяющей силы заданий; допустима симуляция на синтетических кандидатах (PR.1).',
+  );
+  lines.push('');
+  lines.push('**Модель (допущение команды, не измерение на людях).**');
+  lines.push('');
+  lines.push(
+    `* У кандидата скрытая способность θ; трудность заданий: Junior ${g.model.difficulties.Junior}, Middle ${g.model.difficulties.Middle}, Senior ${g.model.difficulties.Senior}. Часть задания кандидат «знает» с вероятностью logistic(1,7·(θ − b)); иначе отвечает наугад тем же случайным ответом, что и стратегия «случайное угадывание» (вероятность угадать у каждого формата своя).`,
+  );
+  lines.push(
+    `* Истинный уровень: нет уровня / Junior / Middle / Senior; центр θ — на ${g.model.levelOffset} выше трудности своего уровня (на своём уровне кандидат знает около 90 % частей), разброс внутри уровня σ = ${g.model.sigma}. По ${g.options.candidatesPerLevel} кандидатов на каждый уровень в каждой из 4 специализаций (${m.candidates} кандидатов, ${m.attempts} попыток).`,
+  );
+  lines.push(
+    `* Процедура как в продукте: кандидат заявляет грейд (честно — ${Math.round(g.model.claimShares.honest * 100)} %, на ступень выше — ${Math.round(g.model.claimShares.over * 100)} %, на ступень ниже — ${Math.round(g.model.claimShares.under * 100)} %), проходит тест; при неуспехе сразу пробует уровень ниже; присвоенный грейд — первый пройденный или «нет». Автоматического повышения нет. Повтор — тот же профиль, новые экземпляры с исключением виденных отпечатков (как в сервисе).`,
+  );
+  lines.push('');
+  lines.push('**Согласованность при повторном прохождении.**');
+  lines.push('');
+  lines.push(
+    md([
+      ['Показатель', 'Значение'],
+      ['Совпадение присвоенных грейдов', pct(m.retestAgreement)],
+      ['Каппа Коэна, взвешенная (линейные веса), 95 % интервал', `${num(m.kappaWeighted.value)} (${num(m.kappaWeighted.low)}–${num(m.kappaWeighted.high)})`],
+      ['Каппа Коэна, невзвешенная', num(m.kappaUnweighted)],
+    ]),
+  );
+  lines.push('');
+  lines.push('Присвоенный грейд: строки — первое прохождение, столбцы — второе:');
+  lines.push('');
+  lines.push(md([['1-е \\ 2-е', ...LEVEL_NAMES], ...m.retestMatrix.map((row, i) => [LEVEL_NAMES[i], ...row.map(String)])]));
+  lines.push('');
+  lines.push('**Точность присвоения** (первое прохождение). Строки — истинный уровень, столбцы — присвоенный:');
+  lines.push('');
+  lines.push(md([['Истинный \\ присвоенный', ...LEVEL_NAMES], ...m.truthMatrix.map((row, i) => [LEVEL_NAMES[i], ...row.map(String)])]));
+  lines.push('');
+  const claimTitle: Record<string, string> = { honest: 'заявил свой уровень', over: 'заявил выше своего', under: 'заявил ниже своего' };
+  lines.push(
+    md([
+      ['Как заявлен грейд', 'Кандидатов', 'Присвоен верно', 'Завышен', 'Занижен (выдан, но ниже)', 'Не выдан при наличии уровня'],
+      ...m.byClaim.map((c) => [claimTitle[c.mode], String(c.n), pct(c.exact), pct(c.over), pct(c.under), pct(c.notIssued)]),
+      ['все', String(m.candidates), pct(m.overall.exact), pct(m.overall.over), pct(m.overall.under), pct(m.overall.notIssued)],
+    ]),
+  );
+  lines.push('');
+  lines.push(
+    'Кандидат, заявивший ниже своего уровня, получает не выше заявленного: платформа не повышает грейд автоматически (по ТЗ и по ответам организаторов), поэтому для повышения нужен отдельный тест на следующий уровень. Завышение у честно заявивших — доля кандидатов, которым присвоен уровень выше истинного.',
+  );
+  lines.push('');
+  lines.push('**Чувствительность к допущениям модели** (меньшие выборки):');
+  lines.push('');
+  const sens = (s: ScenarioResult) => {
+    const honest = s.byClaim.find((c) => c.mode === 'honest')!;
+    return [s.name, String(s.candidates), pct(s.retestAgreement), `${num(s.kappaWeighted.value)} (${num(s.kappaWeighted.low)}–${num(s.kappaWeighted.high)})`, pct(honest.exact), pct(honest.over), pct(honest.notIssued)];
+  };
+  lines.push(
+    md([
+      ['Сценарий', 'Кандидатов', 'Совпадение при повторе', 'κ взвешенная', 'Верно у честно заявивших', 'Завышение', 'Не выдан при наличии уровня'],
+      sens(m),
+      ...g.sensitivity.map(sens),
+    ]),
+  );
+  lines.push('');
+  const s = g.itemSummary;
+  const broken = g.sensitivity.flatMap((x) => {
+    const honest = x.byClaim.find((c) => c.mode === 'honest')!;
+    const problems = [
+      ...(x.retestAgreement < 0.8 ? [`совпадение при повторе ${pct(x.retestAgreement)} (порог 80 %)`] : []),
+      ...(x.kappaWeighted.value !== null && x.kappaWeighted.value < 0.6 ? [`κ ${num(x.kappaWeighted.value)} (порог 0,6)`] : []),
+      ...(honest.over > 0.05 ? [`завышение у честно заявивших ${pct(honest.over)} (порог 5 %)`] : []),
+    ];
+    return problems.length ? [`«${x.name}»: ${problems.join(', ')}`] : [];
+  });
+  lines.push(
+    broken.length
+      ? `Пороги основного сценария выдерживаются не при всех допущениях: ${broken.join('; ')}. Качество определения грейда зависит от того, насколько трудность банка соответствует уровням — а на реальных людях она не калибровалась (пилот остаётся обязательным).`
+      : 'Во всех проверенных вариантах допущений пороги основного сценария выдерживаются.',
+  );
+  lines.push('');
+  lines.push(
+    `При более трудном банке растёт доля «не выдан при наличии уровня» (кандидат с уровнем не проходит тест): ${pct(g.sensitivity.find((x) => x.shift > 0)?.byClaim.find((c) => c.mode === 'honest')?.notIssued ?? null)} у честно заявивших; при более лёгком — завышение: ${pct(g.sensitivity.find((x) => x.shift < 0)?.byClaim.find((c) => c.mode === 'honest')?.over ?? null)}. Это две стороны одной настройки порога и трудности.`,
+  );
+  lines.push('');
+  lines.push('**Разделяющая сила заданий.** Для каждой пары «семейство × грейд» по всем попыткам этого грейда в основном прогоне:');
+  lines.push('');
+  lines.push(
+    `* корреляция балла кейса со средним баллом остальных кейсов попытки: медиана ${num(s.medianCorrelation)}, отрицательных — ${s.negativeCorrelations} из ${s.pairs};`,
+  );
+  lines.push(
+    `* индекс различения D (верхние 27 % попыток по остальным кейсам минус нижние 27 %): медиана ${num(s.medianD)}; D ≥ 0,2 у ${s.dAtLeast02} из ${s.withD} пар (${pct(s.dShare)});`,
+  );
+  lines.push(`* разница среднего балла кейса между кандидатами этого уровня и уровня ниже: медиана ${num(s.medianGap)}, неположительная у ${s.nonPositiveGap} пар.`);
+  lines.push('');
+  lines.push('Пары с наименьшим индексом D:');
+  lines.push('');
+  const worst = [...g.items].filter((i) => i.discriminationD !== null).sort((a, b) => a.discriminationD! - b.discriminationD!).slice(0, 12);
+  lines.push(
+    md([
+      ['Семейство', 'Грейд', 'Попыток', 'Корреляция с остальными', 'D', 'Балл на своём уровне', 'Балл на уровень ниже', 'Разница'],
+      ...worst.map((i) => [`\`${i.family}\``, GRADE_RU[i.grade], String(i.attempts), num(i.itemRestCorrelation), num(i.discriminationD), num(i.meanAtLevel), num(i.meanBelow), num(i.levelGap)]),
+    ]),
+  );
+  lines.push('');
+  lines.push(
+    `Как читать: в модели все задания одного грейда одинаково трудны, поэтому различия между парами определяются долей угадывания (формат ответа, число вариантов) и составом тех, кто проходит этот грейд. Слабее всего различают задания Senior${worst.every((i) => i.grade === 'SENIOR') ? ' (все 12 пар таблицы)' : ''}: тест Senior проходят в основном кандидаты Senior, диапазон способностей узкий, и корреляция неизбежно ниже (ограничение диапазона). Это свойство модели и состава, а не доказательство слабости конкретных заданий. Таблица по всем ${s.pairs} парам — в docs/validation-results.json (grading.items).`,
+  );
+  lines.push('');
+  lines.push(
+    'Чего раздел не показывает: способность и трудность заданы командой, поэтому согласованность и разделяющая сила проверяют правила присвоения и устройство банка в рамках этой модели; реальные люди могут вести себя иначе (подготовка по банку, усталость, подсказки). Для выводов о надёжности нужен пилот с настоящими кандидатами.',
+  );
+  return lines.join('\n');
+}
+
 function resumeSection(r: ValidationResults): string {
   const res = r.resume;
   const table = (scores: ResumeResults['synthetic']['scores']) =>
@@ -388,7 +510,7 @@ export function renderMarkdown(r: ValidationResults): string {
   lines.push('');
   lines.push('## Сводка проверок');
   lines.push('');
-  const gates = [...r.matching.gates, ...r.testing.gates, ...r.resume.gates];
+  const gates = [...r.matching.gates, ...r.testing.gates, ...r.grading.gates, ...r.resume.gates];
   lines.push(md([['Проверка', 'Итог', 'Данные'], ...gates.map((g) => [g.name, mark(g.ok), g.detail])]));
   lines.push('');
   lines.push(`Итог: ${r.gatesOk ? '**все проверки пройдены**' : '**есть непройденные проверки**'}.`);
@@ -396,6 +518,8 @@ export function renderMarkdown(r: ValidationResults): string {
   lines.push(matchingSection(r));
   lines.push('');
   lines.push(testingSection(r));
+  lines.push('');
+  lines.push(gradingSection(r));
   lines.push('');
   lines.push(resumeSection(r));
   lines.push('');

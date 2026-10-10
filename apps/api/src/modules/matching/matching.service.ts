@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Clock } from '../../common/clock';
 import { notFound, unprocessable } from '../../common/errors';
 import { PolicyService } from '../../common/policy.service';
-import { getSkill, GRADE_TITLES, isKnownSkill, type GradeCode } from '../../domain/catalog/catalog';
+import { getSkill, getSpecialization, GRADE_TITLES, isKnownSkill, type GradeCode } from '../../domain/catalog/catalog';
 import { fspEvidence } from '../../domain/matching/fsp-relevance';
 import {
   isUnconfirmedForSpec,
@@ -54,6 +54,10 @@ export interface CandidateSummary {
   hasContactAccess: boolean;
   /** 16–17 лет: особые условия трудоустройства. */
   minor: boolean;
+  /** Сводный уровень сигналов честности попытки, подтвердившей грейд (информация); null — нет. */
+  integrityLevel: 'NONE' | 'NOTE' | 'ATTENTION' | null;
+  /** Другие подтверждённые категории кандидата. */
+  otherCategories: Array<{ specialization: string; specializationTitle: string; grade: GradeCode; gradeTitle: string }>;
 }
 
 @Injectable()
@@ -69,7 +73,8 @@ export class MatchingService {
   ) {}
 
   /** Краткие карточки (без контактов и персональных данных) с состоянием отношений компании и кандидата. */
-  private async summaries(company: Company, candidates: MatchCandidate[]): Promise<Map<string, CandidateSummary>> {
+  /** Сводки по записям подбора; ключ — сама запись (кандидат может быть в списке несколько раз — по одной на категорию). */
+  private async summaries(company: Company, candidates: MatchCandidate[]): Promise<Map<MatchCandidate, CandidateSummary>> {
     const ids = candidates.map((c) => c.candidateId);
     const [bookmarks, invitations, grants] = await Promise.all([
       this.prisma.candidateBookmark.findMany({ where: { companyId: company.id, candidateId: { in: ids } }, select: { candidateId: true } }),
@@ -85,14 +90,14 @@ export class MatchingService {
     const invitationOf = new Map<string, { id: string; status: string }>();
     for (const inv of invitations) if (!invitationOf.has(inv.candidateId)) invitationOf.set(inv.candidateId, { id: inv.id, status: inv.status });
     const formula = this.policies.matching;
-    const result = new Map<string, CandidateSummary>();
+    const result = new Map<MatchCandidate, CandidateSummary>();
     for (const c of candidates) {
       const q = c.qualification;
       const specialization = q?.specialization ?? c.specialization;
       if (!specialization) continue;
       const verified = q?.verifiedSkills ?? [];
       const fsp = fspEvidence(c.fspAchievements, specialization, formula);
-      result.set(c.candidateId, {
+      result.set(c, {
         candidateId: c.candidateId,
         alias: c.alias,
         displayName: `Кандидат ${c.alias}`,
@@ -115,6 +120,13 @@ export class MatchingService {
         activeInvitation: invitationOf.get(c.candidateId) ?? null,
         hasContactAccess: granted.has(c.candidateId),
         minor: c.minor,
+        integrityLevel: q?.integrityLevel ?? null,
+        otherCategories: c.otherCategories.map((o) => ({
+          specialization: o.specialization,
+          specializationTitle: getSpecialization(o.specialization)?.title ?? o.specialization,
+          grade: o.grade,
+          gradeTitle: GRADE_TITLES[o.grade],
+        })),
       });
     }
     return result;
@@ -127,14 +139,15 @@ export class MatchingService {
       if (!isKnownSkill(skill)) throw unprocessable('UNKNOWN_SKILL', `Навыка нет в справочнике: ${skill}`);
     }
     const started = process.hrtime.bigint();
-    const candidates = await this.repository.load({ specialization: filters.specialization });
+    // Без фильтра по специализации кандидат появляется в каждой своей подтверждённой категории.
+    const candidates = filters.specialization ? await this.repository.load({ specialization: filters.specialization }) : await this.repository.loadCategories();
     const ranked = rankBank(candidates, filters, this.policies.matching);
     const pageItems = paginate(ranked, page, pageSize);
-    const byId = new Map(candidates.map((c) => [c.candidateId, c]));
-    const summaries = await this.summaries(company, pageItems.items.map((r) => byId.get(r.candidateId)!));
+    const entryOf = new Map(candidates.map((c) => [`${c.candidateId}|${c.specialization}`, c]));
+    const summaries = await this.summaries(company, pageItems.items.map((r) => entryOf.get(`${r.candidateId}|${r.specialization}`)!));
     return {
       ...pageItems,
-      items: pageItems.items.map((r) => ({ ...summaries.get(r.candidateId)!, bankScore: r.bankScore, category: `${r.specialization}:${r.grade ?? 'UNCONFIRMED'}` })),
+      items: pageItems.items.map((r) => ({ ...summaries.get(entryOf.get(`${r.candidateId}|${r.specialization}`)!)!, bankScore: r.bankScore, category: `${r.specialization}:${r.grade ?? 'UNCONFIRMED'}` })),
       formulaVersion: this.policies.matching.version,
       sorting:
         'Категория (специализация → подтверждённый грейд Senior→Junior), внутри категории: 95·балл теста + 5·бонус ФСП. Кандидаты без подтверждённого грейда — после подтверждённых своей специализации, без балла (по бонусу ФСП)',
@@ -144,8 +157,10 @@ export class MatchingService {
 
   // ───────────────────────────── Карточка кандидата ─────────────────────────────
 
-  async candidate(company: Company, userId: string, candidateId: string, needId: string | undefined, requestId: string) {
-    const view = await this.views.employerView(company.id, candidateId);
+  async candidate(company: Company, userId: string, candidateId: string, needId: string | undefined, requestId: string, specialization?: string) {
+    // Карточка по потребности (или с явной специализацией) показывает квалификацию именно этой категории.
+    const need = needId ? await this.needs.getOwn(company, needId) : null;
+    const view = await this.views.employerView(company.id, candidateId, need?.specializationCode ?? specialization);
     const [bookmark, invitations] = await Promise.all([
       this.prisma.candidateBookmark.findUnique({ where: { companyId_candidateId: { companyId: company.id, candidateId } } }),
       this.prisma.invitation.findMany({
@@ -155,9 +170,8 @@ export class MatchingService {
       }),
     ]);
     let match: { needId: string; needTitle: string; gradeConfirmed: boolean; passes: boolean; violations: string[]; score: number | null; explanation: MatchExplanation | null } | null = null;
-    if (needId) {
-      const need = await this.needs.getOwn(company, needId);
-      const [candidate] = await this.repository.load({ ids: [candidateId], prefilter: false });
+    if (need) {
+      const [candidate] = await this.repository.load({ ids: [candidateId], prefilter: false, qualificationFor: need.specializationCode });
       if (candidate) {
         const spec = needSpecOf(need);
         if (isUnconfirmedForSpec(candidate, spec.specialization)) {
@@ -312,10 +326,12 @@ export class MatchingService {
       skip: (page - 1) * pageSize,
       take: pageSize,
     });
-    const current = await this.repository.load({ ids: results.map((r) => r.candidateId), prefilter: false });
+    const need = await this.prisma.hiringNeed.findUnique({ where: { id: run.needId } });
+    // Оцениваем по специализации потребности: кандидат может иметь несколько категорий.
+    const current = await this.repository.load({ ids: results.map((r) => r.candidateId), prefilter: false, qualificationFor: need?.specializationCode });
     const visible = current.filter((c) => c.discoverable);
     const summaries = await this.summaries(company, visible);
-    const need = await this.prisma.hiringNeed.findUnique({ where: { id: run.needId } });
+    const entryById = new Map(visible.map((c) => [c.candidateId, c]));
     const rejection = run.rejectionSummary as { reasons: Record<RejectionReason, number>; requiredSkills: Record<string, number> };
     return {
       id: run.id,
@@ -344,7 +360,8 @@ export class MatchingService {
       pageSize,
       total,
       items: results.map((r) => {
-        const summary = summaries.get(r.candidateId);
+        const entry = entryById.get(r.candidateId);
+        const summary = entry ? summaries.get(entry) : undefined;
         if (!summary) return { rank: r.rank, unavailable: true as const };
         return { rank: r.rank, unavailable: false as const, gradeConfirmed: r.gradeConfirmed, score: r.score, candidate: summary, explanation: r.explanation as unknown as MatchExplanation };
       }),
@@ -374,14 +391,17 @@ export class MatchingService {
   async bookmarks(company: Company) {
     const bookmarks = await this.prisma.candidateBookmark.findMany({ where: { companyId: company.id }, orderBy: { createdAt: 'desc' } });
     const current = await this.repository.load({ ids: bookmarks.map((b) => b.candidateId), prefilter: false });
-    const summaries = await this.summaries(company, current.filter((c) => c.discoverable));
+    const visible = current.filter((c) => c.discoverable);
+    const summaries = await this.summaries(company, visible);
+    const entryById = new Map(visible.map((c) => [c.candidateId, c]));
     const grants = await this.prisma.contactAccessGrant.findMany({
       where: { companyId: company.id, candidateId: { in: bookmarks.map((b) => b.candidateId) }, revokedAt: null },
       select: { candidateId: true },
     });
     const granted = new Set(grants.map((g) => g.candidateId));
     return bookmarks.map((b) => {
-      const summary = summaries.get(b.candidateId);
+      const entry = entryById.get(b.candidateId);
+      const summary = entry ? summaries.get(entry) : undefined;
       return summary
         ? { candidateId: b.candidateId, createdAt: b.createdAt.toISOString(), unavailable: false as const, candidate: summary }
         : { candidateId: b.candidateId, createdAt: b.createdAt.toISOString(), unavailable: true as const, hasContactAccess: granted.has(b.candidateId) };

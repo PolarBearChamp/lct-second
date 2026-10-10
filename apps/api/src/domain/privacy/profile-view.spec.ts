@@ -1,4 +1,4 @@
-import { buildProfileView, type FspSource, type ProfileSource, type QualificationSource } from './profile-view';
+import { buildProfileView, parseIntegrity, type FspSource, type ProfileSource, type QualificationSource } from './profile-view';
 
 const profile: ProfileSource = {
   id: '11111111-1111-4111-8111-111111111111',
@@ -108,6 +108,28 @@ describe('представление профиля: обезличенная к
     expect(hidden.salaryExpectation).toBeNull();
     expect(hidden.fsp.achievements).toEqual([]);
     expect(hidden.fsp.linked).toBe(false);
+  });
+});
+
+describe('представление профиля: сигналы честности прохождения', () => {
+  const evaluation = {
+    version: 'integrity-signals-v1',
+    level: 'NOTE',
+    signals: [{ code: 'PASTE', severity: 'NOTE', text: 'Вставка текста в поля ответа: 1', value: 1 }],
+    counters: { tabHiddenCount: 4, tabHiddenMs: 90_000, pasteCount: 1, copyCount: 0, focusLossCount: 5 },
+  };
+
+  it('в карточке только уровень и нейтральные формулировки — без версии и счётчиков', () => {
+    const view = buildProfileView('EMPLOYER_REDACTED', profile, { ...qualification, integrity: evaluation }, fsp);
+    expect(view.qualification?.integrity).toEqual({ level: 'NOTE', signals: [{ code: 'PASTE', severity: 'NOTE', text: 'Вставка текста в поля ответа: 1', value: 1 }] });
+    expect(JSON.stringify(view)).not.toMatch(/tabHiddenMs|counters|integrity-signals/);
+  });
+
+  it('для старых попыток оценки нет, повреждённый JSON не ломает карточку', () => {
+    expect(buildProfileView('EMPLOYER_REDACTED', profile, qualification, fsp).qualification?.integrity).toBeNull();
+    for (const broken of [null, undefined, 'x', 42, [], {}, { level: 'HIGH' }]) expect(parseIntegrity(broken)).toBeNull();
+    expect(parseIntegrity({ level: 'NONE' })).toEqual({ level: 'NONE', signals: [] });
+    expect(parseIntegrity({ level: 'NOTE', signals: [null, 'x', { code: 'PASTE' }, evaluation.signals[0]] })?.signals).toHaveLength(1);
   });
 });
 

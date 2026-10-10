@@ -1522,6 +1522,116 @@
         ]
       }
     },
+    "/api/v1/candidate/assessments/{id}/signals": {
+      "post": {
+        "description": "Интерфейс теста присылает раз в ~20 секунд, сколько раз скрывалась вкладка, сколько вставок и копирований было. Содержимое не передаётся. Сигналы информационные: на баллы и грейд не влияют, итог оценивается при завершении попытки и виден кандидату и работодателю.",
+        "operationId": "Assessments_signals",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssessmentSignalsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Сигналы приняты (счётчики добавлены к активной попытке)"
+          },
+          "400": {
+            "description": "INVALID_ID — идентификатор в пути имеет неверный формат",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UNAUTHENTICATED — нет действующей сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FORBIDDEN_ROLE | EMAIL_NOT_VERIFIED | CSRF_TOKEN_INVALID | CSRF_ORIGIN_MISMATCH",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Объект не найден или недоступен (одинаково для чужого и несуществующего)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ATTEMPT_NOT_ACTIVE | ATTEMPT_EXPIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION_FAILED — поля не прошли проверку (details.fields); 400 MALFORMED_JSON — тело не является JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "RATE_LIMITED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Сигналы честности прохождения теста (агрегированные счётчики интерфейса)",
+        "tags": [
+          "candidate-assessments"
+        ]
+      }
+    },
     "/api/v1/candidate/assessments/{id}/submit": {
       "post": {
         "description": "Сначала сохраняет переданные актуальные ответы, затем фиксирует результат. Повторный вызов возвращает тот же результат.",
@@ -2598,6 +2708,21 @@
             "in": "path",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "specialization",
+            "required": false,
+            "in": "query",
+            "description": "Показать квалификацию этой специализации (у кандидата может быть несколько категорий). Потребность имеет приоритет.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FRONTEND",
+                "BACKEND",
+                "ML_ENGINEER",
+                "MANUAL_QA"
+              ]
             }
           },
           {
@@ -7122,6 +7247,21 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "specialization",
+            "required": false,
+            "in": "query",
+            "description": "Категория, которую показать в PDF (у кандидата может быть несколько подтверждённых); по умолчанию — активная.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FRONTEND",
+                "BACKEND",
+                "ML_ENGINEER",
+                "MANUAL_QA"
+              ]
+            }
           }
         ],
         "responses": {
@@ -8121,6 +8261,41 @@
           "answer",
           "revision"
         ]
+      },
+      "AssessmentSignalsDto": {
+        "type": "object",
+        "properties": {
+          "tabHiddenCount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 50,
+            "description": "Сколько раз вкладка стала скрытой"
+          },
+          "tabHiddenMs": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1800000,
+            "description": "Суммарное время со скрытой вкладкой, мс"
+          },
+          "pasteCount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 50,
+            "description": "Вставки текста из буфера в поля ответа"
+          },
+          "copyCount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 50,
+            "description": "Копирование текста задания"
+          },
+          "focusLossCount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Потери фокуса окна (информационно)"
+          }
+        }
       },
       "FinalAnswerDto": {
         "type": "object",
@@ -9642,6 +9817,15 @@
           },
           "confirmedAt": {
             "type": "string"
+          },
+          "integrity": {
+            "description": "Как проходилась попытка, подтвердившая квалификацию; null — у старых попыток оценки нет.",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IntegrityView"
+              }
+            ]
           }
         },
         "required": [
@@ -9652,7 +9836,8 @@
           "overallScore",
           "groupScores",
           "skillEvidence",
-          "confirmedAt"
+          "confirmedAt",
+          "integrity"
         ],
         "additionalProperties": false
       },
@@ -9691,6 +9876,71 @@
           "BELOW_THRESHOLD",
           "INSUFFICIENT_DATA"
         ]
+      },
+      "IntegrityView": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "$ref": "#/components/schemas/IntegrityLevel"
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IntegritySignalView"
+            }
+          }
+        },
+        "required": [
+          "level",
+          "signals"
+        ],
+        "additionalProperties": false,
+        "description": "Сводка сигналов, которую видят работодатель (в карточке и PDF) и владелец."
+      },
+      "IntegrityLevel": {
+        "type": "string",
+        "enum": [
+          "NONE",
+          "NOTE",
+          "ATTENTION"
+        ],
+        "description": "Сигналы честности прохождения теста: информация, а не доказательство; на грейд не влияют."
+      },
+      "IntegritySignalView": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "FAST_COMPLETION",
+              "FAST_ITEMS",
+              "TAB_HIDDEN",
+              "PASTE",
+              "COPY"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "NOTE",
+              "ATTENTION"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "description": "Нейтральная формулировка."
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "text",
+          "value"
+        ],
+        "additionalProperties": false
       },
       "CandidateProfileView": {
         "type": "object",
@@ -9739,6 +9989,38 @@
                 "$ref": "#/components/schemas/CodeTitle"
               }
             ]
+          },
+          "otherCategories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "specialization": {
+                  "$ref": "#/components/schemas/Specialization"
+                },
+                "specializationTitle": {
+                  "type": "string"
+                },
+                "grade": {
+                  "$ref": "#/components/schemas/Grade"
+                },
+                "gradeTitle": {
+                  "type": "string"
+                },
+                "overallScore": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "specialization",
+                "specializationTitle",
+                "grade",
+                "gradeTitle",
+                "overallScore"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Остальные подтверждённые категории кандидата (кроме показанной в `qualification`)."
           },
           "experienceMonths": {
             "type": "number",
@@ -9957,6 +10239,7 @@
           "specialization",
           "qualification",
           "declaredGrade",
+          "otherCategories",
           "experienceMonths",
           "minor",
           "city",
@@ -11470,6 +11753,60 @@
           },
           "statusMessage": {
             "type": "string"
+          },
+          "integrity": {
+            "description": "Сигналы честности прохождения (с счётчиками); null — у прерванных и старых попыток. Кандидат видит то же, что работодатель.",
+            "nullable": true,
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "type": "string"
+              },
+              "counters": {
+                "type": "object",
+                "properties": {
+                  "tabHiddenCount": {
+                    "type": "number"
+                  },
+                  "tabHiddenMs": {
+                    "type": "number"
+                  },
+                  "pasteCount": {
+                    "type": "number"
+                  },
+                  "copyCount": {
+                    "type": "number"
+                  },
+                  "focusLossCount": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "tabHiddenCount",
+                  "tabHiddenMs",
+                  "pasteCount",
+                  "copyCount",
+                  "focusLossCount"
+                ],
+                "additionalProperties": false
+              },
+              "level": {
+                "$ref": "#/components/schemas/IntegrityLevel"
+              },
+              "signals": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/IntegritySignalView"
+                }
+              }
+            },
+            "required": [
+              "counters",
+              "level",
+              "signals",
+              "version"
+            ]
           }
         },
         "required": [
@@ -11480,6 +11817,7 @@
           "grade",
           "groups",
           "id",
+          "integrity",
           "isSynthetic",
           "overallScore",
           "passed",
@@ -12592,6 +12930,43 @@
                 "minor": {
                   "type": "boolean",
                   "description": "16–17 лет: особые условия трудоустройства (ТК РФ, гл. 42)."
+                },
+                "otherCategories": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "specialization": {
+                        "$ref": "#/components/schemas/Specialization"
+                      },
+                      "specializationTitle": {
+                        "type": "string"
+                      },
+                      "grade": {
+                        "$ref": "#/components/schemas/Grade"
+                      },
+                      "gradeTitle": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "specialization",
+                      "specializationTitle",
+                      "grade",
+                      "gradeTitle"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Другие подтверждённые категории кандидата (он виден и в них)."
+                },
+                "integrityLevel": {
+                  "description": "Сводный уровень сигналов честности попытки, подтвердившей грейд; null — оценки нет. Информация, на грейд не влияет.",
+                  "nullable": true,
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/IntegrityLevel"
+                    }
+                  ]
                 }
               },
               "required": [
@@ -12611,7 +12986,9 @@
                 "gradeTitle",
                 "groupScores",
                 "hasContactAccess",
+                "integrityLevel",
                 "minor",
+                "otherCategories",
                 "overallScore",
                 "salary",
                 "salaryHidden",
@@ -13398,6 +13775,43 @@
           "minor": {
             "type": "boolean",
             "description": "16–17 лет: особые условия трудоустройства (ТК РФ, гл. 42)."
+          },
+          "otherCategories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "specialization": {
+                  "$ref": "#/components/schemas/Specialization"
+                },
+                "specializationTitle": {
+                  "type": "string"
+                },
+                "grade": {
+                  "$ref": "#/components/schemas/Grade"
+                },
+                "gradeTitle": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "specialization",
+                "specializationTitle",
+                "grade",
+                "gradeTitle"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Другие подтверждённые категории кандидата (он виден и в них)."
+          },
+          "integrityLevel": {
+            "description": "Сводный уровень сигналов честности попытки, подтвердившей грейд; null — оценки нет. Информация, на грейд не влияет.",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IntegrityLevel"
+              }
+            ]
           }
         },
         "required": [
@@ -13422,7 +13836,9 @@
           "bookmarked",
           "activeInvitation",
           "hasContactAccess",
-          "minor"
+          "minor",
+          "otherCategories",
+          "integrityLevel"
         ],
         "additionalProperties": false
       },

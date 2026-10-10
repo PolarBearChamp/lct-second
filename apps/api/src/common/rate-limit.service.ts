@@ -61,4 +61,6 @@ export const RATE_LIMITS = {
   verifyPerIp: { limit: 30, windowMs: 15 * 60_000 },
   fspLinkPerUser: { limit: 10, windowMs: 15 * 60_000 },
   resumePerUser: { limit: 10, windowMs: 15 * 60_000 },
+  /** Пакеты сигналов теста: интерфейс отправляет раз в 20 секунд, на 30-минутную попытку хватает с запасом. */
+  signalsPerAttempt: { limit: 200, windowMs: 30 * 60_000 },
 } satisfies Record<string, RateLimitRule>;

@@ -113,6 +113,41 @@ export const MATCHING_FORMULAS: Record<string, MatchingFormula> = {
   },
 };
 
+/**
+ * Пороги сигналов честности прохождения теста (domain/assessment/integrity.ts). Рабочие допущения команды, не
+ * откалиброванные на людях; на баллы и грейд не влияют, поэтому версионируются отдельно от политики оценки.
+ */
+export interface IntegrityPolicy {
+  version: string;
+  /** Тест завершён быстрее этой доли отведённого времени при результате не ниже проходного. */
+  fastCompletionShare: number;
+  /** Кейс решён полностью верно быстрее стольких секунд после предыдущего сохранения. */
+  fastItemSeconds: number;
+  /** Сколько таких кейсов нужно для сигнала. */
+  fastItemsMin: number;
+  /** Сколько раз вкладка скрывалась для замечания и для предупреждения. */
+  tabHiddenNote: number;
+  tabHiddenAttention: number;
+  /** Суммарное время со скрытой вкладкой (мс) для предупреждения. */
+  tabHiddenAttentionMs: number;
+  pasteNote: number;
+  pasteAttention: number;
+  copyNote: number;
+}
+
+export const INTEGRITY_POLICY: IntegrityPolicy = {
+  version: 'integrity-signals-v1',
+  fastCompletionShare: 0.2,
+  fastItemSeconds: 15,
+  fastItemsMin: 3,
+  tabHiddenNote: 3,
+  tabHiddenAttention: 8,
+  tabHiddenAttentionMs: 5 * 60_000,
+  pasteNote: 1,
+  pasteAttention: 3,
+  copyNote: 3,
+};
+
 export interface InvitationPolicy {
   version: string;
   ttlDays: number;

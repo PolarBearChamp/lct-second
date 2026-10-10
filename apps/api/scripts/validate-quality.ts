@@ -14,6 +14,7 @@ import { MATCHING_ALGORITHM_VERSION } from '../src/domain/matching/rank';
 import { environmentInfo, gitInfo, repoRoot } from './validation/common';
 import { runMatchingValidation } from './validation/matching';
 import { runResumeValidation } from './validation/resume';
+import { DEFAULT_GRADING_OPTIONS, QUICK_GRADING_OPTIONS, runGradingValidation } from './validation/grading';
 import { renderMarkdown, type Finding, type ValidationResults } from './validation/report';
 import { DEFAULT_OPTIONS, runTestingValidation, type TestingOptions } from './validation/testing';
 
@@ -27,6 +28,7 @@ const LIMITATIONS = [
   'Пороги прохождения (75 / 50 / 90 / 75, подтверждение навыка ≥ 2 кейса и ≥ 70) — рабочие допущения команды, научно не откалиброваны; симуляция профилей решателя не является моделью реальных людей.',
   'Разметка пар «потребность–кандидат» авторская и синтетическая, составлена теми же людьми, что реализовали формулу; внешней экспертной разметки нет. 12 потребностей (8 итоговых) — слишком мало для статистических выводов.',
   'Подбор оценивается на синтетическом пуле из 76 кандидатов; масштаб (1000+ кандидатов) и нагрузка в этом отчёте не измерялись — см. docs/implementation-status.md.',
+  'Определение грейда (раздел 2.9) проверено на симуляции: способность кандидата и трудность заданий каждого грейда заданы командой, а не измерены на людях; показатели test-retest и разделяющей силы отражают согласованность правил и банка с этой моделью. Реальную надёжность и валидность даст только пилот с настоящими кандидатами и независимой экспертной оценкой.',
   'Параметризация заданий снижает частоту точных повторов, но семейства внутри пары «специализация × грейд» повторяются во всех попытках, а доля частей с постоянным верным ответом (раздел 2.8) допускает подготовку по банку; это не защита от списывания.',
   'Ручные контрольные примеры привязаны к версии семейства и отпечатку экземпляра; после изменения генератора их нужно решить заново (скрипт сообщает об этом явно).',
   'Метрики подбора не обещают такого же результата на реальных данных; score — относительная мера соответствия описанной потребности, а не вероятность найма.',
@@ -41,12 +43,14 @@ function main(): void {
   const matching = runMatchingValidation();
   log('Тестирование…');
   const testing = runTestingValidation(options, log);
+  log('Определение грейда (test-retest, разделяющая сила)…');
+  const grading = runGradingValidation(quick ? QUICK_GRADING_OPTIONS : DEFAULT_GRADING_OPTIONS, log);
   log('Распознавание резюме…');
   const resume = runResumeValidation(quick ? 20 : 60);
 
   const findingsFile = path.join(repoRoot(), 'data', 'validation', 'findings.json');
   const findings = JSON.parse(readFileSync(findingsFile, 'utf8')) as Finding[];
-  const gates = [...matching.gates, ...testing.gates, ...resume.gates];
+  const gates = [...matching.gates, ...testing.gates, ...grading.gates, ...resume.gates];
   const policy = getAssessmentPolicy('assessment-policy-v2');
   const formula = getMatchingFormula('matching-formula-v1');
 
@@ -67,6 +71,7 @@ function main(): void {
     },
     matching,
     testing,
+    grading,
     resume,
     findings,
     limitations: LIMITATIONS,

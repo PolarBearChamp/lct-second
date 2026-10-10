@@ -7,6 +7,8 @@ import { personName } from './people';
 export type AttemptOutcome = 'PASS' | 'FAIL' | 'EXPIRED' | 'ABANDONED';
 
 export interface AttemptPlan {
+  /** Специализация попытки (по умолчанию — специализация кандидата): так у кандидата появляется вторая категория. */
+  specialization?: SpecializationCode;
   grade: GradeCode;
   outcome: AttemptOutcome;
   /** Сколько дней назад завершена (для EXPIRED/ABANDONED — начата). */
@@ -14,7 +16,12 @@ export interface AttemptPlan {
   hoursAgo?: number;
   accuracy?: [number, number, number];
   confident?: boolean;
+  /** Демонстрационные сигналы честности: NOTE — несколько уходов со вкладки и вставка; ATTENTION — частые уходы, вставки и копирование. По умолчанию — без сигналов. */
+  integrity?: 'NOTE' | 'ATTENTION';
 }
+
+/** Кандидаты с примерами сигналов честности (остальные проходят без замечаний). */
+export const INTEGRITY_DEMO: Record<string, 'NOTE' | 'ATTENTION'> = { 'fe-middle-4': 'NOTE', 'be-middle-4': 'ATTENTION' };
 
 export type FspPlan = { kind: 'LINK'; id: string; code: string } | { kind: 'SYNC_ERROR'; id: string };
 
@@ -69,7 +76,7 @@ export function mainCandidates(used: Set<string>, perCell = 8): CandidateDef[] {
         const attempts: AttemptPlan[] = [];
         const passDaysAgo = longAgo ? 96 + counter % 40 : 6 + ((counter * 7) % 70);
         if (priorFailure) attempts.push({ grade: HIGHER[grade], outcome: 'FAIL', daysAgo: passDaysAgo + 3 + (counter % 5) });
-        attempts.push({ grade, outcome: 'PASS', daysAgo: passDaysAgo, confident: n === 1 || n === 5 ? true : undefined });
+        attempts.push({ grade, outcome: 'PASS', daysAgo: passDaysAgo, confident: n === 1 || n === 5 ? true : undefined, integrity: INTEGRITY_DEMO[`${SPEC_SHORT[spec]}-${GRADE_SHORT[grade]}-${n}`] });
         let fsp: FspPlan | undefined;
         if (n <= 3 && participantIndex < SEED_PARTICIPANTS_PER_SPEC - 1) {
           const number = specIndex + 1 + SEED_SPECS.length * participantIndex;
@@ -144,6 +151,7 @@ export function extraCandidates(used: Set<string>): CandidateDef[] {
     make({ key: 'fsp-empty-1', email: 'fsp.empty1@demo.example', ...heroName('Юлия Пустая', true, used), specialization: 'FRONTEND', declaredGrade: 'MIDDLE', publication: 'PUBLISHED', attempts: [{ grade: 'MIDDLE', outcome: 'PASS', daysAgo: 22 }], fsp: { kind: 'LINK', id: 'FSP-DEMO-2001', code: '502288' }, note: 'ФСП привязан, истории нет — основной сценарий не ломается' }),
     make({ key: 'fsp-empty-2', email: 'fsp.empty2@demo.example', ...heroName('Артём Нулевой', false, used), specialization: 'MANUAL_QA', declaredGrade: 'MIDDLE', publication: 'PUBLISHED', attempts: [{ grade: 'MIDDLE', outcome: 'PASS', daysAgo: 33 }], fsp: { kind: 'LINK', id: 'FSP-DEMO-2002', code: '377190' }, note: 'ФСП привязан, истории нет' }),
     make({ key: 'unconfirmed', email: 'unconfirmed.candidate@demo.example', ...heroName('Глеб Неподтверждённый', false, used), specialization: 'BACKEND', declaredGrade: 'MIDDLE', publication: 'PUBLISHED', attempts: [], note: 'Профиль опубликован, теста ещё нет: виден работодателям после подтверждённых, с пометкой «грейд не подтверждён» (рекомендация организаторов)' }),
+    make({ key: 'multi', email: 'multi.candidate@demo.example', ...heroName('Мария Двойная', true, used), specialization: 'BACKEND', declaredGrade: 'MIDDLE', publication: 'PUBLISHED', attempts: [{ grade: 'MIDDLE', outcome: 'PASS', daysAgo: 25 }, { specialization: 'FRONTEND', grade: 'JUNIOR', outcome: 'PASS', daysAgo: 18 }], note: 'Две подтверждённые категории (Backend Middle и Frontend Junior): виден в банке и подборках по обеим специализациям' }),
     make({ key: 'teen', email: 'teen.candidate@demo.example', ...heroName('Ева Юная', true, used), specialization: 'FRONTEND', declaredGrade: 'JUNIOR', publication: 'PUBLISHED', attempts: [{ grade: 'JUNIOR', outcome: 'PASS', daysAgo: 6 }], ageYears: 17, guardianName: 'Юная Ольга Петровна', note: 'Кандидат 17 лет с согласием законного представителя: у работодателей отметка «16–17 лет», приглашение требует подтвердить особые условия труда' }),
   ];
 }

@@ -26,6 +26,44 @@ export class SaveAnswerDto {
   revision!: number;
 }
 
+/** Агрегированные сигналы интерфейса теста за период (без содержимого ответов). */
+export class AssessmentSignalsDto {
+  @ApiPropertyOptional({ description: 'Сколько раз вкладка стала скрытой', maximum: 50 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(50)
+  tabHiddenCount?: number;
+
+  @ApiPropertyOptional({ description: 'Суммарное время со скрытой вкладкой, мс', maximum: 1_800_000 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(1_800_000)
+  tabHiddenMs?: number;
+
+  @ApiPropertyOptional({ description: 'Вставки текста из буфера в поля ответа', maximum: 50 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(50)
+  pasteCount?: number;
+
+  @ApiPropertyOptional({ description: 'Копирование текста задания', maximum: 50 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(50)
+  copyCount?: number;
+
+  @ApiPropertyOptional({ description: 'Потери фокуса окна (информационно)', maximum: 100 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  focusLossCount?: number;
+}
+
 export class FinalAnswerDto extends SaveAnswerDto {
   @ApiProperty()
   @IsUUID()

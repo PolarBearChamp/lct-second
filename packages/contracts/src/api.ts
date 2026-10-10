@@ -232,6 +232,23 @@ export interface SkillEvidenceView {
   status: SkillEvidenceStatus;
 }
 
+/** Сигналы честности прохождения теста: информация, а не доказательство; на грейд не влияют. */
+export type IntegrityLevel = 'NONE' | 'NOTE' | 'ATTENTION';
+
+export interface IntegritySignalView {
+  code: 'FAST_COMPLETION' | 'FAST_ITEMS' | 'TAB_HIDDEN' | 'PASTE' | 'COPY';
+  severity: 'NOTE' | 'ATTENTION';
+  /** Нейтральная формулировка. */
+  text: string;
+  value: number;
+}
+
+/** Сводка сигналов, которую видят работодатель (в карточке и PDF) и владелец. */
+export interface IntegrityView {
+  level: IntegrityLevel;
+  signals: IntegritySignalView[];
+}
+
 export interface QualificationView {
   specialization: Specialization;
   specializationTitle: string;
@@ -241,6 +258,8 @@ export interface QualificationView {
   groupScores: Array<{ group: string; title: string; score: number }>;
   skillEvidence: SkillEvidenceView[];
   confirmedAt: string;
+  /** Как проходилась попытка, подтвердившая квалификацию; null — у старых попыток оценки нет. */
+  integrity: IntegrityView | null;
 }
 
 export interface AchievementView {
@@ -266,6 +285,8 @@ export interface CandidateProfileView {
   specialization: { code: Specialization; title: string } | null;
   qualification: QualificationView | null;
   declaredGrade: CodeTitle | null;
+  /** Остальные подтверждённые категории кандидата (кроме показанной в `qualification`). */
+  otherCategories: Array<{ specialization: Specialization; specializationTitle: string; grade: Grade; gradeTitle: string; overallScore: number }>;
   experienceMonths: number | null;
   /** 16–17 лет (дата рождения работодателю не раскрывается). */
   minor: boolean;
@@ -447,6 +468,8 @@ export interface AttemptResult extends AttemptSummary {
   versions: { policy: string; bank: string; blueprint: string };
   eligibility: EligibilityResponse;
   statusMessage: string;
+  /** Сигналы честности прохождения (с счётчиками); null — у прерванных и старых попыток. Кандидат видит то же, что работодатель. */
+  integrity: (IntegrityView & { version: string; counters: { tabHiddenCount: number; tabHiddenMs: number; pasteCount: number; copyCount: number; focusLossCount: number } }) | null;
 }
 
 export type { AnswerFormat };

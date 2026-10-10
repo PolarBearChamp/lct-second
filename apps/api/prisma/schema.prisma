@@ -373,6 +373,14 @@ model AssessmentAttempt {
   qualificationGranted Boolean       @default(false)
   /// Попытка создана сидером синтетических данных (ответы сгенерированы, оценка — серверным evaluator).
   isSynthetic          Boolean       @default(false)
+  /// Счётчики сигналов честности, которые присылает интерфейс теста (агрегаты без содержимого); на грейд не влияют.
+  tabHiddenCount       Int           @default(0)
+  tabHiddenMs          Int           @default(0)
+  pasteCount           Int           @default(0)
+  copyCount            Int           @default(0)
+  focusLossCount       Int           @default(0)
+  /// Итог оценки сигналов при завершении попытки: { version, level, signals[], counters }. Не заполнено у прерванных и старых попыток.
+  integrity            Json?
 
   candidate            CandidateProfile        @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   specialization       Specialization          @relation(fields: [specializationCode], references: [code])
@@ -413,12 +421,14 @@ model AssessmentItem {
 }
 
 model AssessmentAnswer {
-  id        String   @id @default(uuid()) @db.Uuid
-  attemptId String   @db.Uuid
-  itemId    String   @db.Uuid
-  answer    Json
-  revision  Int
-  savedAt   DateTime @db.Timestamptz(3)
+  id           String    @id @default(uuid()) @db.Uuid
+  attemptId    String    @db.Uuid
+  itemId       String    @db.Uuid
+  answer       Json
+  revision     Int
+  savedAt      DateTime  @db.Timestamptz(3)
+  /// Когда ответ на задание был сохранён впервые (для сигнала о слишком быстром решении); у старых записей не заполнено.
+  firstSavedAt DateTime? @db.Timestamptz(3)
 
   attempt AssessmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
   /// Составной внешний ключ гарантирует, что ответ относится к заданию именно этой попытки.

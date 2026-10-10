@@ -2,6 +2,7 @@ import { WORK_FORMAT_LABELS, type CandidateSummary } from '@fsp/contracts';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { InvitationStatusBadge } from '@/components/invitations/invitation-status';
+import { IntegrityBadge } from '@/components/profile/integrity';
 import { Badge } from '@/components/ui/badge';
 import { formatSalaryRange } from '@/lib/format';
 import { BookmarkButton } from './bookmark-button';
@@ -47,6 +48,7 @@ export function CandidateSummaryCard({
                 </>
               )}
               {candidate.minor ? <Badge tone="warning" title="Особые условия труда работников до 18 лет (ТК РФ, гл. 42)">16–17 лет</Badge> : null}
+              <IntegrityBadge level={candidate.integrityLevel} />
               {candidate.fsp.relevantEvents ? <Badge tone="brand">ФСП: {candidate.fsp.relevantEvents} мероприятие(й)</Badge> : null}
               {candidate.activeInvitation ? <InvitationStatusBadge status={candidate.activeInvitation.status} /> : null}
               {candidate.hasContactAccess ? <Badge tone="success">контакты доступны</Badge> : null}
@@ -65,6 +67,11 @@ export function CandidateSummaryCard({
           <BookmarkButton candidateId={candidate.candidateId} initial={candidate.bookmarked} />
         </div>
       </div>
+      {candidate.otherCategories.length ? (
+        <div className="mt-2 text-sm text-muted">
+          Также подтверждено: {candidate.otherCategories.map((c) => `${c.specializationTitle} · ${c.gradeTitle}`).join('; ')}
+        </div>
+      ) : null}
       <div className="mt-3 flex flex-wrap gap-1.5">
         {candidate.verifiedSkills.map((s) => (
           <Badge key={s.code} tone="success">

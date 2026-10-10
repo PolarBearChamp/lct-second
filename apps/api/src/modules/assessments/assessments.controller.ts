@@ -8,7 +8,7 @@ import type { ItemAnswer } from '../../domain/assessment/types';
 import { CurrentAuth, RequestId, Roles } from '../auth/decorators';
 import { CandidateProfilesService } from '../candidate-profiles/candidate-profiles.service';
 import { AssessmentsService } from './assessments.service';
-import { SaveAnswerDto, StartAssessmentDto, SubmitAssessmentDto } from './dto/assessment.dto';
+import { AssessmentSignalsDto, SaveAnswerDto, StartAssessmentDto, SubmitAssessmentDto } from './dto/assessment.dto';
 
 const IDEMPOTENCY_KEY = /^[A-Za-z0-9_-]{8,64}$/;
 
@@ -78,6 +78,19 @@ export class AssessmentsController {
     @Body() dto: SaveAnswerDto,
   ) {
     return this.assessments.saveAnswer(await this.profiles.candidateIdOf(auth.userId), id, itemId, dto.answer, dto.revision);
+  }
+
+  @Post(':id/signals')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Сигналы честности прохождения теста (агрегированные счётчики интерфейса)',
+    description:
+      'Интерфейс теста присылает раз в ~20 секунд, сколько раз скрывалась вкладка, сколько вставок и копирований было. Содержимое не передаётся. Сигналы информационные: на баллы и грейд не влияют, итог оценивается при завершении попытки и виден кандидату и работодателю.',
+  })
+  @ApiResponse({ status: 409, description: 'ATTEMPT_NOT_ACTIVE | ATTEMPT_EXPIRED' })
+  @ApiResponse({ status: 429, description: 'RATE_LIMITED' })
+  async signals(@CurrentAuth() auth: AuthContext, @Param('id', UuidPipe) id: string, @Body() dto: AssessmentSignalsDto): Promise<void> {
+    await this.assessments.recordSignals(await this.profiles.candidateIdOf(auth.userId), id, dto);
   }
 
   @Post(':id/submit')

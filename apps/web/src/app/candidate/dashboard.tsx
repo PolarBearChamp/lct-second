@@ -10,7 +10,7 @@ import { LinkButton } from '@/components/ui/button';
 import { Card, CardHeader, PageHeader } from '@/components/ui/card';
 import { ErrorState, Spinner } from '@/components/ui/states';
 import { formatDateTime } from '@/lib/format';
-import { useEligibility } from '@/lib/queries';
+import { useEligibility, useQualifications } from '@/lib/queries';
 
 const ISSUE_LINKS: Record<string, string> = {
   PROFILE_INCOMPLETE: '/candidate/profile',
@@ -25,6 +25,7 @@ export function CandidateDashboard() {
   const me = useMe();
   const candidate = me.candidate!;
   const eligibility = useEligibility(candidate.activeSpecialization);
+  const qualifications = useQualifications();
 
   return (
     <>
@@ -91,6 +92,12 @@ export function CandidateDashboard() {
           ) : candidate.discoverable ? (
             <Alert tone="success" title="Профиль виден работодателям">
               Компании видят обезличенную карточку. Контакты раскрываются только той компании, чьё приглашение вы примете.
+              {qualifications.data && qualifications.data.qualifications.length > 0 ? (
+                <span className="mt-1 block">
+                  Вы показываетесь в {qualifications.data.qualifications.length > 1 ? 'категориях' : 'категории'}:{' '}
+                  {qualifications.data.qualifications.map((q) => `${SPECIALIZATION_LABELS[q.specialization]} · ${GRADE_LABELS[q.grade]}`).join('; ')}.
+                </span>
+              ) : null}
             </Alert>
           ) : (
             <>

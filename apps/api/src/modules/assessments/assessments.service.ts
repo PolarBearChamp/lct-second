@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { randomBytes } from 'node:crypto';
 import { addMinutes, Clock } from '../../common/clock';
+import { RATE_LIMITS, RateLimitService } from '../../common/rate-limit.service';
 import { conflict, isUniqueViolation, notFound, unprocessable } from '../../common/errors';
 import { PolicyService } from '../../common/policy.service';
 import type { AssessmentPolicy } from '../../config/policies';
@@ -9,6 +10,7 @@ import { BANK_VERSION } from '../../domain/assessment/bank/registry';
 import { BLUEPRINT_VERSION } from '../../domain/assessment/blueprint';
 import { checkEligibility, type EligibilityResult } from '../../domain/assessment/eligibility';
 import { evaluateItem, validateItemAnswerShape } from '../../domain/assessment/evaluate';
+import { evaluateIntegrity, type IntegrityCounters, type IntegrityEvaluation } from '../../domain/assessment/integrity';
 import { recommendationsFor, scoreAttempt, type AttemptScore, type GroupScore, type SkillEvidence } from '../../domain/assessment/scoring';
 import type { ItemAnswer, PrivateKey, PrivateTaskInstance, PublicTask } from '../../domain/assessment/types';
 import { getGroup, getSpecialization, GRADE_TITLES, groupsOf, isSpecializationCode, type GradeCode, type SpecializationCode } from '../../domain/catalog/catalog';
@@ -47,6 +49,7 @@ export class AssessmentsService {
     private readonly clock: Clock,
     private readonly policies: PolicyService,
     private readonly audit: AuditService,
+    private readonly rateLimit: RateLimitService,
   ) {}
 
   // ───────────────────────────── Допуск ─────────────────────────────
@@ -345,6 +348,7 @@ export class AssessmentsService {
       versions: { policy: attempt.policyVersion, bank: attempt.bankVersion, blueprint: attempt.blueprintVersion },
       eligibility,
       statusMessage: this.statusMessage(attempt),
+      integrity: attempt.integrity ? { ...(attempt.integrity as unknown as IntegrityEvaluation) } : null,
     };
   }
 
@@ -394,11 +398,47 @@ export class AssessmentsService {
     });
   }
 
+  /**
+   * Сигналы честности от интерфейса теста: агрегированные счётчики (без содержимого). Накапливаются атомарным UPDATE только
+   * у активной непросроченной попытки, с верхними границами; на баллы не влияют. Итоговая оценка — при завершении попытки.
+   */
+  async recordSignals(candidateId: string, attemptId: string, signals: Partial<IntegrityCounters>): Promise<void> {
+    const attempt = await this.ownAttempt(candidateId, attemptId);
+    if (attempt.status !== 'IN_PROGRESS') throw conflict('ATTEMPT_NOT_ACTIVE', 'Попытка уже завершена');
+    const now = this.clock.now();
+    if (attempt.expiresAt <= now) {
+      await this.finalizeById(attempt.id, 'EXPIRE');
+      throw conflict('ATTEMPT_EXPIRED', 'Время теста истекло');
+    }
+    this.rateLimit.consume(`signals:${attemptId}`, RATE_LIMITS.signalsPerAttempt);
+    const policy = attempt.policySnapshot as unknown as AssessmentPolicy;
+    const maxHiddenMs = policy.durationMinutes * 60_000;
+    const changed = await this.prisma.$executeRaw`
+      UPDATE "AssessmentAttempt" SET
+        "tabHiddenCount" = LEAST("tabHiddenCount" + ${signals.tabHiddenCount ?? 0}, 1000),
+        "tabHiddenMs" = LEAST("tabHiddenMs" + ${signals.tabHiddenMs ?? 0}, ${maxHiddenMs}),
+        "pasteCount" = LEAST("pasteCount" + ${signals.pasteCount ?? 0}, 1000),
+        "copyCount" = LEAST("copyCount" + ${signals.copyCount ?? 0}, 1000),
+        "focusLossCount" = LEAST("focusLossCount" + ${signals.focusLossCount ?? 0}, 1000)
+      WHERE "id" = ${attemptId}::uuid AND "status" = 'IN_PROGRESS' AND "expiresAt" > ${now}`;
+    if (changed === 0) throw conflict('ATTEMPT_NOT_ACTIVE', 'Попытка уже завершена');
+  }
+
+  private countersOf(attempt: Pick<AssessmentAttempt, 'tabHiddenCount' | 'tabHiddenMs' | 'pasteCount' | 'copyCount' | 'focusLossCount'>): IntegrityCounters {
+    return {
+      tabHiddenCount: attempt.tabHiddenCount,
+      tabHiddenMs: attempt.tabHiddenMs,
+      pasteCount: attempt.pasteCount,
+      copyCount: attempt.copyCount,
+      focusLossCount: attempt.focusLossCount,
+    };
+  }
+
   /** Условная запись: обновляет ответ, только если ревизия новее сохранённой (устаревший autosave не перезапишет свежий). */
   private async upsertAnswer(tx: Tx, attemptId: string, itemId: string, answer: ItemAnswer, revision: number, now: Date) {
     const rows = await tx.$queryRaw<Array<{ revision: number; savedAt: Date }>>`
-      INSERT INTO "AssessmentAnswer" ("id", "attemptId", "itemId", "answer", "revision", "savedAt")
-      VALUES (gen_random_uuid(), ${attemptId}::uuid, ${itemId}::uuid, ${JSON.stringify(answer)}::jsonb, ${revision}, ${now})
+      INSERT INTO "AssessmentAnswer" ("id", "attemptId", "itemId", "answer", "revision", "savedAt", "firstSavedAt")
+      VALUES (gen_random_uuid(), ${attemptId}::uuid, ${itemId}::uuid, ${JSON.stringify(answer)}::jsonb, ${revision}, ${now}, ${now})
       ON CONFLICT ("attemptId", "itemId") DO UPDATE
         SET "answer" = EXCLUDED."answer", "revision" = EXCLUDED."revision", "savedAt" = EXCLUDED."savedAt"
         WHERE "AssessmentAnswer"."revision" < EXCLUDED."revision"
@@ -527,6 +567,21 @@ export class AssessmentsService {
     const finishedAt = kind === 'EXPIRE' ? attempt.expiresAt : now;
     const status = kind === 'EXPIRE' ? 'EXPIRED' : score.passed ? 'PASSED' : 'FAILED';
     const granted = status === 'PASSED';
+    // Сигналы честности — информация о прохождении; на баллы и грейд не влияют.
+    const answerRows = new Map(attempt.answers.map((a) => [a.itemId, a]));
+    const integrity = evaluateIntegrity({
+      kind: kind === 'EXPIRE' ? 'EXPIRE' : 'SUBMIT',
+      startedAtMs: attempt.startedAt.getTime(),
+      durationMs: policy.durationMinutes * 60_000,
+      elapsedMs: finishedAt.getTime() - attempt.startedAt.getTime(),
+      overall: score.overall,
+      passOverall: policy.passOverall,
+      items: attempt.items.map((item, index) => ({
+        firstSavedAtMs: (answerRows.get(item.id)?.firstSavedAt ?? null)?.getTime() ?? null,
+        score: evaluated[index].evaluation.earned / Math.max(1, evaluated[index].evaluation.total),
+      })),
+      counters: this.countersOf(attempt),
+    });
 
     await tx.assessmentAttempt.update({
       where: { id: attemptId },
@@ -538,6 +593,7 @@ export class AssessmentsService {
         skillEvidence: score.skills as unknown as Prisma.InputJsonValue,
         confident: status === 'PASSED' ? score.confident : false,
         qualificationGranted: granted,
+        integrity: integrity as unknown as Prisma.InputJsonValue,
       },
     });
 

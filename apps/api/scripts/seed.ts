@@ -21,6 +21,7 @@ import { CONSENT_POLICY_VERSIONS } from '../src/config/policies';
 import { BANK_VERSION, getFamily } from '../src/domain/assessment/bank/registry';
 import { BLUEPRINT_VERSION, buildStandardBlueprint } from '../src/domain/assessment/blueprint';
 import { evaluateItem } from '../src/domain/assessment/evaluate';
+import { EMPTY_COUNTERS, evaluateIntegrity, type IntegrityCounters } from '../src/domain/assessment/integrity';
 import { instantiate } from '../src/domain/assessment/instantiate';
 import { createRng } from '../src/domain/assessment/rng';
 import { scoreAttempt, type AttemptScore } from '../src/domain/assessment/scoring';
@@ -551,7 +552,7 @@ async function main(): Promise<void> {
   }
 
   async function seedAttempt(candidateId: string, def: CandidateDef, plan: AttemptPlan, index: number): Promise<void> {
-    const spec = def.specialization as SpecializationCode;
+    const spec = (plan.specialization ?? def.specialization) as SpecializationCode;
     const attemptId = uuidFrom(`attempt|${def.key}|${index}`);
     if (await prisma.assessmentAttempt.findUnique({ where: { id: attemptId } })) return;
     const base = `seed|${def.key}|${index}`;
@@ -590,6 +591,30 @@ async function main(): Promise<void> {
     const finishedAt = plan.outcome === 'EXPIRED' ? expiresAt : plan.outcome === 'ABANDONED' ? new Date(startedAt.getTime() + 6 * 60_000) : endTime;
     const status = plan.outcome === 'PASS' ? 'PASSED' : plan.outcome === 'FAIL' ? 'FAILED' : plan.outcome === 'EXPIRED' ? 'EXPIRED' : 'ABANDONED';
     const scored = plan.outcome !== 'ABANDONED' ? score : null;
+    // Ответы сохраняются раз в 90 секунд (обычное прохождение); демонстрационные сигналы — только у помеченных попыток.
+    const answerSavedAt = (position: number) => new Date(startedAt.getTime() + (position + 1) * 90_000);
+    const counters: IntegrityCounters =
+      plan.integrity === 'ATTENTION'
+        ? { tabHiddenCount: 9, tabHiddenMs: 7 * 60_000, pasteCount: 3, copyCount: 4, focusLossCount: 12 }
+        : plan.integrity === 'NOTE'
+          ? { tabHiddenCount: 4, tabHiddenMs: 95_000, pasteCount: 1, copyCount: 0, focusLossCount: 5 }
+          : EMPTY_COUNTERS;
+    const integrity =
+      plan.outcome === 'ABANDONED'
+        ? null
+        : evaluateIntegrity({
+            kind: plan.outcome === 'EXPIRED' ? 'EXPIRE' : 'SUBMIT',
+            startedAtMs: startedAt.getTime(),
+            durationMs: policy.durationMinutes * 60_000,
+            elapsedMs: finishedAt.getTime() - startedAt.getTime(),
+            overall: scored!.overall,
+            passOverall: policy.passOverall,
+            items: instances.map((inst, position) => {
+              const evaluation = evaluateItem(inst.key, answers[position]);
+              return { firstSavedAtMs: answers[position] ? answerSavedAt(position).getTime() : null, score: evaluation.earned / Math.max(1, evaluation.total) };
+            }),
+            counters,
+          });
 
     await prisma.$transaction(async (tx) => {
       const attempt = await tx.assessmentAttempt.create({
@@ -612,6 +637,7 @@ async function main(): Promise<void> {
           confident: plan.outcome === 'PASS' ? scored!.confident : plan.outcome === 'ABANDONED' ? null : false,
           qualificationGranted: status === 'PASSED',
           isSynthetic: true,
+          ...(integrity ? { ...counters, integrity: integrity as unknown as Prisma.InputJsonValue } : {}),
         },
       });
       await tx.assessmentItem.createMany({
@@ -632,7 +658,7 @@ async function main(): Promise<void> {
       });
       const rows = answers.flatMap((answer, position) =>
         answer
-          ? [{ id: uuidFrom(`answer|${attemptId}|${position}`), attemptId, itemId: uuidFrom(`item|${attemptId}|${position}`), answer: answer as unknown as Prisma.InputJsonValue, revision: 1, savedAt: new Date(startedAt.getTime() + (position + 1) * 90_000) }]
+          ? [{ id: uuidFrom(`answer|${attemptId}|${position}`), attemptId, itemId: uuidFrom(`item|${attemptId}|${position}`), answer: answer as unknown as Prisma.InputJsonValue, revision: 1, savedAt: answerSavedAt(position), firstSavedAt: answerSavedAt(position) }]
           : [],
       );
       if (rows.length) await tx.assessmentAnswer.createMany({ data: rows });

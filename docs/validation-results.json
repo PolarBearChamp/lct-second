@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-10-08T23:04:32.294Z",
-  "durationSeconds": 17.1,
+  "generatedAt": "2026-10-10T12:44:10.243Z",
+  "durationSeconds": 28,
   "mode": "full",
   "git": {
-    "commit": "c591c7e",
+    "commit": "484991d",
     "dirty": true,
     "note": "в рабочем дереве есть незакоммиченные изменения"
   },
@@ -2186,7 +2186,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.14
+          "msPerInstance": 0.172
         },
         {
           "family": "fe.event-loop",
@@ -2219,7 +2219,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.126
+          "msPerInstance": 0.141
         },
         {
           "family": "fe.event-loop",
@@ -2252,7 +2252,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.144
+          "msPerInstance": 0.155
         },
         {
           "family": "fe.promise-combinators",
@@ -2285,7 +2285,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.133
+          "msPerInstance": 0.145
         },
         {
           "family": "fe.promise-combinators",
@@ -2319,7 +2319,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.124
+          "msPerInstance": 0.14
         },
         {
           "family": "fe.promise-combinators",
@@ -2352,7 +2352,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.092
+          "msPerInstance": 0.083
         },
         {
           "family": "fe.ui-state",
@@ -2385,7 +2385,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.078
+          "msPerInstance": 0.087
         },
         {
           "family": "fe.ui-state",
@@ -2418,7 +2418,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.074
+          "msPerInstance": 0.097
         },
         {
           "family": "fe.ui-state",
@@ -2451,7 +2451,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.158
+          "msPerInstance": 0.142
         },
         {
           "family": "fe.react-effects",
@@ -2484,7 +2484,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.079
+          "msPerInstance": 0.074
         },
         {
           "family": "fe.react-effects",
@@ -2517,7 +2517,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.059
+          "msPerInstance": 0.058
         },
         {
           "family": "fe.react-effects",
@@ -2550,7 +2550,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.081
+          "msPerInstance": 0.085
         },
         {
           "family": "fe.http-client-errors",
@@ -2583,7 +2583,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.143
+          "msPerInstance": 0.168
         },
         {
           "family": "fe.http-client-errors",
@@ -2617,7 +2617,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.13
+          "msPerInstance": 0.121
         },
         {
           "family": "fe.http-client-errors",
@@ -2650,7 +2650,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.074
+          "msPerInstance": 0.106
         },
         {
           "family": "fe.request-races",
@@ -2715,7 +2715,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.273
+          "msPerInstance": 0.447
         },
         {
           "family": "fe.request-races",
@@ -2748,7 +2748,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.166
+          "msPerInstance": 0.188
         },
         {
           "family": "be.http-semantics",
@@ -2781,7 +2781,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.15
+          "msPerInstance": 0.196
         },
         {
           "family": "be.http-semantics",
@@ -2814,7 +2814,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.178
+          "msPerInstance": 0.165
         },
         {
           "family": "be.http-semantics",
@@ -2847,7 +2847,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.153
+          "msPerInstance": 0.169
         },
         {
           "family": "be.idempotency",
@@ -2880,7 +2880,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.138
+          "msPerInstance": 0.139
         },
         {
           "family": "be.idempotency",
@@ -2913,7 +2913,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.122
+          "msPerInstance": 0.123
         },
         {
           "family": "be.idempotency",
@@ -2947,7 +2947,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.263
+          "msPerInstance": 0.31
         },
         {
           "family": "be.sql-query-result",
@@ -2979,7 +2979,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.083
+          "msPerInstance": 0.094
         },
         {
           "family": "be.sql-query-result",
@@ -3011,7 +3011,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.083
+          "msPerInstance": 0.098
         },
         {
           "family": "be.sql-query-result",
@@ -3043,7 +3043,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.084
+          "msPerInstance": 0.101
         },
         {
           "family": "be.data-modeling",
@@ -3076,7 +3076,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.125
+          "msPerInstance": 0.139
         },
         {
           "family": "be.data-modeling",
@@ -3109,7 +3109,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.162
+          "msPerInstance": 0.131
         },
         {
           "family": "be.data-modeling",
@@ -3142,7 +3142,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.17
+          "msPerInstance": 0.152
         },
         {
           "family": "be.tx-isolation",
@@ -3175,7 +3175,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.078
+          "msPerInstance": 0.092
         },
         {
           "family": "be.tx-isolation",
@@ -3208,7 +3208,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.077
+          "msPerInstance": 0.061
         },
         {
           "family": "be.tx-isolation",
@@ -3241,7 +3241,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.086
+          "msPerInstance": 0.073
         },
         {
           "family": "be.reliability-patterns",
@@ -3275,7 +3275,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.099
+          "msPerInstance": 0.113
         },
         {
           "family": "be.reliability-patterns",
@@ -3308,7 +3308,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.07
+          "msPerInstance": 0.067
         },
         {
           "family": "be.reliability-patterns",
@@ -3342,7 +3342,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.13
+          "msPerInstance": 0.11
         },
         {
           "family": "ml.leakage",
@@ -3375,7 +3375,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.121
+          "msPerInstance": 0.113
         },
         {
           "family": "ml.leakage",
@@ -3409,7 +3409,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.166
+          "msPerInstance": 0.164
         },
         {
           "family": "ml.leakage",
@@ -3442,7 +3442,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.164
+          "msPerInstance": 0.153
         },
         {
           "family": "ml.pandas-prep",
@@ -3474,7 +3474,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.109
+          "msPerInstance": 0.08
         },
         {
           "family": "ml.pandas-prep",
@@ -3506,7 +3506,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.083
+          "msPerInstance": 0.092
         },
         {
           "family": "ml.pandas-prep",
@@ -3538,7 +3538,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.098
+          "msPerInstance": 0.08
         },
         {
           "family": "ml.confusion-metrics",
@@ -3571,7 +3571,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.064
+          "msPerInstance": 0.055
         },
         {
           "family": "ml.confusion-metrics",
@@ -3604,7 +3604,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.204
+          "msPerInstance": 0.227
         },
         {
           "family": "ml.confusion-metrics",
@@ -3637,7 +3637,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.139
+          "msPerInstance": 0.133
         },
         {
           "family": "ml.imbalance-metrics",
@@ -3670,7 +3670,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.056
+          "msPerInstance": 0.063
         },
         {
           "family": "ml.imbalance-metrics",
@@ -3704,7 +3704,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.101
+          "msPerInstance": 0.102
         },
         {
           "family": "ml.imbalance-metrics",
@@ -3737,7 +3737,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.074
+          "msPerInstance": 0.054
         },
         {
           "family": "ml.validation-schemes",
@@ -3770,7 +3770,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.071
+          "msPerInstance": 0.072
         },
         {
           "family": "ml.validation-schemes",
@@ -3803,7 +3803,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.077
+          "msPerInstance": 0.076
         },
         {
           "family": "ml.validation-schemes",
@@ -3837,7 +3837,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.096
+          "msPerInstance": 0.09
         },
         {
           "family": "ml.model-ops",
@@ -3870,7 +3870,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.164
+          "msPerInstance": 0.148
         },
         {
           "family": "ml.model-ops",
@@ -3903,7 +3903,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.094
+          "msPerInstance": 0.086
         },
         {
           "family": "ml.model-ops",
@@ -3937,7 +3937,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.116
+          "msPerInstance": 0.148
         },
         {
           "family": "qa.requirement-defects",
@@ -3971,7 +3971,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.163
+          "msPerInstance": 0.173
         },
         {
           "family": "qa.requirement-defects",
@@ -4005,7 +4005,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.121
+          "msPerInstance": 0.135
         },
         {
           "family": "qa.requirement-defects",
@@ -4038,7 +4038,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.187
+          "msPerInstance": 0.154
         },
         {
           "family": "qa.decision-tables",
@@ -4071,7 +4071,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.121
+          "msPerInstance": 0.104
         },
         {
           "family": "qa.decision-tables",
@@ -4104,7 +4104,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.132
+          "msPerInstance": 0.129
         },
         {
           "family": "qa.decision-tables",
@@ -4136,7 +4136,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.205
+          "msPerInstance": 0.21
         },
         {
           "family": "qa.boundary-values",
@@ -4170,7 +4170,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.1
+          "msPerInstance": 0.094
         },
         {
           "family": "qa.boundary-values",
@@ -4204,7 +4204,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.12
+          "msPerInstance": 0.142
         },
         {
           "family": "qa.boundary-values",
@@ -4237,7 +4237,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.083
+          "msPerInstance": 0.105
         },
         {
           "family": "qa.minimal-suite",
@@ -4270,7 +4270,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.096
+          "msPerInstance": 0.076
         },
         {
           "family": "qa.minimal-suite",
@@ -4303,7 +4303,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.15
+          "msPerInstance": 0.163
         },
         {
           "family": "qa.minimal-suite",
@@ -4336,7 +4336,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.29
+          "msPerInstance": 0.246
         },
         {
           "family": "qa.severity-priority",
@@ -4370,7 +4370,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.125
+          "msPerInstance": 0.136
         },
         {
           "family": "qa.severity-priority",
@@ -4404,7 +4404,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.177
+          "msPerInstance": 0.181
         },
         {
           "family": "qa.severity-priority",
@@ -4437,7 +4437,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.168
+          "msPerInstance": 0.221
         },
         {
           "family": "qa.test-cases",
@@ -4471,7 +4471,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.109
+          "msPerInstance": 0.11
         },
         {
           "family": "qa.test-cases",
@@ -4505,7 +4505,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.175
+          "msPerInstance": 0.166
         },
         {
           "family": "qa.test-cases",
@@ -4538,7 +4538,7 @@
             "badTolerance": 0,
             "shape": 0
           },
-          "msPerInstance": 0.193
+          "msPerInstance": 0.224
         }
       ],
       "totalInstances": 14400,
@@ -5097,7 +5097,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.43
+        "attemptGenerationMs": 0.44
       },
       {
         "specialization": "FRONTEND",
@@ -5384,7 +5384,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.45
+        "attemptGenerationMs": 0.48
       },
       {
         "specialization": "FRONTEND",
@@ -5671,7 +5671,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.42
+        "attemptGenerationMs": 0.47
       },
       {
         "specialization": "BACKEND",
@@ -5958,7 +5958,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.54
+        "attemptGenerationMs": 0.46
       },
       {
         "specialization": "BACKEND",
@@ -6245,7 +6245,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.43
+        "attemptGenerationMs": 0.44
       },
       {
         "specialization": "BACKEND",
@@ -6532,7 +6532,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.6
+        "attemptGenerationMs": 0.66
       },
       {
         "specialization": "ML_ENGINEER",
@@ -6819,7 +6819,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.36
+        "attemptGenerationMs": 0.41
       },
       {
         "specialization": "ML_ENGINEER",
@@ -7106,7 +7106,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.54
+        "attemptGenerationMs": 0.76
       },
       {
         "specialization": "ML_ENGINEER",
@@ -7393,7 +7393,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.53
+        "attemptGenerationMs": 0.51
       },
       {
         "specialization": "MANUAL_QA",
@@ -7680,7 +7680,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.54
+        "attemptGenerationMs": 0.51
       },
       {
         "specialization": "MANUAL_QA",
@@ -7967,7 +7967,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.7
+        "attemptGenerationMs": 0.74
       },
       {
         "specialization": "MANUAL_QA",
@@ -8254,7 +8254,7 @@
           "familyOverlapMean": 1,
           "sameFamilyDifferentInstanceShare": 1
         },
-        "attemptGenerationMs": 0.84
+        "attemptGenerationMs": 0.94
       }
     ],
     "constantAnswers": {
@@ -9521,6 +9521,1352 @@
       }
     ]
   },
+  "grading": {
+    "model": {
+      "difficulties": {
+        "Junior": -1.5,
+        "Middle": 0,
+        "Senior": 1.5
+      },
+      "levelOffset": 1.29,
+      "claimShares": {
+        "honest": 0.7,
+        "over": 0.15,
+        "under": 0.15
+      },
+      "sigma": 0.5,
+      "pass": "assessment-policy-v2"
+    },
+    "options": {
+      "candidatesPerLevel": 150,
+      "sensitivityCandidatesPerLevel": 60,
+      "bootstrap": 1000
+    },
+    "main": {
+      "name": "основной",
+      "sigma": 0.5,
+      "shift": 0,
+      "candidates": 2400,
+      "attempts": 5553,
+      "retestAgreement": 0.8946,
+      "kappaWeighted": {
+        "value": 0.911,
+        "low": 0.901,
+        "high": 0.922
+      },
+      "kappaUnweighted": 0.858,
+      "retestMatrix": [
+        [
+          588,
+          58,
+          0,
+          0
+        ],
+        [
+          50,
+          596,
+          35,
+          0
+        ],
+        [
+          0,
+          35,
+          558,
+          44
+        ],
+        [
+          0,
+          0,
+          31,
+          405
+        ]
+      ],
+      "truthMatrix": [
+        [
+          581,
+          18,
+          1,
+          0
+        ],
+        [
+          65,
+          526,
+          9,
+          0
+        ],
+        [
+          0,
+          137,
+          458,
+          5
+        ],
+        [
+          0,
+          0,
+          169,
+          431
+        ]
+      ],
+      "byClaim": [
+        {
+          "mode": "honest",
+          "n": 1942,
+          "exact": 0.9063,
+          "over": 0.0077,
+          "under": 0.0582,
+          "notIssued": 0.0278
+        },
+        {
+          "mode": "over",
+          "n": 275,
+          "exact": 0.8582,
+          "over": 0.0655,
+          "under": 0.0364,
+          "notIssued": 0.04
+        },
+        {
+          "mode": "under",
+          "n": 183,
+          "exact": 0,
+          "over": 0,
+          "under": 1,
+          "notIssued": 0
+        }
+      ],
+      "overall": {
+        "exact": 0.8317,
+        "over": 0.0138,
+        "under": 0.1275,
+        "notIssued": 0.0271
+      }
+    },
+    "sensitivity": [
+      {
+        "name": "разброс способности σ = 0,3",
+        "sigma": 0.3,
+        "shift": 0,
+        "candidates": 960,
+        "attempts": 2156,
+        "retestAgreement": 0.9354,
+        "kappaWeighted": {
+          "value": 0.947,
+          "low": 0.932,
+          "high": 0.96
+        },
+        "kappaUnweighted": 0.914,
+        "retestMatrix": [
+          [
+            234,
+            18,
+            0,
+            0
+          ],
+          [
+            12,
+            249,
+            11,
+            0
+          ],
+          [
+            0,
+            9,
+            222,
+            5
+          ],
+          [
+            0,
+            0,
+            7,
+            193
+          ]
+        ],
+        "truthMatrix": [
+          [
+            237,
+            3,
+            0,
+            0
+          ],
+          [
+            15,
+            225,
+            0,
+            0
+          ],
+          [
+            0,
+            44,
+            195,
+            1
+          ],
+          [
+            0,
+            0,
+            41,
+            199
+          ]
+        ],
+        "byClaim": [
+          {
+            "mode": "honest",
+            "n": 792,
+            "exact": 0.9583,
+            "over": 0.0025,
+            "under": 0.0215,
+            "notIssued": 0.0177
+          },
+          {
+            "mode": "over",
+            "n": 101,
+            "exact": 0.9604,
+            "over": 0.0198,
+            "under": 0.0099,
+            "notIssued": 0.0099
+          },
+          {
+            "mode": "under",
+            "n": 67,
+            "exact": 0,
+            "over": 0,
+            "under": 1,
+            "notIssued": 0
+          }
+        ],
+        "overall": {
+          "exact": 0.8917,
+          "over": 0.0042,
+          "under": 0.0885,
+          "notIssued": 0.0156
+        }
+      },
+      {
+        "name": "разброс способности σ = 0,8",
+        "sigma": 0.8,
+        "shift": 0,
+        "candidates": 960,
+        "attempts": 2272,
+        "retestAgreement": 0.8729,
+        "kappaWeighted": {
+          "value": 0.892,
+          "low": 0.875,
+          "high": 0.91
+        },
+        "kappaUnweighted": 0.829,
+        "retestMatrix": [
+          [
+            225,
+            36,
+            0,
+            0
+          ],
+          [
+            25,
+            233,
+            26,
+            0
+          ],
+          [
+            0,
+            11,
+            215,
+            14
+          ],
+          [
+            0,
+            1,
+            9,
+            165
+          ]
+        ],
+        "truthMatrix": [
+          [
+            212,
+            28,
+            0,
+            0
+          ],
+          [
+            48,
+            185,
+            7,
+            0
+          ],
+          [
+            1,
+            71,
+            162,
+            6
+          ],
+          [
+            0,
+            0,
+            71,
+            169
+          ]
+        ],
+        "byClaim": [
+          {
+            "mode": "honest",
+            "n": 793,
+            "exact": 0.8159,
+            "over": 0.0315,
+            "under": 0.0984,
+            "notIssued": 0.0542
+          },
+          {
+            "mode": "over",
+            "n": 111,
+            "exact": 0.7297,
+            "over": 0.1441,
+            "under": 0.0721,
+            "notIssued": 0.0541
+          },
+          {
+            "mode": "under",
+            "n": 56,
+            "exact": 0,
+            "over": 0,
+            "under": 1,
+            "notIssued": 0
+          }
+        ],
+        "overall": {
+          "exact": 0.7583,
+          "over": 0.0427,
+          "under": 0.1479,
+          "notIssued": 0.051
+        }
+      },
+      {
+        "name": "банк труднее на 0,5",
+        "sigma": 0.5,
+        "shift": 0.5,
+        "candidates": 960,
+        "attempts": 2420,
+        "retestAgreement": 0.8135,
+        "kappaWeighted": {
+          "value": 0.839,
+          "low": 0.817,
+          "high": 0.862
+        },
+        "kappaUnweighted": 0.744,
+        "retestMatrix": [
+          [
+            288,
+            37,
+            0,
+            0
+          ],
+          [
+            28,
+            209,
+            33,
+            0
+          ],
+          [
+            0,
+            32,
+            175,
+            30
+          ],
+          [
+            0,
+            0,
+            19,
+            109
+          ]
+        ],
+        "truthMatrix": [
+          [
+            239,
+            1,
+            0,
+            0
+          ],
+          [
+            85,
+            155,
+            0,
+            0
+          ],
+          [
+            1,
+            113,
+            125,
+            1
+          ],
+          [
+            0,
+            1,
+            112,
+            127
+          ]
+        ],
+        "byClaim": [
+          {
+            "mode": "honest",
+            "n": 799,
+            "exact": 0.7171,
+            "over": 0.0013,
+            "under": 0.1902,
+            "notIssued": 0.0914
+          },
+          {
+            "mode": "over",
+            "n": 95,
+            "exact": 0.7684,
+            "over": 0.0105,
+            "under": 0.0842,
+            "notIssued": 0.1368
+          },
+          {
+            "mode": "under",
+            "n": 66,
+            "exact": 0,
+            "over": 0,
+            "under": 1,
+            "notIssued": 0
+          }
+        ],
+        "overall": {
+          "exact": 0.6729,
+          "over": 0.0021,
+          "under": 0.2354,
+          "notIssued": 0.0896
+        }
+      },
+      {
+        "name": "банк легче на 0,5",
+        "sigma": 0.5,
+        "shift": -0.5,
+        "candidates": 960,
+        "attempts": 2094,
+        "retestAgreement": 0.9292,
+        "kappaWeighted": {
+          "value": 0.939,
+          "low": 0.926,
+          "high": 0.955
+        },
+        "kappaUnweighted": 0.905,
+        "retestMatrix": [
+          [
+            174,
+            17,
+            0,
+            0
+          ],
+          [
+            27,
+            277,
+            4,
+            0
+          ],
+          [
+            0,
+            7,
+            243,
+            6
+          ],
+          [
+            0,
+            0,
+            7,
+            198
+          ]
+        ],
+        "truthMatrix": [
+          [
+            189,
+            51,
+            0,
+            0
+          ],
+          [
+            2,
+            225,
+            13,
+            0
+          ],
+          [
+            0,
+            32,
+            194,
+            14
+          ],
+          [
+            0,
+            0,
+            49,
+            191
+          ]
+        ],
+        "byClaim": [
+          {
+            "mode": "honest",
+            "n": 785,
+            "exact": 0.9299,
+            "over": 0.0586,
+            "under": 0.0102,
+            "notIssued": 0.0013
+          },
+          {
+            "mode": "over",
+            "n": 103,
+            "exact": 0.6699,
+            "over": 0.3107,
+            "under": 0.0097,
+            "notIssued": 0.0097
+          },
+          {
+            "mode": "under",
+            "n": 72,
+            "exact": 0,
+            "over": 0,
+            "under": 1,
+            "notIssued": 0
+          }
+        ],
+        "overall": {
+          "exact": 0.8323,
+          "over": 0.0813,
+          "under": 0.0844,
+          "notIssued": 0.0021
+        }
+      }
+    ],
+    "items": [
+      {
+        "family": "be.data-modeling",
+        "specialization": "BACKEND",
+        "grade": "JUNIOR",
+        "attempts": 651,
+        "itemRestCorrelation": 0.693,
+        "discriminationD": 0.634,
+        "meanAtLevel": 0.905,
+        "meanBelow": 0.393,
+        "levelGap": 0.512
+      },
+      {
+        "family": "be.data-modeling",
+        "specialization": "BACKEND",
+        "grade": "MIDDLE",
+        "attempts": 443,
+        "itemRestCorrelation": 0.762,
+        "discriminationD": 0.576,
+        "meanAtLevel": 0.885,
+        "meanBelow": 0.395,
+        "levelGap": 0.49
+      },
+      {
+        "family": "be.data-modeling",
+        "specialization": "BACKEND",
+        "grade": "SENIOR",
+        "attempts": 302,
+        "itemRestCorrelation": 0.624,
+        "discriminationD": 0.451,
+        "meanAtLevel": 0.874,
+        "meanBelow": 0.354,
+        "levelGap": 0.52
+      },
+      {
+        "family": "be.http-semantics",
+        "specialization": "BACKEND",
+        "grade": "JUNIOR",
+        "attempts": 651,
+        "itemRestCorrelation": 0.662,
+        "discriminationD": 0.629,
+        "meanAtLevel": 0.868,
+        "meanBelow": 0.376,
+        "levelGap": 0.492
+      },
+      {
+        "family": "be.http-semantics",
+        "specialization": "BACKEND",
+        "grade": "MIDDLE",
+        "attempts": 443,
+        "itemRestCorrelation": 0.808,
+        "discriminationD": 0.626,
+        "meanAtLevel": 0.9,
+        "meanBelow": 0.395,
+        "levelGap": 0.505
+      },
+      {
+        "family": "be.http-semantics",
+        "specialization": "BACKEND",
+        "grade": "SENIOR",
+        "attempts": 302,
+        "itemRestCorrelation": 0.542,
+        "discriminationD": 0.346,
+        "meanAtLevel": 0.878,
+        "meanBelow": 0.469,
+        "levelGap": 0.409
+      },
+      {
+        "family": "be.idempotency",
+        "specialization": "BACKEND",
+        "grade": "JUNIOR",
+        "attempts": 651,
+        "itemRestCorrelation": 0.68,
+        "discriminationD": 0.631,
+        "meanAtLevel": 0.914,
+        "meanBelow": 0.406,
+        "levelGap": 0.507
+      },
+      {
+        "family": "be.idempotency",
+        "specialization": "BACKEND",
+        "grade": "MIDDLE",
+        "attempts": 443,
+        "itemRestCorrelation": 0.72,
+        "discriminationD": 0.513,
+        "meanAtLevel": 0.883,
+        "meanBelow": 0.421,
+        "levelGap": 0.462
+      },
+      {
+        "family": "be.idempotency",
+        "specialization": "BACKEND",
+        "grade": "SENIOR",
+        "attempts": 302,
+        "itemRestCorrelation": 0.669,
+        "discriminationD": 0.407,
+        "meanAtLevel": 0.874,
+        "meanBelow": 0.424,
+        "levelGap": 0.45
+      },
+      {
+        "family": "be.reliability-patterns",
+        "specialization": "BACKEND",
+        "grade": "JUNIOR",
+        "attempts": 651,
+        "itemRestCorrelation": 0.725,
+        "discriminationD": 0.615,
+        "meanAtLevel": 0.901,
+        "meanBelow": 0.392,
+        "levelGap": 0.508
+      },
+      {
+        "family": "be.reliability-patterns",
+        "specialization": "BACKEND",
+        "grade": "MIDDLE",
+        "attempts": 443,
+        "itemRestCorrelation": 0.714,
+        "discriminationD": 0.529,
+        "meanAtLevel": 0.862,
+        "meanBelow": 0.487,
+        "levelGap": 0.375
+      },
+      {
+        "family": "be.reliability-patterns",
+        "specialization": "BACKEND",
+        "grade": "SENIOR",
+        "attempts": 302,
+        "itemRestCorrelation": 0.647,
+        "discriminationD": 0.374,
+        "meanAtLevel": 0.887,
+        "meanBelow": 0.368,
+        "levelGap": 0.519
+      },
+      {
+        "family": "be.sql-query-result",
+        "specialization": "BACKEND",
+        "grade": "JUNIOR",
+        "attempts": 651,
+        "itemRestCorrelation": 0.711,
+        "discriminationD": 0.691,
+        "meanAtLevel": 0.866,
+        "meanBelow": 0.328,
+        "levelGap": 0.538
+      },
+      {
+        "family": "be.sql-query-result",
+        "specialization": "BACKEND",
+        "grade": "MIDDLE",
+        "attempts": 443,
+        "itemRestCorrelation": 0.802,
+        "discriminationD": 0.601,
+        "meanAtLevel": 0.877,
+        "meanBelow": 0.434,
+        "levelGap": 0.443
+      },
+      {
+        "family": "be.sql-query-result",
+        "specialization": "BACKEND",
+        "grade": "SENIOR",
+        "attempts": 302,
+        "itemRestCorrelation": 0.521,
+        "discriminationD": 0.358,
+        "meanAtLevel": 0.854,
+        "meanBelow": 0.438,
+        "levelGap": 0.417
+      },
+      {
+        "family": "be.tx-isolation",
+        "specialization": "BACKEND",
+        "grade": "JUNIOR",
+        "attempts": 651,
+        "itemRestCorrelation": 0.637,
+        "discriminationD": 0.597,
+        "meanAtLevel": 0.866,
+        "meanBelow": 0.411,
+        "levelGap": 0.455
+      },
+      {
+        "family": "be.tx-isolation",
+        "specialization": "BACKEND",
+        "grade": "MIDDLE",
+        "attempts": 443,
+        "itemRestCorrelation": 0.751,
+        "discriminationD": 0.508,
+        "meanAtLevel": 0.894,
+        "meanBelow": 0.553,
+        "levelGap": 0.342
+      },
+      {
+        "family": "be.tx-isolation",
+        "specialization": "BACKEND",
+        "grade": "SENIOR",
+        "attempts": 302,
+        "itemRestCorrelation": 0.558,
+        "discriminationD": 0.346,
+        "meanAtLevel": 0.88,
+        "meanBelow": 0.49,
+        "levelGap": 0.39
+      },
+      {
+        "family": "fe.event-loop",
+        "specialization": "FRONTEND",
+        "grade": "JUNIOR",
+        "attempts": 657,
+        "itemRestCorrelation": 0.642,
+        "discriminationD": 0.65,
+        "meanAtLevel": 0.869,
+        "meanBelow": 0.358,
+        "levelGap": 0.511
+      },
+      {
+        "family": "fe.event-loop",
+        "specialization": "FRONTEND",
+        "grade": "MIDDLE",
+        "attempts": 448,
+        "itemRestCorrelation": 0.824,
+        "discriminationD": 0.679,
+        "meanAtLevel": 0.876,
+        "meanBelow": 0.417,
+        "levelGap": 0.46
+      },
+      {
+        "family": "fe.event-loop",
+        "specialization": "FRONTEND",
+        "grade": "SENIOR",
+        "attempts": 280,
+        "itemRestCorrelation": 0.605,
+        "discriminationD": 0.407,
+        "meanAtLevel": 0.892,
+        "meanBelow": 0.288,
+        "levelGap": 0.604
+      },
+      {
+        "family": "fe.http-client-errors",
+        "specialization": "FRONTEND",
+        "grade": "JUNIOR",
+        "attempts": 657,
+        "itemRestCorrelation": 0.626,
+        "discriminationD": 0.554,
+        "meanAtLevel": 0.878,
+        "meanBelow": 0.418,
+        "levelGap": 0.46
+      },
+      {
+        "family": "fe.http-client-errors",
+        "specialization": "FRONTEND",
+        "grade": "MIDDLE",
+        "attempts": 448,
+        "itemRestCorrelation": 0.797,
+        "discriminationD": 0.581,
+        "meanAtLevel": 0.88,
+        "meanBelow": 0.472,
+        "levelGap": 0.408
+      },
+      {
+        "family": "fe.http-client-errors",
+        "specialization": "FRONTEND",
+        "grade": "SENIOR",
+        "attempts": 280,
+        "itemRestCorrelation": 0.63,
+        "discriminationD": 0.364,
+        "meanAtLevel": 0.89,
+        "meanBelow": 0.417,
+        "levelGap": 0.474
+      },
+      {
+        "family": "fe.promise-combinators",
+        "specialization": "FRONTEND",
+        "grade": "JUNIOR",
+        "attempts": 657,
+        "itemRestCorrelation": 0.7,
+        "discriminationD": 0.589,
+        "meanAtLevel": 0.864,
+        "meanBelow": 0.463,
+        "levelGap": 0.4
+      },
+      {
+        "family": "fe.promise-combinators",
+        "specialization": "FRONTEND",
+        "grade": "MIDDLE",
+        "attempts": 448,
+        "itemRestCorrelation": 0.776,
+        "discriminationD": 0.533,
+        "meanAtLevel": 0.883,
+        "meanBelow": 0.632,
+        "levelGap": 0.251
+      },
+      {
+        "family": "fe.promise-combinators",
+        "specialization": "FRONTEND",
+        "grade": "SENIOR",
+        "attempts": 280,
+        "itemRestCorrelation": 0.609,
+        "discriminationD": 0.373,
+        "meanAtLevel": 0.899,
+        "meanBelow": 0.458,
+        "levelGap": 0.44
+      },
+      {
+        "family": "fe.react-effects",
+        "specialization": "FRONTEND",
+        "grade": "JUNIOR",
+        "attempts": 657,
+        "itemRestCorrelation": 0.684,
+        "discriminationD": 0.63,
+        "meanAtLevel": 0.878,
+        "meanBelow": 0.43,
+        "levelGap": 0.448
+      },
+      {
+        "family": "fe.react-effects",
+        "specialization": "FRONTEND",
+        "grade": "MIDDLE",
+        "attempts": 448,
+        "itemRestCorrelation": 0.697,
+        "discriminationD": 0.508,
+        "meanAtLevel": 0.876,
+        "meanBelow": 0.563,
+        "levelGap": 0.314
+      },
+      {
+        "family": "fe.react-effects",
+        "specialization": "FRONTEND",
+        "grade": "SENIOR",
+        "attempts": 280,
+        "itemRestCorrelation": 0.585,
+        "discriminationD": 0.34,
+        "meanAtLevel": 0.9,
+        "meanBelow": 0.475,
+        "levelGap": 0.425
+      },
+      {
+        "family": "fe.request-races",
+        "specialization": "FRONTEND",
+        "grade": "JUNIOR",
+        "attempts": 657,
+        "itemRestCorrelation": 0.661,
+        "discriminationD": 0.524,
+        "meanAtLevel": 0.905,
+        "meanBelow": 0.493,
+        "levelGap": 0.412
+      },
+      {
+        "family": "fe.request-races",
+        "specialization": "FRONTEND",
+        "grade": "MIDDLE",
+        "attempts": 448,
+        "itemRestCorrelation": 0.794,
+        "discriminationD": 0.517,
+        "meanAtLevel": 0.89,
+        "meanBelow": 0.547,
+        "levelGap": 0.343
+      },
+      {
+        "family": "fe.request-races",
+        "specialization": "FRONTEND",
+        "grade": "SENIOR",
+        "attempts": 280,
+        "itemRestCorrelation": 0.599,
+        "discriminationD": 0.36,
+        "meanAtLevel": 0.887,
+        "meanBelow": 0.417,
+        "levelGap": 0.471
+      },
+      {
+        "family": "fe.ui-state",
+        "specialization": "FRONTEND",
+        "grade": "JUNIOR",
+        "attempts": 657,
+        "itemRestCorrelation": 0.645,
+        "discriminationD": 0.633,
+        "meanAtLevel": 0.887,
+        "meanBelow": 0.402,
+        "levelGap": 0.485
+      },
+      {
+        "family": "fe.ui-state",
+        "specialization": "FRONTEND",
+        "grade": "MIDDLE",
+        "attempts": 448,
+        "itemRestCorrelation": 0.777,
+        "discriminationD": 0.538,
+        "meanAtLevel": 0.904,
+        "meanBelow": 0.573,
+        "levelGap": 0.332
+      },
+      {
+        "family": "fe.ui-state",
+        "specialization": "FRONTEND",
+        "grade": "SENIOR",
+        "attempts": 280,
+        "itemRestCorrelation": 0.524,
+        "discriminationD": 0.307,
+        "meanAtLevel": 0.896,
+        "meanBelow": 0.513,
+        "levelGap": 0.383
+      },
+      {
+        "family": "ml.confusion-metrics",
+        "specialization": "ML_ENGINEER",
+        "grade": "JUNIOR",
+        "attempts": 675,
+        "itemRestCorrelation": 0.756,
+        "discriminationD": 0.626,
+        "meanAtLevel": 0.895,
+        "meanBelow": 0.396,
+        "levelGap": 0.5
+      },
+      {
+        "family": "ml.confusion-metrics",
+        "specialization": "ML_ENGINEER",
+        "grade": "MIDDLE",
+        "attempts": 429,
+        "itemRestCorrelation": 0.85,
+        "discriminationD": 0.637,
+        "meanAtLevel": 0.876,
+        "meanBelow": 0.463,
+        "levelGap": 0.413
+      },
+      {
+        "family": "ml.confusion-metrics",
+        "specialization": "ML_ENGINEER",
+        "grade": "SENIOR",
+        "attempts": 284,
+        "itemRestCorrelation": 0.577,
+        "discriminationD": 0.26,
+        "meanAtLevel": 0.875,
+        "meanBelow": 0.5,
+        "levelGap": 0.375
+      },
+      {
+        "family": "ml.imbalance-metrics",
+        "specialization": "ML_ENGINEER",
+        "grade": "JUNIOR",
+        "attempts": 675,
+        "itemRestCorrelation": 0.763,
+        "discriminationD": 0.637,
+        "meanAtLevel": 0.9,
+        "meanBelow": 0.379,
+        "levelGap": 0.521
+      },
+      {
+        "family": "ml.imbalance-metrics",
+        "specialization": "ML_ENGINEER",
+        "grade": "MIDDLE",
+        "attempts": 429,
+        "itemRestCorrelation": 0.812,
+        "discriminationD": 0.612,
+        "meanAtLevel": 0.89,
+        "meanBelow": 0.506,
+        "levelGap": 0.384
+      },
+      {
+        "family": "ml.imbalance-metrics",
+        "specialization": "ML_ENGINEER",
+        "grade": "SENIOR",
+        "attempts": 284,
+        "itemRestCorrelation": 0.619,
+        "discriminationD": 0.36,
+        "meanAtLevel": 0.872,
+        "meanBelow": 0.472,
+        "levelGap": 0.4
+      },
+      {
+        "family": "ml.leakage",
+        "specialization": "ML_ENGINEER",
+        "grade": "JUNIOR",
+        "attempts": 675,
+        "itemRestCorrelation": 0.714,
+        "discriminationD": 0.57,
+        "meanAtLevel": 0.905,
+        "meanBelow": 0.434,
+        "levelGap": 0.471
+      },
+      {
+        "family": "ml.leakage",
+        "specialization": "ML_ENGINEER",
+        "grade": "MIDDLE",
+        "attempts": 429,
+        "itemRestCorrelation": 0.831,
+        "discriminationD": 0.609,
+        "meanAtLevel": 0.876,
+        "meanBelow": 0.477,
+        "levelGap": 0.399
+      },
+      {
+        "family": "ml.leakage",
+        "specialization": "ML_ENGINEER",
+        "grade": "SENIOR",
+        "attempts": 284,
+        "itemRestCorrelation": 0.587,
+        "discriminationD": 0.281,
+        "meanAtLevel": 0.887,
+        "meanBelow": 0.537,
+        "levelGap": 0.35
+      },
+      {
+        "family": "ml.model-ops",
+        "specialization": "ML_ENGINEER",
+        "grade": "JUNIOR",
+        "attempts": 675,
+        "itemRestCorrelation": 0.723,
+        "discriminationD": 0.566,
+        "meanAtLevel": 0.909,
+        "meanBelow": 0.446,
+        "levelGap": 0.463
+      },
+      {
+        "family": "ml.model-ops",
+        "specialization": "ML_ENGINEER",
+        "grade": "MIDDLE",
+        "attempts": 429,
+        "itemRestCorrelation": 0.732,
+        "discriminationD": 0.467,
+        "meanAtLevel": 0.894,
+        "meanBelow": 0.611,
+        "levelGap": 0.283
+      },
+      {
+        "family": "ml.model-ops",
+        "specialization": "ML_ENGINEER",
+        "grade": "SENIOR",
+        "attempts": 284,
+        "itemRestCorrelation": 0.585,
+        "discriminationD": 0.32,
+        "meanAtLevel": 0.911,
+        "meanBelow": 0.491,
+        "levelGap": 0.421
+      },
+      {
+        "family": "ml.pandas-prep",
+        "specialization": "ML_ENGINEER",
+        "grade": "JUNIOR",
+        "attempts": 675,
+        "itemRestCorrelation": 0.716,
+        "discriminationD": 0.651,
+        "meanAtLevel": 0.895,
+        "meanBelow": 0.36,
+        "levelGap": 0.535
+      },
+      {
+        "family": "ml.pandas-prep",
+        "specialization": "ML_ENGINEER",
+        "grade": "MIDDLE",
+        "attempts": 429,
+        "itemRestCorrelation": 0.779,
+        "discriminationD": 0.63,
+        "meanAtLevel": 0.875,
+        "meanBelow": 0.435,
+        "levelGap": 0.44
+      },
+      {
+        "family": "ml.pandas-prep",
+        "specialization": "ML_ENGINEER",
+        "grade": "SENIOR",
+        "attempts": 284,
+        "itemRestCorrelation": 0.666,
+        "discriminationD": 0.441,
+        "meanAtLevel": 0.879,
+        "meanBelow": 0.292,
+        "levelGap": 0.587
+      },
+      {
+        "family": "ml.validation-schemes",
+        "specialization": "ML_ENGINEER",
+        "grade": "JUNIOR",
+        "attempts": 675,
+        "itemRestCorrelation": 0.76,
+        "discriminationD": 0.663,
+        "meanAtLevel": 0.893,
+        "meanBelow": 0.363,
+        "levelGap": 0.53
+      },
+      {
+        "family": "ml.validation-schemes",
+        "specialization": "ML_ENGINEER",
+        "grade": "MIDDLE",
+        "attempts": 429,
+        "itemRestCorrelation": 0.805,
+        "discriminationD": 0.53,
+        "meanAtLevel": 0.886,
+        "meanBelow": 0.556,
+        "levelGap": 0.331
+      },
+      {
+        "family": "ml.validation-schemes",
+        "specialization": "ML_ENGINEER",
+        "grade": "SENIOR",
+        "attempts": 284,
+        "itemRestCorrelation": 0.523,
+        "discriminationD": 0.263,
+        "meanAtLevel": 0.88,
+        "meanBelow": 0.463,
+        "levelGap": 0.417
+      },
+      {
+        "family": "qa.boundary-values",
+        "specialization": "MANUAL_QA",
+        "grade": "JUNIOR",
+        "attempts": 671,
+        "itemRestCorrelation": 0.696,
+        "discriminationD": 0.593,
+        "meanAtLevel": 0.872,
+        "meanBelow": 0.402,
+        "levelGap": 0.47
+      },
+      {
+        "family": "qa.boundary-values",
+        "specialization": "MANUAL_QA",
+        "grade": "MIDDLE",
+        "attempts": 409,
+        "itemRestCorrelation": 0.838,
+        "discriminationD": 0.615,
+        "meanAtLevel": 0.914,
+        "meanBelow": 0.399,
+        "levelGap": 0.515
+      },
+      {
+        "family": "qa.boundary-values",
+        "specialization": "MANUAL_QA",
+        "grade": "SENIOR",
+        "attempts": 304,
+        "itemRestCorrelation": 0.569,
+        "discriminationD": 0.321,
+        "meanAtLevel": 0.898,
+        "meanBelow": 0.486,
+        "levelGap": 0.412
+      },
+      {
+        "family": "qa.decision-tables",
+        "specialization": "MANUAL_QA",
+        "grade": "JUNIOR",
+        "attempts": 671,
+        "itemRestCorrelation": 0.745,
+        "discriminationD": 0.641,
+        "meanAtLevel": 0.873,
+        "meanBelow": 0.406,
+        "levelGap": 0.467
+      },
+      {
+        "family": "qa.decision-tables",
+        "specialization": "MANUAL_QA",
+        "grade": "MIDDLE",
+        "attempts": 409,
+        "itemRestCorrelation": 0.808,
+        "discriminationD": 0.555,
+        "meanAtLevel": 0.911,
+        "meanBelow": 0.5,
+        "levelGap": 0.411
+      },
+      {
+        "family": "qa.decision-tables",
+        "specialization": "MANUAL_QA",
+        "grade": "SENIOR",
+        "attempts": 304,
+        "itemRestCorrelation": 0.652,
+        "discriminationD": 0.394,
+        "meanAtLevel": 0.897,
+        "meanBelow": 0.424,
+        "levelGap": 0.474
+      },
+      {
+        "family": "qa.minimal-suite",
+        "specialization": "MANUAL_QA",
+        "grade": "JUNIOR",
+        "attempts": 671,
+        "itemRestCorrelation": 0.764,
+        "discriminationD": 0.65,
+        "meanAtLevel": 0.876,
+        "meanBelow": 0.362,
+        "levelGap": 0.514
+      },
+      {
+        "family": "qa.minimal-suite",
+        "specialization": "MANUAL_QA",
+        "grade": "MIDDLE",
+        "attempts": 409,
+        "itemRestCorrelation": 0.869,
+        "discriminationD": 0.595,
+        "meanAtLevel": 0.906,
+        "meanBelow": 0.408,
+        "levelGap": 0.499
+      },
+      {
+        "family": "qa.minimal-suite",
+        "specialization": "MANUAL_QA",
+        "grade": "SENIOR",
+        "attempts": 304,
+        "itemRestCorrelation": 0.723,
+        "discriminationD": 0.378,
+        "meanAtLevel": 0.881,
+        "meanBelow": 0.37,
+        "levelGap": 0.511
+      },
+      {
+        "family": "qa.requirement-defects",
+        "specialization": "MANUAL_QA",
+        "grade": "JUNIOR",
+        "attempts": 671,
+        "itemRestCorrelation": 0.76,
+        "discriminationD": 0.669,
+        "meanAtLevel": 0.863,
+        "meanBelow": 0.358,
+        "levelGap": 0.505
+      },
+      {
+        "family": "qa.requirement-defects",
+        "specialization": "MANUAL_QA",
+        "grade": "MIDDLE",
+        "attempts": 409,
+        "itemRestCorrelation": 0.819,
+        "discriminationD": 0.615,
+        "meanAtLevel": 0.897,
+        "meanBelow": 0.413,
+        "levelGap": 0.483
+      },
+      {
+        "family": "qa.requirement-defects",
+        "specialization": "MANUAL_QA",
+        "grade": "SENIOR",
+        "attempts": 304,
+        "itemRestCorrelation": 0.615,
+        "discriminationD": 0.35,
+        "meanAtLevel": 0.867,
+        "meanBelow": 0.458,
+        "levelGap": 0.409
+      },
+      {
+        "family": "qa.severity-priority",
+        "specialization": "MANUAL_QA",
+        "grade": "JUNIOR",
+        "attempts": 671,
+        "itemRestCorrelation": 0.778,
+        "discriminationD": 0.659,
+        "meanAtLevel": 0.872,
+        "meanBelow": 0.38,
+        "levelGap": 0.492
+      },
+      {
+        "family": "qa.severity-priority",
+        "specialization": "MANUAL_QA",
+        "grade": "MIDDLE",
+        "attempts": 409,
+        "itemRestCorrelation": 0.815,
+        "discriminationD": 0.561,
+        "meanAtLevel": 0.901,
+        "meanBelow": 0.442,
+        "levelGap": 0.459
+      },
+      {
+        "family": "qa.severity-priority",
+        "specialization": "MANUAL_QA",
+        "grade": "SENIOR",
+        "attempts": 304,
+        "itemRestCorrelation": 0.618,
+        "discriminationD": 0.362,
+        "meanAtLevel": 0.868,
+        "meanBelow": 0.438,
+        "levelGap": 0.431
+      },
+      {
+        "family": "qa.test-cases",
+        "specialization": "MANUAL_QA",
+        "grade": "JUNIOR",
+        "attempts": 671,
+        "itemRestCorrelation": 0.759,
+        "discriminationD": 0.624,
+        "meanAtLevel": 0.884,
+        "meanBelow": 0.384,
+        "levelGap": 0.5
+      },
+      {
+        "family": "qa.test-cases",
+        "specialization": "MANUAL_QA",
+        "grade": "MIDDLE",
+        "attempts": 409,
+        "itemRestCorrelation": 0.863,
+        "discriminationD": 0.611,
+        "meanAtLevel": 0.9,
+        "meanBelow": 0.38,
+        "levelGap": 0.52
+      },
+      {
+        "family": "qa.test-cases",
+        "specialization": "MANUAL_QA",
+        "grade": "SENIOR",
+        "attempts": 304,
+        "itemRestCorrelation": 0.537,
+        "discriminationD": 0.268,
+        "meanAtLevel": 0.889,
+        "meanBelow": 0.556,
+        "levelGap": 0.334
+      }
+    ],
+    "itemSummary": {
+      "pairs": 72,
+      "withD": 72,
+      "dAtLeast02": 72,
+      "dShare": 1,
+      "negativeCorrelations": 0,
+      "medianCorrelation": 0.712,
+      "medianD": 0.558,
+      "medianGap": 0.46,
+      "nonPositiveGap": 0
+    },
+    "gates": [
+      {
+        "name": "Определение грейда: взвешенная каппа повторного прохождения (test-retest) не ниже 0.6",
+        "ok": true,
+        "detail": "κw 0.911 (95 % интервал 0.901–0.922), 2400 кандидатов"
+      },
+      {
+        "name": "Определение грейда: при повторе совпадает не менее 80 % присвоенных грейдов",
+        "ok": true,
+        "detail": "89.5 %"
+      },
+      {
+        "name": "Определение грейда: у честно заявивших завышение не более 5 %",
+        "ok": true,
+        "detail": "0.8 % из 1942"
+      },
+      {
+        "name": "Разделяющая сила: индекс D ≥ 0.2 не менее чем у 90 % пар «семейство × грейд»",
+        "ok": true,
+        "detail": "72 из 72 (100 %), медиана D 0.558"
+      },
+      {
+        "name": "Разделяющая сила: ни у одной пары нет отрицательной корреляции с остальными кейсами",
+        "ok": true,
+        "detail": "0 из 72, медиана 0.712"
+      }
+    ]
+  },
   "resume": {
     "now": "2026-10-07T12:00:00.000Z",
     "synthetic": {
@@ -10338,6 +11684,15 @@
       "cause": "Правила разбора не учитывали эти написания; разметка генератора не была привязана к тому, что реально записано в тексте.",
       "action": "Парсер: добавлены английские названия городов, разбор имени до запятой/тире, «по» перед «н.в./настоящее время» и «года» после года начала. Генератор: разметка строится по реально выведенному тексту. Первоначальные показатели и правки зафиксированы здесь; ручной набор после правок уже не «невиданный».",
       "status": "исправлено; вне набора остаётся ФИО в строке «Контакты: …» (не распознаётся, показано в отчёте)"
+    },
+    {
+      "id": "F6",
+      "area": "определение грейда · симуляция test-retest",
+      "foundBy": "анализ чувствительности к допущениям модели (раздел 2.9 отчёта)",
+      "found": "В основном сценарии пороги выдерживаются, но при сдвиге трудности банка на ±0,5 качество меняется: при более трудном банке 9,1 % кандидатов с уровнем не получают грейд (совпадение при повторе 81,3 %), при более лёгком завышение у честно заявивших 5,9 % (порог 5 %). Слабее всего различают задания уровня Senior (ограничение диапазона способностей).",
+      "cause": "Порог прохождения (75/50) и трудность заданий связаны: результат определения грейда зависит от соответствия трудности банка реальным уровням, а она задана допущением и не калибровалась на людях.",
+      "action": "Пороги и модель не подгонялись под результат. Зависимость зафиксирована в отчёте и документации как ограничение; новая версия политики и калибровка банка возможны только после пилота с реальными кандидатами.",
+      "status": "ограничение зафиксировано; калибровка — после пилота"
     }
   ],
   "limitations": [
@@ -10345,6 +11700,7 @@
     "Пороги прохождения (75 / 50 / 90 / 75, подтверждение навыка ≥ 2 кейса и ≥ 70) — рабочие допущения команды, научно не откалиброваны; симуляция профилей решателя не является моделью реальных людей.",
     "Разметка пар «потребность–кандидат» авторская и синтетическая, составлена теми же людьми, что реализовали формулу; внешней экспертной разметки нет. 12 потребностей (8 итоговых) — слишком мало для статистических выводов.",
     "Подбор оценивается на синтетическом пуле из 76 кандидатов; масштаб (1000+ кандидатов) и нагрузка в этом отчёте не измерялись — см. docs/implementation-status.md.",
+    "Определение грейда (раздел 2.9) проверено на симуляции: способность кандидата и трудность заданий каждого грейда заданы командой, а не измерены на людях; показатели test-retest и разделяющей силы отражают согласованность правил и банка с этой моделью. Реальную надёжность и валидность даст только пилот с настоящими кандидатами и независимой экспертной оценкой.",
     "Параметризация заданий снижает частоту точных повторов, но семейства внутри пары «специализация × грейд» повторяются во всех попытках, а доля частей с постоянным верным ответом (раздел 2.8) допускает подготовку по банку; это не защита от списывания.",
     "Ручные контрольные примеры привязаны к версии семейства и отпечатку экземпляра; после изменения генератора их нужно решить заново (скрипт сообщает об этом явно).",
     "Метрики подбора не обещают такого же результата на реальных данных; score — относительная мера соответствия описанной потребности, а не вероятность найма."

@@ -17,12 +17,14 @@ import { api } from '@/lib/api/client';
 import { formatDate } from '@/lib/format';
 import { useCompany, useNeeds } from '@/lib/employer-queries';
 
-export function EmployerCandidateView({ id, needId }: { id: string; needId?: string }) {
+export function EmployerCandidateView({ id, needId, specialization }: { id: string; needId?: string; specialization?: string }) {
   const queryClient = useQueryClient();
-  const key = ['employer', 'candidate', id, needId ?? ''];
+  const key = ['employer', 'candidate', id, needId ?? '', specialization ?? ''];
+  // Категория из банка: у кандидата может быть несколько подтверждённых; потребность (needId) имеет приоритет на сервере.
+  const query = new URLSearchParams({ ...(needId ? { needId } : {}), ...(specialization ? { specialization } : {}) }).toString();
   const data = useQuery({
     queryKey: key,
-    queryFn: () => api.get<EmployerCandidateResponse>(`/employer/candidates/${id}${needId ? `?needId=${needId}` : ''}`),
+    queryFn: () => api.get<EmployerCandidateResponse>(`/employer/candidates/${id}${query ? `?${query}` : ''}`),
   });
   const needs = useNeeds();
   const company = useCompany();
@@ -49,7 +51,7 @@ export function EmployerCandidateView({ id, needId }: { id: string; needId?: str
         actions={
           <>
             <BookmarkButton candidateId={id} initial={bookmarked} />
-            <a href={`/api/v1/employer/candidates/${id}/pdf`} className={buttonClass('outline', 'sm')} download>
+            <a href={`/api/v1/employer/candidates/${id}/pdf${specialization ? `?specialization=${specialization}` : ''}`} className={buttonClass('outline', 'sm')} download>
               PDF ({profile.mode === 'EMPLOYER_GRANTED' ? 'с контактами' : 'обезличенный'})
             </a>
           </>

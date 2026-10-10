@@ -5,6 +5,7 @@ import {
   type CandidateProfileView,
   type FspSource,
   type ProfileSource,
+  type ProfileViewExtras,
   type ProfileViewMode,
   type QualificationSource,
 } from '../../domain/privacy/profile-view';
@@ -14,8 +15,11 @@ import { candidateFactsInclude, hasActivePublicationConsent, toDiscoverabilityFa
 
 export interface LoadedCandidate {
   profile: ProfileSource & { userId: string };
+  /** Квалификация показанной категории (по умолчанию — активной специализации). */
   qualification: QualificationSource | null;
   fsp: FspSource | null;
+  /** Показанная категория и все подтверждённые квалификации — для презентера. */
+  extras: ProfileViewExtras;
 }
 
 /**
@@ -27,22 +31,24 @@ export interface LoadedCandidate {
 export class ProfileViewService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async load(candidateId: string): Promise<LoadedCandidate | null> {
+  /**
+   * focusSpecialization — показать квалификацию этой специализации (карточка по потребности): у кандидата может быть
+   * несколько категорий. Если по ней у кандидата нет подтверждённой квалификации, показывается активная специализация.
+   */
+  async load(candidateId: string, focusSpecialization?: string | null): Promise<LoadedCandidate | null> {
     const profile = await this.prisma.candidateProfile.findUnique({
       where: { id: candidateId },
       include: { skills: true, fspLink: true, fspAchievements: { orderBy: { eventDate: 'desc' } } },
     });
     if (!profile) return null;
-    const qualification = profile.activeSpecializationCode
-      ? await this.prisma.candidateQualification.findUnique({
-          where: {
-            candidateId_specializationCode: { candidateId, specializationCode: profile.activeSpecializationCode },
-          },
-        })
-      : null;
+    const rows = await this.prisma.candidateQualification.findMany({ where: { candidateId }, orderBy: { confirmedAt: 'desc' }, include: { attempt: { select: { integrity: true } } } });
+    const qualifications: QualificationSource[] = rows.map(({ attempt, ...q }) => ({ ...q, integrity: attempt.integrity }));
+    const focus = focusSpecialization && qualifications.some((q) => q.specializationCode === focusSpecialization) ? focusSpecialization : profile.activeSpecializationCode;
+    const qualification = qualifications.find((q) => q.specializationCode === focus) ?? null;
     return {
       profile: { ...profile, skills: profile.skills.map((s) => ({ skillCode: s.skillCode, months: s.months })) },
       qualification,
+      extras: { focusSpecialization: focus, otherQualifications: qualifications },
       fsp: profile.fspLink
         ? {
             state: profile.fspLink.state,
@@ -58,14 +64,14 @@ export class ProfileViewService {
   async ownerView(candidateId: string): Promise<CandidateProfileView> {
     const loaded = await this.load(candidateId);
     if (!loaded) throw notFound();
-    return buildProfileView('OWNER', loaded.profile, loaded.qualification, loaded.fsp);
+    return buildProfileView('OWNER', loaded.profile, loaded.qualification, loaded.fsp, null, loaded.extras);
   }
 
   /** Как карточку видит любой работодатель без доступа (для предпросмотра кандидатом). */
   async redactedPreview(candidateId: string): Promise<CandidateProfileView> {
     const loaded = await this.load(candidateId);
     if (!loaded) throw notFound();
-    return buildProfileView('EMPLOYER_REDACTED', loaded.profile, loaded.qualification, loaded.fsp);
+    return buildProfileView('EMPLOYER_REDACTED', loaded.profile, loaded.qualification, loaded.fsp, null, loaded.extras);
   }
 
   /** Активный доступ компании к контактам кандидата (не отозван). */
@@ -87,8 +93,8 @@ export class ProfileViewService {
    * Представление для работодателя. 404 — если кандидат скрыт и у компании нет действующего доступа
    * (одинаково для «не существует» и «недоступен», чтобы не раскрывать наличие профиля).
    */
-  async employerView(companyId: string, candidateId: string): Promise<CandidateProfileView> {
-    const loaded = await this.load(candidateId);
+  async employerView(companyId: string, candidateId: string, focusSpecialization?: string | null): Promise<CandidateProfileView> {
+    const loaded = await this.load(candidateId, focusSpecialization);
     if (!loaded) throw notFound('CANDIDATE_NOT_FOUND', 'Кандидат не найден или недоступен');
     const grant = await this.activeGrant(candidateId, companyId);
     let mode: ProfileViewMode;
@@ -99,6 +105,6 @@ export class ProfileViewService {
     } else {
       throw notFound('CANDIDATE_NOT_FOUND', 'Кандидат не найден или недоступен');
     }
-    return buildProfileView(mode, loaded.profile, loaded.qualification, loaded.fsp, grant ? { channels: grant.channels, grantedAt: grant.grantedAt } : null);
+    return buildProfileView(mode, loaded.profile, loaded.qualification, loaded.fsp, grant ? { channels: grant.channels, grantedAt: grant.grantedAt } : null, loaded.extras);
   }
 }

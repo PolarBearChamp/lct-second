@@ -47,7 +47,7 @@ export class CandidateProfilesService {
     const publicationConsent = await hasActivePublicationConsent(this.prisma, userId);
     const discoverability = evaluateDiscoverability(toDiscoverabilityFacts(profile, publicationConsent), this.clock.now());
     const loaded = await this.views.load(profile.id);
-    const view = buildProfileView('OWNER', loaded!.profile, loaded!.qualification, loaded!.fsp);
+    const view = buildProfileView('OWNER', loaded!.profile, loaded!.qualification, loaded!.fsp, null, loaded!.extras);
     const verified = new Set(view.skills.filter((s) => s.source === 'VERIFIED').map((s) => s.code));
     const consentState = (type: 'DATA_PROCESSING' | 'PROFILE_PUBLICATION' | 'GUARDIAN_CONSENT') => {
       // Действующая запись важнее более «свежей» отозванной: при равных метках времени порядок не определён.
