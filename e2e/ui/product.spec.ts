@@ -123,3 +123,26 @@ test('company verification button aligns with input and has a visible hover stat
   expect(smallButton!.y).toBeGreaterThan(smallInput!.y + smallInput!.height);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
 });
+
+test('assessment selection and start work when randomUUID is unavailable on HTTP', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(Crypto.prototype, 'randomUUID', { value: undefined, configurable: true });
+  });
+  await setup(page);
+  let key: string | undefined;
+  await page.route('**/api/v1/candidate/assessments', async (route) => {
+    if (route.request().method() === 'GET') {
+      await route.fulfill({ json: [] });
+      return;
+    }
+    key = route.request().headers()['idempotency-key'];
+    await route.fulfill({ json: attempt });
+  });
+  await page.goto('/candidate/assessments');
+  await expect(page.getByRole('heading', { name: 'Выберите уровень теста' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Что-то пошло не так' })).toHaveCount(0);
+  await page.locator('#grade-JUNIOR').getByRole('button', { name: 'Начать тест' }).click();
+  await page.getByRole('button', { name: 'Начать — таймер запустится', exact: true }).click();
+  await expect(page).toHaveURL(/\/candidate\/assessments\/attempt$/);
+  expect(key).toMatch(/^[a-f0-9]{32}JUNIOR$/);
+});
