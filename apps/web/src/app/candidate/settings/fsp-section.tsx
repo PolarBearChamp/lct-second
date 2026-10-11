@@ -70,7 +70,7 @@ export function FspSection() {
         <ErrorState error={state.error} onRetry={() => state.refetch()} />
       ) : state.data.state === 'NOT_LINKED' ? (
         <form
-          className="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end"
+          className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-start"
           onSubmit={(event) => {
             event.preventDefault();
             link.mutate();
@@ -82,7 +82,7 @@ export function FspSection() {
           <Field label="Одноразовый код" hint="Демо: 731905 (из data/fixtures/fsp-mock.json)">
             {(props) => <Input {...props} value={code} onChange={(e) => setCode(e.target.value)} inputMode="numeric" autoComplete="one-time-code" />}
           </Field>
-          <Button type="submit" loading={link.isPending} disabled={!fspId || !code}>
+          <Button type="submit" className="md:mt-[26px]" loading={link.isPending} disabled={!fspId || !code}>
             Привязать
           </Button>
           {formError ? (

@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
 
+const selectArrow = `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="m4 6 4 4 4-4" stroke="#535866" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>')}")`;
+
 const control =
   'w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-[15px] text-ink placeholder:text-[#8a8d99] transition-colors hover:border-[#a8a9b4] focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 disabled:bg-canvas disabled:text-muted aria-[invalid=true]:border-danger-600';
 
@@ -53,9 +55,20 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<H
   return <textarea ref={ref} className={clsx(control, 'min-h-28', className)} {...rest} />;
 });
 
-export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(function Select({ className, children, ...rest }, ref) {
+export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(function Select({ className, children, style, ...rest }, ref) {
   return (
-    <select ref={ref} className={clsx(control, 'h-11 pr-8 text-base sm:h-10 sm:text-[15px]', className)} {...rest}>
+    <select
+      ref={ref}
+      className={clsx(control, 'h-11 appearance-none pr-10 text-base sm:h-10 sm:text-[15px]', className)}
+      style={{
+        backgroundImage: selectArrow,
+        backgroundPosition: 'right 12px center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '16px 16px',
+        ...style,
+      }}
+      {...rest}
+    >
       {children}
     </select>
   );
