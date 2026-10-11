@@ -9,9 +9,9 @@ export function RoleActions() {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       {roles.map((item) => (
-        <div key={item.role} className="flex flex-col rounded-2xl border border-line bg-surface p-5 shadow-sm">
-          <h2 className="text-base font-bold">{item.title}</h2>
-          <p className="mb-5 mt-2 text-sm text-muted">{item.description}</p>
+        <div key={item.role} className="flex flex-col card relative border-t-4 border-t-brand-500 p-6 sm:p-8">
+          <h2 className="text-xl font-bold">{item.title}</h2>
+          <p className="mb-6 mt-3 max-w-xl text-sm leading-relaxed text-muted">{item.description}</p>
           <LinkButton href={`/register?role=${item.role}`} size="lg" variant={item.role === 'CANDIDATE' ? 'primary' : 'outline'} className="mt-auto w-full px-3">
             {item.action}
           </LinkButton>

@@ -12,9 +12,9 @@ import { MeProvider, useMe } from './me-context';
 function Header({ roleLabel }: { roleLabel: string }) {
   const me = useMe();
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-white/20 bg-ink">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6">
-        <Logo href={me.user.role === 'CANDIDATE' ? '/candidate' : '/employer'} />
+        <Logo href={me.user.role === 'CANDIDATE' ? '/candidate' : '/employer'} dark />
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           {me.user.isDemo ? (
             <Badge tone="warning" className="max-sm:hidden">
@@ -22,10 +22,10 @@ function Header({ roleLabel }: { roleLabel: string }) {
             </Badge>
           ) : null}
           <Badge tone="brand">{roleLabel}</Badge>
-          <span className="hidden max-w-[220px] truncate text-sm text-muted md:inline" title={me.user.email}>
+          <span className="hidden max-w-[220px] truncate text-sm text-white/70 md:inline" title={me.user.email}>
             {me.user.email}
           </span>
-          <LogoutButton />
+          <LogoutButton className="text-white hover:bg-white/10" />
         </div>
       </div>
     </header>

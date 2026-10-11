@@ -3,11 +3,11 @@ import { Logo } from './logo';
 
 export function PublicHeader() {
   return (
-    <header className="border-b border-line bg-surface">
+    <header className="border-b border-white/20 bg-ink">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Logo />
+        <Logo dark />
         <nav aria-label="Вход" className="flex items-center gap-2">
-          <LinkButton href="/login" variant="ghost" size="sm">
+          <LinkButton href="/login" variant="ghost" size="sm" className="text-white hover:bg-white/10">
             Войти
           </LinkButton>
           <LinkButton href="/register" size="sm">
