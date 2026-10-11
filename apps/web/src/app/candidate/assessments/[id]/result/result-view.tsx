@@ -156,7 +156,12 @@ function ResultBody({ r }: { r: AttemptResult }) {
                 <li key={g.grade} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line px-3 py-2">
                   <span className="font-medium">{GRADE_LABELS[g.grade]}</span>
                   {g.allowed ? (
-                    <Badge tone="success">можно сейчас</Badge>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge tone="success">можно сейчас</Badge>
+                      <LinkButton href={`/candidate/assessments?grade=${g.grade}&specialization=${r.specialization}#grade-${g.grade}`} variant="outline" size="sm">
+                        Выбрать {GRADE_LABELS[g.grade]}
+                      </LinkButton>
+                    </div>
                   ) : (
                     <span className="text-sm text-muted">{g.availableAt ? `с ${formatDateTime(g.availableAt)}` : g.message}</span>
                   )}

@@ -42,17 +42,17 @@ export function CompanyVerificationCard({ company }: { company: CompanyView }) {
         actions={v.status === 'VERIFIED' ? <Badge tone="success">Проверена {v.verifiedAt ? formatDate(v.verifiedAt) : ''}</Badge> : v.status === 'REJECTED' ? <Badge tone="warning">Не пройдена</Badge> : null}
       />
       <form
-        className="flex flex-wrap items-end gap-3"
+        className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start"
         noValidate
         onSubmit={(event) => {
           event.preventDefault();
           check.mutate();
         }}
       >
-        <Field label="ИНН компании" hint="10 цифр (юрлицо) или 12 (ИП)" error={fieldError} className="min-w-[14rem] flex-1">
+        <Field label="ИНН компании" hint="10 цифр (юрлицо) или 12 (ИП)" error={fieldError} className="min-w-0">
           {(props) => <Input {...props} inputMode="numeric" maxLength={12} value={inn} onChange={(e) => setInn(e.target.value.replace(/\D/g, ''))} />}
         </Field>
-        <Button type="submit" variant="outline" loading={check.isPending} disabled={inn.length !== 10 && inn.length !== 12}>
+        <Button className="w-full sm:mt-[26px] sm:w-auto" type="submit" variant="outline" loading={check.isPending} disabled={inn.length !== 10 && inn.length !== 12}>
           {v.status === 'NOT_REQUESTED' ? 'Проверить' : 'Проверить снова'}
         </Button>
       </form>

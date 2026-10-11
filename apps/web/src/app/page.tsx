@@ -1,14 +1,10 @@
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { PublicFooter, PublicHeader } from '@/components/layout/public-header';
+import { RoleJourney } from '@/components/landing/role-journey';
 import { RoleActions } from '@/components/landing/role-actions';
 import { getMe } from '@/lib/api/server';
 
-const steps = [
-  { title: 'Профиль и специализация', text: 'Расскажите об опыте, выберите направление и уровень, который хотите подтвердить.' },
-  { title: 'Проверка навыков', text: 'Пройдите тест на выбранный грейд. В подборку попадёт подтверждённый результат, а не самооценка.' },
-  { title: 'Приглашение от компании', text: 'Работодатель отправит условия и зарплатную вилку. Примите предложение, когда будете готовы к разговору.' },
-];
 const questions = [
   { title: 'Когда работодатель увидит мои контакты?', text: 'После принятия приглашения или вашего отклика на вакансию. До этого компания видит обезличенный профиль: специализацию, подтверждённый грейд и навыки. Публикация профиля требует отдельного согласия в настройках.' },
   { title: 'Можно ли зарегистрироваться без истории ФСП?', text: 'Да. Достижения ФСП дополняют профиль, но не заменяют тестирование и не обязательны для участия в подборе.' },
@@ -50,20 +46,7 @@ export default async function HomePage() {
 
         <section id="how-it-works" className="border-y border-line bg-canvas/50">
           <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-            <div className="grid gap-6 md:grid-cols-[1fr_2fr] md:gap-12">
-              <h2 className="text-2xl font-medium leading-tight">От профиля<br />к предложению</h2>
-              <ol className="divide-y divide-line">
-                {steps.map((step, index) => (
-                  <li key={step.title} className="grid grid-cols-[28px_1fr] gap-4 py-5 first:pt-0 last:pb-0 sm:grid-cols-[48px_1fr]">
-                    <span className="pt-1 font-brand text-xs text-brand-500">0{index + 1}</span>
-                    <div>
-                      <h3 className="text-lg font-semibold">{step.title}</h3>
-                      <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-muted">{step.text}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
+            <RoleJourney />
           </div>
         </section>
 

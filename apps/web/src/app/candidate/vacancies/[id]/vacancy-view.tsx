@@ -182,9 +182,11 @@ export function CandidateVacancyView({ id }: { id: string }) {
                     ))}
                   </ul>
                 </Alert>
-                {v.blockers.some((b) => b.code === 'QUALIFICATION_REQUIRED') ? <LinkButton href="/candidate/assessments" variant="outline" size="sm">К тестированию</LinkButton> : null}
-                {v.blockers.some((b) => b.code === 'PROFILE_INCOMPLETE') ? <LinkButton href="/candidate/profile" variant="outline" size="sm">К профилю</LinkButton> : null}
-                {v.blockers.some((b) => b.code === 'NO_CONTACT_CHANNEL') ? <LinkButton href="/candidate/settings#channels" variant="outline" size="sm">Выбрать каналы связи</LinkButton> : null}
+                <div className="flex flex-wrap gap-2">
+                  {v.blockers.some((b) => b.code === 'QUALIFICATION_REQUIRED') ? <LinkButton href="/candidate/assessments" variant="outline" size="sm">К тестированию</LinkButton> : null}
+                  {v.blockers.some((b) => b.code === 'PROFILE_INCOMPLETE') ? <LinkButton href="/candidate/profile" variant="outline" size="sm">К профилю</LinkButton> : null}
+                  {v.blockers.some((b) => b.code === 'NO_CONTACT_CHANNEL') ? <LinkButton href="/candidate/settings#channels" variant="outline" size="sm">Выбрать каналы связи</LinkButton> : null}
+                </div>
               </div>
             )}
           </Card>

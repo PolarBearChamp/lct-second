@@ -52,13 +52,13 @@ export function AccountNav({ items }: { items: NavItem[] }) {
                   onClick={() => setExpandedPath(null)}
                   aria-current={active ? 'page' : undefined}
                   className={clsx(
-                    'flex items-center justify-between gap-3 whitespace-nowrap rounded-lg min-h-11 px-3 py-2 text-[15px] transition-colors',
+                    'flex items-center justify-between gap-3 rounded-lg min-h-11 px-3 py-2 text-[15px] transition-colors',
                     active ? 'bg-brand-50 font-semibold text-brand-700' : 'text-ink-soft hover:bg-surface',
                   )}
                 >
                   {item.label}
                   {count ? (
-                    <span className="rounded-full bg-brand-500 px-2 text-xs font-bold leading-5 text-white" aria-label={`новых: ${count}`}>
+                    <span className="shrink-0 rounded-full bg-brand-500 px-2 text-xs font-bold leading-5 text-white" aria-label={`новых: ${count}`}>
                       {count}
                     </span>
                   ) : null}

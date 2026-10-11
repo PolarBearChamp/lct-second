@@ -8,7 +8,8 @@
     "install-browsers": "playwright install chromium",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test:ux": "playwright test --config playwright.ux.config.ts"
+    "test:ux": "playwright test --config playwright.ux.config.ts",
+    "test:ui": "playwright test --config playwright.ui.config.ts"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

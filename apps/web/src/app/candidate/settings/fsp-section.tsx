@@ -121,9 +121,11 @@ export function FspSection() {
           {state.data.achievements.length ? (
             <ul className="space-y-2">
               {state.data.achievements.map((a, index) => (
-                <li key={index} className="rounded-lg border border-line px-3 py-2 text-[15px]">
-                  <strong>{OUTCOME[a.outcome]}</strong>
-                  {a.place ? ` (${a.place} место)` : ''} · {a.eventTitle ?? 'Мероприятие'} · {a.year ?? '—'}{' '}
+                <li key={index} className="grid items-start gap-2 rounded-lg border border-line px-3 py-3 text-[15px] lg:grid-cols-[minmax(0,1fr)_auto]">
+                  <span className="min-w-0 leading-6">
+                    <strong>{OUTCOME[a.outcome]}</strong>
+                    {a.place ? ` (${a.place} место)` : ''} · {a.eventTitle ?? 'Мероприятие'} · {a.year ?? '—'}
+                  </span>
                   {a.relevantToSpecialization ? <Badge tone="brand">релевантно вашей специализации</Badge> : <Badge>не влияет на подбор</Badge>}
                 </li>
               ))}
