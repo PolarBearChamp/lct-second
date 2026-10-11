@@ -1,7 +1,8 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { PublicFooter, PublicHeader } from '@/components/layout/public-header';
-import { LinkButton } from '@/components/ui/button';
+import { RoleActions } from '@/components/landing/role-actions';
 import { getMe } from '@/lib/api/server';
 
 const steps = [
@@ -18,7 +19,7 @@ export default async function HomePage() {
     <>
       <PublicHeader />
       <main id="main">
-        <section className="relative overflow-hidden bg-surface">
+        <section className="relative overflow-hidden bg-gradient-to-br from-brand-50 via-surface to-surface">
           <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
             <div>
               <p className="mb-3 font-brand text-sm font-medium text-brand-600">Федерация спортивного программирования</p>
@@ -29,16 +30,11 @@ export default async function HomePage() {
                 Обратный подбор ИТ-специалистов: вместо откликов вслепую — проверенный грейд, прозрачная подборка и предложение с
                 зарплатой до начала общения.
               </p>
-              <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                <LinkButton href="/register?role=CANDIDATE" size="lg" className="w-full">
-                  Я ищу работу
-                </LinkButton>
-                <LinkButton href="/register?role=EMPLOYER" size="lg" variant="outline" className="w-full">
-                  Я ищу специалиста
-                </LinkButton>
+              <div className="mt-8">
+                <RoleActions />
               </div>
               <p className="mt-4 text-sm text-muted">
-                Уже зарегистрированы? <a className="font-medium text-brand-600 underline-offset-4 hover:underline" href="/login">Войти</a>
+                Уже зарегистрированы? <Link className="font-medium text-brand-600 underline-offset-4 hover:underline" href="/login">Войти</Link>
               </p>
             </div>
             <div className="brand-line relative hidden p-8 lg:block">
@@ -48,7 +44,8 @@ export default async function HomePage() {
           </div>
         </section>
         <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-          <h2 className="text-2xl font-bold">Как это работает</h2>
+          <p className="mb-2 text-sm font-semibold text-brand-700">От навыков к предложению</p>
+          <h2 className="text-2xl font-bold">Три шага к новому месту работы</h2>
           <ol className="mt-6 grid gap-4 md:grid-cols-3">
             {steps.map((step, index) => (
               <li key={step.title} className="card p-6">

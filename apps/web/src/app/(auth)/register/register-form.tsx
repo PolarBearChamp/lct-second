@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox, ChoiceGroup, Field, Input } from '@/components/ui/field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { api, ApiError } from '@/lib/api/client';
 
 const schema = z.object({
@@ -77,7 +78,7 @@ export function RegisterForm({ initialRole }: { initialRole: 'CANDIDATE' | 'EMPL
           {(props) => <Input type="email" autoComplete="email" {...props} {...register('email')} />}
         </Field>
         <Field label="Пароль" hint="Не менее 10 символов" error={errors.password?.message} required>
-          {(props) => <Input type="password" autoComplete="new-password" {...props} {...register('password')} />}
+          {(props) => <PasswordInput autoComplete="new-password" {...props} {...register('password')} />}
         </Field>
         <div>
           <Checkbox

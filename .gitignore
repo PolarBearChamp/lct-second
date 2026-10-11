@@ -158,3 +158,6 @@ test-results/
 blob-report/
 e2e/.artifacts/
 docs/export/*.html
+
+# Local Vercel project link and build output
+.vercel/

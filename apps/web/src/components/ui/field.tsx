@@ -46,7 +46,7 @@ export function Field({ label, hint, error, required, children, className }: Fie
 }
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function Input({ className, ...rest }, ref) {
-  return <input ref={ref} className={clsx(control, 'h-10', className)} {...rest} />;
+  return <input ref={ref} className={clsx(control, 'h-11 text-base sm:h-10 sm:text-[15px]', className)} {...rest} />;
 });
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(function Textarea({ className, ...rest }, ref) {
@@ -55,14 +55,15 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<H
 
 export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(function Select({ className, children, ...rest }, ref) {
   return (
-    <select ref={ref} className={clsx(control, 'h-10 pr-8', className)} {...rest}>
+    <select ref={ref} className={clsx(control, 'h-11 pr-8 text-base sm:h-10 sm:text-[15px]', className)} {...rest}>
       {children}
     </select>
   );
 });
 
 export function Checkbox({ label, description, className, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label: ReactNode; description?: ReactNode }) {
-  const id = useId();
+  const generatedId = useId();
+  const id = rest.id ?? generatedId;
   return (
     <div className={clsx('flex items-start gap-3', className)}>
       <input id={id} type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 rounded border-line-strong accent-brand-500" {...rest} />
@@ -98,9 +99,9 @@ export function ChoiceGroup<T extends string>({
 }) {
   const id = useId();
   return (
-    <fieldset aria-describedby={error ? `${id}-err` : undefined}>
+    <fieldset aria-describedby={[hint && `${id}-hint`, error && `${id}-err`].filter(Boolean).join(' ') || undefined}>
       <legend className="mb-1.5 text-sm font-medium text-ink">{legend}</legend>
-      {hint ? <p className="mb-2 text-[13px] text-muted">{hint}</p> : null}
+      {hint ? <p id={`${id}-hint`} className="mb-2 text-[13px] text-muted">{hint}</p> : null}
       <div className={clsx('grid gap-2', columns === 2 && 'sm:grid-cols-2', columns === 3 && 'sm:grid-cols-3')}>
         {options.map((option) => {
           const checked = value.includes(option.value);

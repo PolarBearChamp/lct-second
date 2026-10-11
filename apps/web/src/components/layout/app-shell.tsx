@@ -1,56 +1,13 @@
 'use client';
 
 import type { MeResponse } from '@fsp/contracts';
-import clsx from 'clsx';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { AccountNav, type NavItem } from './account-nav';
 import { Logo } from './logo';
 import { LogoutButton } from './logout-button';
 import { MeProvider, useMe } from './me-context';
 
-export interface NavItem {
-  href: string;
-  label: string;
-  /** Совпадение по префиксу пути. */
-  match?: string | string[];
-  badge?: (me: MeResponse) => number | null;
-}
-
-function Nav({ items }: { items: NavItem[] }) {
-  const pathname = usePathname();
-  const me = useMe();
-  return (
-    <nav aria-label="Разделы кабинета" className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
-      <ul className="flex gap-1 lg:flex-col">
-        {items.map((item) => {
-          const active = item.match ? [item.match].flat().some((prefix) => pathname.startsWith(prefix)) : pathname === item.href;
-          const count = item.badge?.(me) ?? null;
-          return (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                aria-current={active ? 'page' : undefined}
-                className={clsx(
-                  'flex items-center justify-between gap-3 whitespace-nowrap rounded-lg px-3 py-2 text-[15px] transition-colors',
-                  active ? 'bg-brand-50 font-semibold text-brand-700' : 'text-ink-soft hover:bg-surface',
-                )}
-              >
-                {item.label}
-                {count ? (
-                  <span className="rounded-full bg-brand-500 px-2 text-xs font-bold leading-5 text-white" aria-label={`новых: ${count}`}>
-                    {count}
-                  </span>
-                ) : null}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-  );
-}
 
 function Header({ roleLabel }: { roleLabel: string }) {
   const me = useMe();
@@ -127,7 +84,7 @@ export function AppShell({ me, area, children }: { me: MeResponse; area: 'candid
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:flex-row lg:gap-8">
         <aside className="lg:w-56 lg:shrink-0">
           <div className="lg:sticky lg:top-24">
-            <Nav items={nav} />
+            <AccountNav items={nav} />
           </div>
         </aside>
         <main id="main" className="min-w-0 flex-1 pb-16">
