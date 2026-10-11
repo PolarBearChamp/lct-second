@@ -101,8 +101,8 @@ export function VerifyEmailView({ token, me }: { token: string | null; me: MeRes
     <div className="card p-6 sm:p-8">
       <h1 className="text-2xl font-bold">Подтвердите email</h1>
       <p className="mt-2 text-ink-soft">
-        Мы отправили письмо со ссылкой на <strong className="break-all">{me.user.email}</strong>. Откройте его и нажмите
-        «Подтвердить». До подтверждения кабинет недоступен.
+        Для доступа к кабинету подтвердите адрес <strong className="break-all">{me.user.email}</strong> по ссылке из письма.
+        Если письмо не пришло, запросите его повторно.
       </p>
       {message ? (
         <Alert tone={resendState === 'sent' ? 'success' : 'danger'} className="mt-5">
@@ -130,9 +130,6 @@ export function VerifyEmailView({ token, me }: { token: string | null; me: MeRes
         </Button>
         <LogoutButton variant="outline" />
       </div>
-      <p className="mt-6 text-sm text-muted">
-        Локальная демонстрация: письма доставляются в Mailpit (http://localhost:8025).
-      </p>
     </div>
   );
 }
