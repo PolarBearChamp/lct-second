@@ -6,13 +6,14 @@ import { useState } from 'react';
 import { api } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 
-export function LogoutButton({ variant = 'ghost' }: { variant?: 'ghost' | 'outline' }) {
+export function LogoutButton({ variant = 'ghost', className }: { variant?: 'ghost' | 'outline'; className?: string }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   return (
     <Button
       variant={variant}
+      className={className}
       size="sm"
       loading={loading}
       onClick={async () => {

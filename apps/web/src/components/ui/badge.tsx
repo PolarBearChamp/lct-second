@@ -16,7 +16,7 @@ export function Badge({ tone = 'neutral', children, className, title }: { tone?:
   return (
     <span
       title={title}
-      className={clsx('inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[13px] font-medium leading-5', tones[tone], className)}
+      className={clsx('inline-flex max-w-full items-center gap-1 rounded-full border px-2.5 py-0.5 text-[13px] font-medium leading-5 break-words', tones[tone], className)}
     >
       {children}
     </span>

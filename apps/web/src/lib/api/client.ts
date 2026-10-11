@@ -113,7 +113,9 @@ export const api = {
 
 /** Ключ идемпотентности для защиты от двойной отправки. */
 export function idempotencyKey(): string {
-  return crypto.randomUUID().replace(/-/g, '');
+  // getRandomValues is also available on HTTP origins; randomUUID requires HTTPS or localhost.
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
 export function errorMessage(error: unknown): string {

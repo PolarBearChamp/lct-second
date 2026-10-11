@@ -129,7 +129,7 @@ export function CandidateVacancies() {
                 {list.data.items.map((vacancy) => (
                   <li key={vacancy.id}>
                     <Link href={`/candidate/vacancies/${vacancy.id}`} className="card block p-5 transition-colors hover:border-brand-300">
-                      <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_240px]">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="text-lg font-bold">{vacancy.title}</span>
@@ -161,8 +161,8 @@ export function CandidateVacancies() {
                             ) : null}
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="font-brand text-xl font-bold text-brand-700">{formatSalaryRange(vacancy.salaryFrom, vacancy.salaryTo, false)}</div>
+                        <div className="min-w-0 border-t border-line pt-3 xl:border-l xl:border-t-0 xl:pl-5 xl:pt-0">
+                          <div className="font-brand text-lg font-bold text-brand-700">{formatSalaryRange(vacancy.salaryFrom, vacancy.salaryTo, false)}</div>
                           <div className="text-xs text-muted">в месяц до вычета налогов</div>
                         </div>
                       </div>

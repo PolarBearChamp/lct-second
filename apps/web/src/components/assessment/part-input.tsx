@@ -2,7 +2,7 @@
 
 import type { PartAnswer, PublicPart } from '@fsp/contracts';
 import clsx from 'clsx';
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 
 const FORMAT_HINTS: Record<PublicPart['format'], string> = {
   SINGLE_CHOICE: 'Выберите один вариант',
@@ -118,7 +118,7 @@ export function PartInput({
           })}
         </div>
       ) : null}
-      {part.format === 'ORDERING' ? <OrderingInput part={part} answer={answer} onChange={onChange} /> : null}
+      {part.format === 'ORDERING' ? <OrderingInput part={part} answer={answer} onChange={onChange} disabled={disabled} /> : null}
     </fieldset>
   );
 }
@@ -179,35 +179,84 @@ function NumericInput({ part, answer, onChange }: { part: Extract<PublicPart, { 
   );
 }
 
-function OrderingInput({ part, answer, onChange }: { part: Extract<PublicPart, { format: 'ORDERING' }>; answer: PartAnswer | null | undefined; onChange: (a: PartAnswer | null) => void }) {
+function OrderingInput({ part, answer, onChange, disabled }: { part: Extract<PublicPart, { format: 'ORDERING' }>; answer: PartAnswer | null | undefined; onChange: (a: PartAnswer | null) => void; disabled?: boolean }) {
   const order = answer && 'order' in answer ? answer.order : part.items.map((item) => item.id);
   const byId = new Map(part.items.map((item) => [item.id, item]));
   const answered = !!answer && 'order' in answer;
-  const move = (index: number, delta: number) => {
+  const listRef = useRef<HTMLOListElement>(null);
+  const dragRef = useRef<{ itemId: string; targetId: string } | null>(null);
+  const [drag, setDrag] = useState<{ itemId: string; targetId: string } | null>(null);
+  const [announcement, setAnnouncement] = useState('');
+  const reorder = (itemId: string, targetId: string) => {
+    if (disabled || itemId === targetId) return;
+    const from = order.indexOf(itemId);
+    const to = order.indexOf(targetId);
+    if (from < 0 || to < 0) return;
     const next = [...order];
-    const target = index + delta;
-    if (target < 0 || target >= next.length) return;
-    [next[index], next[target]] = [next[target], next[index]];
+    next.splice(from, 1);
+    next.splice(to, 0, itemId);
     onChange({ order: next });
+    setAnnouncement(`«${byId.get(itemId)?.label}»: позиция ${to + 1} из ${order.length}.`);
+  };
+  const cancelDrag = () => {
+    dragRef.current = null;
+    setDrag(null);
   };
   return (
     <div>
-      <ol className="space-y-2">
+      <p className="mb-3 text-sm text-muted">Перетащите за ручку слева или измените порядок стрелками. Ответ сохраняется после перемещения.</p>
+      <ol ref={listRef} className="space-y-2">
         {order.map((itemId, index) => (
-          <li key={itemId} className="flex items-center gap-2 rounded-lg border border-line bg-surface px-3 py-2">
-            <span className="w-6 font-brand text-sm text-brand-600">{index + 1}.</span>
+          <li key={itemId} data-order-item={itemId} className={clsx('flex items-center gap-2 rounded-lg border bg-surface p-2 transition-colors', drag?.targetId === itemId && drag.itemId !== itemId ? 'border-brand-500 bg-brand-50 ring-1 ring-brand-500' : 'border-line', drag?.itemId === itemId && 'opacity-60')}>
+            <button
+              type="button"
+              disabled={disabled}
+              aria-label={`Перетащить «${byId.get(itemId)?.label}»`}
+              className="flex h-11 w-8 shrink-0 touch-none select-none items-center justify-center rounded-md text-muted hover:bg-brand-50 hover:text-brand-700 active:cursor-grabbing disabled:cursor-not-allowed sm:w-10 cursor-grab"
+              onKeyDown={(event) => {
+                if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                  event.preventDefault();
+                  const target = order[index + (event.key === 'ArrowUp' ? -1 : 1)];
+                  if (target) reorder(itemId, target);
+                }
+              }}
+              onPointerDown={(event) => {
+                if (disabled || !event.isPrimary || event.button !== 0) return;
+                event.currentTarget.setPointerCapture(event.pointerId);
+                dragRef.current = { itemId, targetId: itemId };
+                setDrag(dragRef.current);
+              }}
+              onPointerMove={(event) => {
+                if (!dragRef.current || disabled) return;
+                const row = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>('[data-order-item]');
+                if (!row || !listRef.current?.contains(row) || !row.dataset.orderItem) return;
+                dragRef.current = { ...dragRef.current, targetId: row.dataset.orderItem };
+                setDrag(dragRef.current);
+              }}
+              onPointerUp={(event) => {
+                const current = dragRef.current;
+                // A drop outside this list cancels; pointer capture must not turn it into an accidental answer.
+                const row = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>('[data-order-item]');
+                if (current && row && listRef.current?.contains(row) && row.dataset.orderItem) reorder(current.itemId, row.dataset.orderItem);
+                cancelDrag();
+              }}
+              onPointerCancel={cancelDrag}
+              onLostPointerCapture={cancelDrag}
+            >
+              <span aria-hidden>⠿</span>
+            </button>
+            <span className="w-5 shrink-0 font-brand text-sm text-brand-600">{index + 1}</span>
             <span className="min-w-0 flex-1 text-[15px]">{byId.get(itemId)?.label}</span>
-            <button type="button" className="rounded-md border border-line px-2 py-1 text-sm hover:bg-canvas disabled:opacity-40" onClick={() => move(index, -1)} disabled={index === 0} aria-label={`Переместить «${byId.get(itemId)?.label}» выше`}>
-              ↑
-            </button>
-            <button type="button" className="rounded-md border border-line px-2 py-1 text-sm hover:bg-canvas disabled:opacity-40" onClick={() => move(index, 1)} disabled={index === order.length - 1} aria-label={`Переместить «${byId.get(itemId)?.label}» ниже`}>
-              ↓
-            </button>
+            <div className="flex shrink-0 gap-1">
+              <button type="button" className="h-11 w-8 rounded-md border border-line text-sm hover:border-brand-300 hover:bg-brand-50 disabled:opacity-40 sm:w-10" onClick={() => reorder(itemId, order[index - 1])} disabled={disabled || index === 0} aria-label={`Переместить «${byId.get(itemId)?.label}» выше`}>↑</button>
+              <button type="button" className="h-11 w-8 rounded-md border border-line text-sm hover:border-brand-300 hover:bg-brand-50 disabled:opacity-40 sm:w-10" onClick={() => reorder(itemId, order[index + 1])} disabled={disabled || index === order.length - 1} aria-label={`Переместить «${byId.get(itemId)?.label}» ниже`}>↓</button>
+            </div>
           </li>
         ))}
       </ol>
+      <p className="sr-only" role="status" aria-live="polite">{announcement}</p>
       {!answered ? (
-        <button type="button" className="mt-3 text-sm font-medium text-brand-600 hover:underline" onClick={() => onChange({ order })}>
+        <button disabled={disabled} type="button" className="mt-3 min-h-11 text-left text-sm font-medium text-brand-600 underline-offset-4 hover:underline disabled:opacity-40" onClick={() => onChange({ order })}>
           Зафиксировать текущий порядок как ответ
         </button>
       ) : (

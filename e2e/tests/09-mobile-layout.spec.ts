@@ -74,9 +74,14 @@ for (const width of WIDTHS) {
       // Шапка: выход доступен, роль видна.
       await page.goto('/candidate');
       await expect(page.getByRole('button', { name: 'Выйти' })).toBeInViewport();
-      // Меню прокручивается горизонтально: пункт за пределами экрана достижим касанием.
+      // Меню раскрывает все разделы без горизонтальной прокрутки.
+      const menu = page.getByRole('button', { name: /Раздел:.*Меню/ });
+      await expect(menu).toHaveAttribute('aria-expanded', 'false');
+      await menu.tap();
+      await expect(menu).toHaveAttribute('aria-expanded', 'true');
       await page.getByRole('link', { name: 'Приватность и ФСП' }).tap();
       await expect(page).toHaveURL(/\/candidate\/settings/);
+      await expect(page.getByRole('button', { name: /Раздел:.*Меню/ })).toHaveAttribute('aria-expanded', 'false');
       await expectNoHorizontalOverflow(page, 'после перехода через меню');
 
       // Диалог отклика помещается на экран.

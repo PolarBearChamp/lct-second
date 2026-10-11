@@ -1,74 +1,37 @@
 'use client';
 
 import type { MeResponse } from '@fsp/contracts';
-import clsx from 'clsx';
-import Link from 'next/link';
+import { useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
-import type { ReactNode } from 'react';
+import clsx from 'clsx';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { AccountNav, type NavItem } from './account-nav';
 import { Logo } from './logo';
 import { LogoutButton } from './logout-button';
 import { MeProvider, useMe } from './me-context';
 
-export interface NavItem {
-  href: string;
-  label: string;
-  /** Совпадение по префиксу пути. */
-  match?: string | string[];
-  badge?: (me: MeResponse) => number | null;
-}
 
-function Nav({ items }: { items: NavItem[] }) {
-  const pathname = usePathname();
+function Header({ roleLabel, focusMode, collapsed, onToggle }: { roleLabel: string; focusMode: boolean; collapsed: boolean; onToggle: () => void }) {
   const me = useMe();
   return (
-    <nav aria-label="Разделы кабинета" className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
-      <ul className="flex gap-1 lg:flex-col">
-        {items.map((item) => {
-          const active = item.match ? [item.match].flat().some((prefix) => pathname.startsWith(prefix)) : pathname === item.href;
-          const count = item.badge?.(me) ?? null;
-          return (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                aria-current={active ? 'page' : undefined}
-                className={clsx(
-                  'flex items-center justify-between gap-3 whitespace-nowrap rounded-lg px-3 py-2 text-[15px] transition-colors',
-                  active ? 'bg-brand-50 font-semibold text-brand-700' : 'text-ink-soft hover:bg-surface',
-                )}
-              >
-                {item.label}
-                {count ? (
-                  <span className="rounded-full bg-brand-500 px-2 text-xs font-bold leading-5 text-white" aria-label={`новых: ${count}`}>
-                    {count}
-                  </span>
-                ) : null}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-  );
-}
-
-function Header({ roleLabel }: { roleLabel: string }) {
-  const me = useMe();
-  return (
-    <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-white/20 bg-ink">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6">
-        <Logo href={me.user.role === 'CANDIDATE' ? '/candidate' : '/employer'} />
+        <div className="flex items-center gap-3">
+          {!focusMode ? <div className="hidden lg:block"><Button variant="ghost" size="sm" className="text-white hover:bg-white/10" aria-expanded={!collapsed} aria-controls="workspace-menu" onClick={onToggle}>{collapsed ? 'Меню' : 'Скрыть меню'}</Button></div> : null}
+          <Logo href={me.user.role === 'CANDIDATE' ? '/candidate' : '/employer'} dark />
+        </div>
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           {me.user.isDemo ? (
             <Badge tone="warning" className="max-sm:hidden">
               Демоаккаунт
             </Badge>
           ) : null}
-          <Badge tone="brand">{roleLabel}</Badge>
-          <span className="hidden max-w-[220px] truncate text-sm text-muted md:inline" title={me.user.email}>
+          <Badge tone="brand">{focusMode ? 'Тестирование' : roleLabel}</Badge>
+          <span className="hidden max-w-[220px] truncate text-sm text-white/70 md:inline" title={me.user.email}>
             {me.user.email}
           </span>
-          <LogoutButton />
+          <LogoutButton className="text-white hover:bg-white/10" />
         </div>
       </div>
     </header>
@@ -119,15 +82,18 @@ const EMPLOYER_NAV: NavItem[] = [
 ];
 
 export function AppShell({ me, area, children }: { me: MeResponse; area: 'candidate' | 'employer'; children: ReactNode }) {
+  const pathname = usePathname();
+  const focusMode = area === 'candidate' && /^\/candidate\/assessments\/[^/]+$/.test(pathname);
+  const [collapsed, setCollapsed] = useState(false);
   const nav = area === 'candidate' ? CANDIDATE_NAV : EMPLOYER_NAV;
   const roleLabel = area === 'candidate' ? 'Кандидат' : 'Работодатель';
   return (
     <MeProvider initial={me}>
-      <Header roleLabel={roleLabel} />
+      <Header roleLabel={roleLabel} focusMode={focusMode} collapsed={collapsed} onToggle={() => setCollapsed((value) => !value)} />
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:flex-row lg:gap-8">
-        <aside className="lg:w-56 lg:shrink-0">
+        <aside id="workspace-menu" className={clsx('lg:w-56 lg:shrink-0', focusMode && 'hidden', !focusMode && collapsed && 'lg:hidden')}>
           <div className="lg:sticky lg:top-24">
-            <Nav items={nav} />
+            <AccountNav items={nav} />
           </div>
         </aside>
         <main id="main" className="min-w-0 flex-1 pb-16">

@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
 
+const selectArrow = `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="m4 6 4 4 4-4" stroke="#535866" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>')}")`;
+
 const control =
   'w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-[15px] text-ink placeholder:text-[#8a8d99] transition-colors hover:border-[#a8a9b4] focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 disabled:bg-canvas disabled:text-muted aria-[invalid=true]:border-danger-600';
 
@@ -46,23 +48,35 @@ export function Field({ label, hint, error, required, children, className }: Fie
 }
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function Input({ className, ...rest }, ref) {
-  return <input ref={ref} className={clsx(control, 'h-10', className)} {...rest} />;
+  return <input ref={ref} className={clsx(control, 'h-11 text-base sm:h-10 sm:text-[15px]', className)} {...rest} />;
 });
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(function Textarea({ className, ...rest }, ref) {
   return <textarea ref={ref} className={clsx(control, 'min-h-28', className)} {...rest} />;
 });
 
-export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(function Select({ className, children, ...rest }, ref) {
+export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(function Select({ className, children, style, ...rest }, ref) {
   return (
-    <select ref={ref} className={clsx(control, 'h-10 pr-8', className)} {...rest}>
+    <select
+      ref={ref}
+      className={clsx(control, 'h-11 appearance-none pr-10 text-base sm:h-10 sm:text-[15px]', className)}
+      style={{
+        backgroundImage: selectArrow,
+        backgroundPosition: 'right 12px center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '16px 16px',
+        ...style,
+      }}
+      {...rest}
+    >
       {children}
     </select>
   );
 });
 
 export function Checkbox({ label, description, className, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label: ReactNode; description?: ReactNode }) {
-  const id = useId();
+  const generatedId = useId();
+  const id = rest.id ?? generatedId;
   return (
     <div className={clsx('flex items-start gap-3', className)}>
       <input id={id} type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 rounded border-line-strong accent-brand-500" {...rest} />
@@ -98,9 +112,9 @@ export function ChoiceGroup<T extends string>({
 }) {
   const id = useId();
   return (
-    <fieldset aria-describedby={error ? `${id}-err` : undefined}>
+    <fieldset aria-describedby={[hint && `${id}-hint`, error && `${id}-err`].filter(Boolean).join(' ') || undefined}>
       <legend className="mb-1.5 text-sm font-medium text-ink">{legend}</legend>
-      {hint ? <p className="mb-2 text-[13px] text-muted">{hint}</p> : null}
+      {hint ? <p id={`${id}-hint`} className="mb-2 text-[13px] text-muted">{hint}</p> : null}
       <div className={clsx('grid gap-2', columns === 2 && 'sm:grid-cols-2', columns === 3 && 'sm:grid-cols-3')}>
         {options.map((option) => {
           const checked = value.includes(option.value);

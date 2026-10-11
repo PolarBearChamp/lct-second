@@ -19,9 +19,9 @@
   --color-ink: #1b1c21;
   --color-ink-soft: #3a3c45;
   --color-muted: #5b5e6b;
-  --color-line: #e2e2ea;
+  --color-line: #d9dadb;
   --color-line-strong: #c8c9ca;
-  --color-canvas: #f6f6fa;
+  --color-canvas: #ededed;
   --color-surface: #ffffff;
   --color-accent-red: #ec1d35;
 
@@ -37,10 +37,10 @@
   --color-info-50: #eff8ff;
   --color-info-700: #175cd3;
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: var(--font-brand), ui-monospace, 'Cascadia Code', Consolas, monospace;
 
-  --radius-card: 14px;
+  --radius-card: 8px;
 }
 
 @layer base {
@@ -130,5 +130,20 @@
     background: var(--color-brand-500);
     top: -4px;
     left: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  .landing-title {
+    font-family: var(--font-sans);
   }
 }

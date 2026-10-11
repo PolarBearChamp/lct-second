@@ -7,6 +7,7 @@ import {
   type EligibilityResponse,
   type Grade,
   type GradeEligibility,
+  type Specialization,
 } from '@fsp/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -32,9 +33,9 @@ const EVENT_LABELS = {
   LOWERED_BY_CHOICE: 'Подтверждён более низкий грейд (по выбору)',
 } as const;
 
-export function AssessmentsOverview() {
+export function AssessmentsOverview({ preferredGrade, specialization }: { preferredGrade?: Grade; specialization?: Specialization }) {
   const me = useMe();
-  const spec = me.candidate?.activeSpecialization ?? null;
+  const spec = specialization ?? me.candidate?.activeSpecialization ?? null;
   const eligibility = useEligibility(spec);
 
   if (!spec) {
@@ -61,13 +62,13 @@ export function AssessmentsOverview() {
       ) : eligibility.isError ? (
         <ErrorState error={eligibility.error} onRetry={() => eligibility.refetch()} />
       ) : (
-        <Overview data={eligibility.data} />
+        <Overview data={eligibility.data} preferredGrade={preferredGrade} />
       )}
     </>
   );
 }
 
-function Overview({ data }: { data: EligibilityResponse }) {
+function Overview({ data, preferredGrade }: { data: EligibilityResponse; preferredGrade?: Grade }) {
   const specs = useSpecializations();
   const groups = useMemo(() => specs.data?.find((s) => s.code === data.specialization)?.groups ?? [], [specs.data, data.specialization]);
   const r = data.rules;
@@ -139,14 +140,14 @@ function Overview({ data }: { data: EligibilityResponse }) {
         </p>
       </Card>
 
-      <GradeChoice data={data} />
+      <GradeChoice data={data} preferredGrade={preferredGrade} />
       <AttemptHistory />
       <QualificationHistory />
     </div>
   );
 }
 
-function GradeChoice({ data }: { data: EligibilityResponse }) {
+function GradeChoice({ data, preferredGrade }: { data: EligibilityResponse; preferredGrade?: Grade }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { notify } = useToast();
@@ -174,7 +175,7 @@ function GradeChoice({ data }: { data: EligibilityResponse }) {
       <CardHeader title="Выберите уровень теста" description={me.candidate?.declaredGrade ? `Заявленный вами грейд — ${GRADE_LABELS[me.candidate.declaredGrade]}.` : undefined} />
       <div className="grid gap-3 md:grid-cols-3">
         {data.grades.map((g) => (
-          <div key={g.grade} className="flex flex-col rounded-xl border border-line p-4">
+          <div key={g.grade} id={`grade-${g.grade}`} className={`flex scroll-mt-24 flex-col rounded-xl border p-4 ${preferredGrade === g.grade ? 'border-brand-500 bg-brand-50/40 ring-1 ring-brand-500' : 'border-line'}`}>
             <div className="flex items-center justify-between gap-2">
               <span className="font-brand text-lg font-bold">{GRADE_LABELS[g.grade]}</span>
               {g.allowed ? <Badge tone="success">доступен</Badge> : <Badge tone="warning">недоступен</Badge>}

@@ -70,7 +70,7 @@ export function FspSection() {
         <ErrorState error={state.error} onRetry={() => state.refetch()} />
       ) : state.data.state === 'NOT_LINKED' ? (
         <form
-          className="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end"
+          className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-start"
           onSubmit={(event) => {
             event.preventDefault();
             link.mutate();
@@ -82,7 +82,7 @@ export function FspSection() {
           <Field label="Одноразовый код" hint="Демо: 731905 (из data/fixtures/fsp-mock.json)">
             {(props) => <Input {...props} value={code} onChange={(e) => setCode(e.target.value)} inputMode="numeric" autoComplete="one-time-code" />}
           </Field>
-          <Button type="submit" loading={link.isPending} disabled={!fspId || !code}>
+          <Button type="submit" className="md:mt-[26px]" loading={link.isPending} disabled={!fspId || !code}>
             Привязать
           </Button>
           {formError ? (
@@ -121,9 +121,11 @@ export function FspSection() {
           {state.data.achievements.length ? (
             <ul className="space-y-2">
               {state.data.achievements.map((a, index) => (
-                <li key={index} className="rounded-lg border border-line px-3 py-2 text-[15px]">
-                  <strong>{OUTCOME[a.outcome]}</strong>
-                  {a.place ? ` (${a.place} место)` : ''} · {a.eventTitle ?? 'Мероприятие'} · {a.year ?? '—'}{' '}
+                <li key={index} className="grid items-start gap-2 rounded-lg border border-line px-3 py-3 text-[15px] lg:grid-cols-[minmax(0,1fr)_auto]">
+                  <span className="min-w-0 leading-6">
+                    <strong>{OUTCOME[a.outcome]}</strong>
+                    {a.place ? ` (${a.place} место)` : ''} · {a.eventTitle ?? 'Мероприятие'} · {a.year ?? '—'}
+                  </span>
                   {a.relevantToSpecialization ? <Badge tone="brand">релевантно вашей специализации</Badge> : <Badge>не влияет на подбор</Badge>}
                 </li>
               ))}

@@ -10,7 +10,7 @@ export function PublicHeader() {
           <LinkButton href="/login" variant="ghost" size="sm">
             Войти
           </LinkButton>
-          <LinkButton href="/register" size="sm">
+          <LinkButton href="/register" size="sm" variant="outline">
             Регистрация
           </LinkButton>
         </nav>

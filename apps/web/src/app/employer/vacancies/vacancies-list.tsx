@@ -64,7 +64,7 @@ export function VacanciesList() {
             <ul className="space-y-3">
               {vacancies.data.map((vacancy) => (
                 <li key={vacancy.id}>
-                  <Link href={`/employer/vacancies/${vacancy.id}`} className="card flex flex-wrap items-start justify-between gap-4 p-5 transition-colors hover:border-brand-300">
+                  <Link href={`/employer/vacancies/${vacancy.id}`} className="card grid gap-4 p-5 transition-colors hover:border-brand-400 lg:grid-cols-[minmax(0,1fr)_240px]">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="text-lg font-bold">{vacancy.title}</span>
@@ -83,7 +83,7 @@ export function VacanciesList() {
                         ))}
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="min-w-0 border-t border-line pt-3 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0">
                       <div className="font-brand font-bold text-brand-700">{formatSalaryRange(vacancy.salaryFrom, vacancy.salaryTo, false)}</div>
                       <div className="text-xs text-muted">
                         откликов {vacancy.applicationsCount} · версия {vacancy.version} · {vacancy.publishedAt ? `опубликована ${formatDate(vacancy.publishedAt)}` : `изменена ${formatDate(vacancy.updatedAt)}`}

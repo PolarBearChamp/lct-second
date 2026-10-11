@@ -1,5 +1,6 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { createTransport, type Transporter } from 'nodemailer';
+import { AppError } from '../../common/errors';
 import { APP_ENV, type AppEnv } from '../../config/env';
 
 export interface OutgoingMail {
@@ -23,11 +24,24 @@ export class MailService {
       auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASSWORD } : undefined,
       connectionTimeout: 10_000,
       greetingTimeout: 10_000,
+      socketTimeout: 20_000,
     });
   }
 
   async send(mail: OutgoingMail): Promise<void> {
-    await this.transporter.sendMail({ from: this.env.MAIL_FROM, ...mail });
+    try {
+      await this.transporter.sendMail({ from: this.env.MAIL_FROM, ...mail });
+    } catch (error) {
+      // SMTP exceptions can contain credentials or recipient addresses; log only a known error code.
+      const code = error && typeof error === 'object' && 'code' in error ? error.code : null;
+      const safeCode = typeof code === 'string' && ['ETIMEDOUT', 'ECONNECTION', 'ECONNREFUSED', 'ESOCKET', 'ETLS', 'EAUTH', 'EENVELOPE', 'EMESSAGE', 'EDNS'].includes(code) ? code : 'SMTP_ERROR';
+      this.logger.error(`SMTP delivery failed: ${safeCode}; host=${this.env.SMTP_HOST}; port=${this.env.SMTP_PORT}`);
+      throw new AppError(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        'EMAIL_DELIVERY_FAILED',
+        'Не удалось отправить письмо. Сервис отправки почты недоступен. Попробуйте позже.',
+      );
+    }
     // В лог не пишем адрес получателя и содержимое письма.
     this.logger.log(`Письмо «${mail.subject}» отправлено`);
   }

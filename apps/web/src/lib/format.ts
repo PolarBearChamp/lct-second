@@ -8,8 +8,21 @@ const dateTime = new Intl.DateTimeFormat('ru-RU', {
 const dateOnly = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
 const money = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 });
 
-export const formatDateTime = (iso: string | null | undefined) => (iso ? dateTime.format(new Date(iso)) : '—');
-export const formatDate = (iso: string | null | undefined) => (iso ? dateOnly.format(new Date(iso)) : '—');
+/** Keep the day, month, year and «г.» together; time may wrap after the comma. */
+function formatUnbrokenDate(formatter: Intl.DateTimeFormat, iso: string): string {
+  const parts = formatter.formatToParts(new Date(iso));
+  const timeStart = parts.findIndex((part) => part.type === 'hour');
+  return parts
+    .map((part, index) =>
+      part.type === 'literal' && (timeStart === -1 || index < timeStart)
+        ? part.value.replace(/\s/g, '\u00a0').replace(/,\u00a0/g, ', ')
+        : part.value,
+    )
+    .join('');
+}
+
+export const formatDateTime = (iso: string | null | undefined) => (iso ? formatUnbrokenDate(dateTime, iso) : '—');
+export const formatDate = (iso: string | null | undefined) => (iso ? formatUnbrokenDate(dateOnly, iso) : '—');
 export const formatMoney = (value: number | null | undefined) => (value === null || value === undefined ? '—' : `${money.format(value)} ₽`);
 
 /** «от 180 000 до 250 000 ₽ в месяц до вычета налогов». */

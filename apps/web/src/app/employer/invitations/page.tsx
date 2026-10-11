@@ -77,7 +77,7 @@ export default function EmployerInvitationsPage() {
                       {inv.title}
                       {inv.needTitle ? <div className="text-xs text-muted">{inv.needTitle}</div> : null}
                     </td>
-                    <td className="px-4 py-3 font-brand text-sm">{formatSalaryRange(inv.salaryFrom, inv.salaryTo, false)}</td>
+                    <td className="whitespace-nowrap px-4 py-3 font-brand text-sm">{formatSalaryRange(inv.salaryFrom, inv.salaryTo, false)}</td>
                     <td className="px-4 py-3">
                       <InvitationStatusBadge status={inv.status} />
                     </td>

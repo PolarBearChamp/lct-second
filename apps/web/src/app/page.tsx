@@ -1,13 +1,14 @@
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { PublicFooter, PublicHeader } from '@/components/layout/public-header';
-import { LinkButton } from '@/components/ui/button';
+import { RoleJourney } from '@/components/landing/role-journey';
+import { RoleActions } from '@/components/landing/role-actions';
 import { getMe } from '@/lib/api/server';
 
-const steps = [
-  { title: 'Подтверждение навыков', text: 'Кандидат проходит опрос и тест на заявленный грейд. В выдачу попадает только грейд, подтверждённый тестом.' },
-  { title: 'Подбор работодателем', text: 'Компания описывает потребность и получает ранжированную подборку с понятным объяснением, почему кандидат подходит.' },
-  { title: 'Предложение с зарплатой', text: 'Работодатель первым отправляет предложение с вилкой. Кандидат видит условия до общения и сам решает, раскрывать ли контакты.' },
+const questions = [
+  { title: 'Когда работодатель увидит мои контакты?', text: 'После принятия приглашения или вашего отклика на вакансию. До этого компания видит обезличенный профиль: специализацию, подтверждённый грейд и навыки. Публикация профиля требует отдельного согласия в настройках.' },
+  { title: 'Можно ли зарегистрироваться без истории ФСП?', text: 'Да. Достижения ФСП дополняют профиль, но не заменяют тестирование и не обязательны для участия в подборе.' },
+  { title: 'Что будет, если я не пройду тест?', text: 'Ваш текущий грейд не понизится. Можно пройти тест на уровень ниже. Повторное тестирование ограничено по времени; доступные попытки и сроки указаны в кабинете.' },
 ];
 
 export default async function HomePage() {
@@ -15,68 +16,70 @@ export default async function HomePage() {
   if (me) redirect(me.user.role === 'CANDIDATE' ? '/candidate' : '/employer');
 
   return (
-    <>
+    <div className="bg-surface">
       <PublicHeader />
       <main id="main">
-        <section className="relative overflow-hidden bg-surface">
-          <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
+        <section className="mx-auto max-w-6xl px-4 pb-10 pt-12 sm:px-6 sm:pb-12 sm:pt-20 lg:pt-24">
+          <div className="grid gap-10 lg:grid-cols-[1.45fr_1fr] lg:gap-20">
             <div>
-              <p className="mb-3 font-brand text-sm font-medium text-brand-600">Федерация спортивного программирования</p>
-              <h1 className="text-3xl font-bold leading-tight sm:text-[42px]">
-                Работодатель находит вас сам — по подтверждённым навыкам
-              </h1>
-              <p className="mt-5 max-w-xl text-lg text-ink-soft">
-                Обратный подбор ИТ-специалистов: вместо откликов вслепую — проверенный грейд, прозрачная подборка и предложение с
-                зарплатой до начала общения.
+              <p className="mb-6 flex items-center gap-3 font-brand text-xs text-muted">
+                <span className="h-2 w-2 bg-brand-500" aria-hidden />
+                Платформа подбора ИТ-специалистов
               </p>
-              <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                <LinkButton href="/register?role=CANDIDATE" size="lg" className="w-full">
-                  Я ищу работу
-                </LinkButton>
-                <LinkButton href="/register?role=EMPLOYER" size="lg" variant="outline" className="w-full">
-                  Я ищу специалиста
-                </LinkButton>
-              </div>
-              <p className="mt-4 text-sm text-muted">
-                Уже зарегистрированы? <a className="font-medium text-brand-600 underline-offset-4 hover:underline" href="/login">Войти</a>
+              <h1 className="landing-title text-[36px] min-[380px]:text-[44px] font-semibold leading-[1.04] tracking-[-0.045em] sm:text-[64px] lg:text-[76px]">
+                Работодатель<br /><span className="text-brand-500">ищет вас.</span>
+              </h1>
+              <p className="mt-7 max-w-md text-lg leading-relaxed text-ink-soft">
+                Подтвердите навыки и получайте приглашения от компаний. Зарплата и условия известны до первого разговора.
               </p>
             </div>
-            <div className="brand-line relative hidden p-8 lg:block">
-              <Image src="/brand/russia-map.png" alt="Карта России в цветах ФСП" width={466} height={320} className="h-auto w-full" priority />
-              <p className="mt-4 text-sm text-muted">Frontend · Backend · ML · Manual QA — Junior, Middle и Senior</p>
+            <div className="lg:pt-4">
+              <RoleActions />
             </div>
           </div>
+          <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-line pt-5 text-sm sm:mt-16">
+            <span className="font-brand text-xs text-muted">Направления</span>
+            <span>Frontend</span><span>Backend</span><span>ML</span><span>Manual QA</span>
+            <span className="text-muted sm:ml-auto">Junior / Middle / Senior</span>
+          </div>
         </section>
-        <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-          <h2 className="text-2xl font-bold">Как это работает</h2>
-          <ol className="mt-6 grid gap-4 md:grid-cols-3">
-            {steps.map((step, index) => (
-              <li key={step.title} className="card p-6">
-                <span className="font-brand text-3xl font-bold text-brand-500">0{index + 1}</span>
-                <h3 className="mt-3 text-lg font-bold">{step.title}</h3>
-                <p className="mt-2 text-ink-soft">{step.text}</p>
-              </li>
+
+        <section id="how-it-works" className="border-y border-line bg-canvas/50">
+          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+            <RoleJourney />
+          </div>
+        </section>
+
+        <section className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 sm:py-16 md:grid-cols-2 md:gap-16">
+          <div>
+            <p className="mb-4 font-brand text-xs text-brand-700">Федерация спортивного программирования</p>
+            <h2 className="max-w-md text-3xl font-medium leading-tight">Достижения ФСП<br />в вашем профиле</h2>
+            <p className="mt-5 max-w-md text-base leading-relaxed text-muted">Результаты соревнований — дополнительный сигнал для работодателя. Привяжите ФСП ID в кабинете, чтобы добавить достижения к подтверждённым навыкам.</p>
+            <p className="mt-4 max-w-md text-sm text-muted">Участие в соревнованиях не обязательно: начать можно с опроса и теста.</p>
+          </div>
+          <figure>
+            <Image src="/brand/fsp-event.jpeg" alt="Стенд Федерации спортивного программирования на мероприятии" width={1440} height={734} sizes="(max-width: 768px) 100vw, 50vw" className="h-auto w-full" />
+            <figcaption className="mt-3 text-xs text-muted">ФСП. Фотография из материалов Федерации.</figcaption>
+          </figure>
+        </section>
+
+        <section className="mx-auto grid max-w-6xl gap-6 border-t border-line px-4 py-12 sm:px-6 sm:py-16 md:grid-cols-[1fr_2fr] md:gap-12">
+          <h2 className="text-2xl font-medium">Перед регистрацией</h2>
+          <div className="divide-y divide-line border-y border-line">
+            {questions.map((question) => (
+              <details key={question.title} className="group py-5">
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-base font-medium [&::-webkit-details-marker]:hidden">
+                  {question.title}
+                  <span aria-hidden className="font-brand text-brand-500 group-open:hidden">+</span>
+                  <span aria-hidden className="hidden font-brand text-brand-500 group-open:inline">−</span>
+                </summary>
+                <p className="mt-3 max-w-xl pr-5 text-[15px] leading-relaxed text-muted">{question.text}</p>
+              </details>
             ))}
-          </ol>
-          <div className="card mt-6 grid gap-4 p-6 md:grid-cols-2">
-            <div>
-              <h3 className="font-bold">Для кандидата</h3>
-              <p className="mt-1 text-ink-soft">
-                До принятия приглашения работодатель видит только обезличенную карточку: специализацию, подтверждённый грейд, баллы и
-                структурированные навыки — без ФИО и контактов.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-bold">Для работодателя</h3>
-              <p className="mt-1 text-ink-soft">
-                Подборка строится по категориям, подтверждённым тестированием. Достижения ФСП дают ограниченный бонус, но не заменяют
-                обязательных требований.
-              </p>
-            </div>
           </div>
         </section>
       </main>
       <PublicFooter />
-    </>
+    </div>
   );
 }

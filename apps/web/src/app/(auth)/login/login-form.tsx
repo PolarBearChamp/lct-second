@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Field, Input } from '@/components/ui/field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { api, ApiError } from '@/lib/api/client';
 
 const schema = z.object({
@@ -58,7 +59,7 @@ export function LoginForm({ next }: { next?: string }) {
           {(props) => <Input type="email" autoComplete="email" {...props} {...register('email')} />}
         </Field>
         <Field label="Пароль" error={errors.password?.message} required>
-          {(props) => <Input type="password" autoComplete="current-password" {...props} {...register('password')} />}
+          {(props) => <PasswordInput autoComplete="current-password" {...props} {...register('password')} />}
         </Field>
         <Button type="submit" className="w-full" loading={isSubmitting}>
           Войти
