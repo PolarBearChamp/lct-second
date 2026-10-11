@@ -1,22 +1,23 @@
+import Link from 'next/link';
 import { LinkButton } from '@/components/ui/button';
-
-const roles = [
-  { role: 'CANDIDATE', title: 'Для кандидатов', description: 'Подтвердите навыки и получайте предложения. Контакты раскрываются только с вашего согласия.', action: 'Я ищу работу' },
-  { role: 'EMPLOYER', title: 'Для работодателей', description: 'Найдите специалиста с проверенным грейдом и отправьте предложение с условиями и зарплатой.', action: 'Я ищу специалиста' },
-] as const;
 
 export function RoleActions() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      {roles.map((item) => (
-        <div key={item.role} className="flex flex-col card relative border-t-4 border-t-brand-500 p-6 sm:p-8">
-          <h2 className="text-xl font-bold">{item.title}</h2>
-          <p className="mb-6 mt-3 max-w-xl text-sm leading-relaxed text-muted">{item.description}</p>
-          <LinkButton href={`/register?role=${item.role}`} size="lg" variant={item.role === 'CANDIDATE' ? 'primary' : 'outline'} className="mt-auto w-full px-3">
-            {item.action}
-          </LinkButton>
-        </div>
-      ))}
+    <div>
+      <div className="border-t-2 border-ink pb-7 pt-5">
+        <h2 className="text-xl font-semibold">Ищу работу</h2>
+        <p className="mb-5 mt-2 max-w-sm text-[15px] leading-relaxed text-muted">Заполните профиль, подтвердите грейд и откройте его для подбора.</p>
+        <LinkButton href="/register?role=CANDIDATE" size="lg" className="w-full justify-between px-4">
+          Я ищу работу <span aria-hidden>→</span>
+        </LinkButton>
+      </div>
+      <div className="border-t border-line py-5">
+        <h2 className="text-xl font-semibold">Нанимаю специалистов</h2>
+        <p className="mb-3 mt-2 max-w-sm text-[15px] leading-relaxed text-muted">Опишите потребность. Получите подборку с объяснением, почему кандидат подходит.</p>
+        <Link href="/register?role=EMPLOYER" className="inline-flex min-h-11 items-center gap-3 font-semibold text-brand-700 underline-offset-4 hover:underline">
+          Я ищу специалиста <span aria-hidden>→</span>
+        </Link>
+      </div>
     </div>
   );
 }

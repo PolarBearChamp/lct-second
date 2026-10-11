@@ -37,10 +37,10 @@
   --color-info-50: #eff8ff;
   --color-info-700: #175cd3;
 
-  --font-sans: var(--font-brand), ui-monospace, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: var(--font-brand), ui-monospace, 'Cascadia Code', Consolas, monospace;
 
-  --radius-card: 12px;
+  --radius-card: 8px;
 }
 
 @layer base {
@@ -102,7 +102,6 @@
     background: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
-    box-shadow: 0 2px 0 rgb(27 28 33 / 0.025);
   }
   .skip-link {
     position: absolute;
@@ -144,37 +143,7 @@
 }
 
 @layer components {
-  .brand-hero {
-    position: relative;
-    background: var(--color-ink);
-    color: #ededed;
-    overflow: hidden;
+  .landing-title {
+    font-family: var(--font-sans);
   }
-  .brand-hero h1 { color: #ededed; }
-  .brand-hero-frame {
-    border: 1px solid rgb(237 237 237 / 0.3);
-    border-radius: 24px;
-    position: relative;
-  }
-  .brand-hero-frame::before, .brand-hero-frame::after {
-    content: '';
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: var(--color-accent-red);
-    border-radius: 50%;
-    top: -4px;
-    left: 28px;
-  }
-  .brand-hero-frame::after { top: auto; left: auto; bottom: -4px; right: 28px; }
-  .brand-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .brand-step { border-top: 3px solid var(--color-brand-500); }
-  .brand-auth { background: var(--color-ink); color: #ededed; }
-  .brand-auth h2 { color: #ededed; }
 }
